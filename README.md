@@ -7,6 +7,21 @@ How said above, Program.cs similar on Program.cs from .Net 7. WebApplicationBuil
 
 Scoped services will be not work. Configuration also based on appsettings.json.
 
+### Default configuration
+```
+static void Main(string[] args)
+{
+    var builder = new BotApplicationBuilder();
+    builder.ConfigureApiKey("your api key");
+    builder.ReceiverOptions.ConfigureAllowedUpdates(UpdateType.Message, UpdateType.CallbackQuery);
+    builder.Services.AddExecutors(); // identical to the controller in ASP.Net Core
+
+    var app = builder.Build();
+    app.UseExecutors();
+    app.RunPolling(); // webhooks are not implemented, but in the future you will be able to, for example, change polling to webhooks and vice versa
+}
+```
+
 ## Routing
 For the routing exists executers(identical to the controllers) and attributes.
 
