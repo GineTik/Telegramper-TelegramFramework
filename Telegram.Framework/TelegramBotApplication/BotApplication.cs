@@ -30,6 +30,7 @@ namespace Telegram.Framework.TelegramBotApplication
             _services = builder.Services;
             _configuration = builder.Configuration;
             _receiverOptions = builder.ReceiverOptions;
+            _apiKey = builder.ApiKey;
 
             UseMiddleware<UpdateContextMiddleware>();
         }
@@ -64,10 +65,8 @@ namespace Telegram.Framework.TelegramBotApplication
             return this;
         }
 
-        public void PollingRun(string? apiKey = null)
+        public void PollingRun()
         {
-            _apiKey = apiKey ?? _configuration["ApiKey"] ??
-                throw new ArgumentNullException("ApiKey is null in appsettings.json and parameters");
             _serviceProvider = _services.BuildServiceProvider();
 
             _firstMiddleware = () => Task.CompletedTask;

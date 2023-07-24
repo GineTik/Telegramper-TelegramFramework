@@ -9,6 +9,6 @@ namespace Telegram.Framework.TelegramBotApplication
         IBotApplication Use(Func<UpdateContext, NextDelegate, Task> middlware);
         IBotApplication Use(Func<IServiceProvider, UpdateContext, NextDelegate, Task> middlware);
         IBotApplication UseMiddleware<T>() where T : class, IMiddleware;
-        void PollingRun(string? apiKey = null);
+        void PollingRun();
     }
 }
