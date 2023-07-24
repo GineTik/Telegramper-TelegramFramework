@@ -22,9 +22,11 @@ namespace Telegram.Framework.TelegramBotApplication
             Services.AddUpdateContextAccessor();
         }
 
-        public BotApplication Build()
+        public IBotApplication Build()
         {
             return new BotApplication(this);
         }
+
+        public static BotApplicationBuilder CreateBuilder() => new BotApplicationBuilder();
     }
 }

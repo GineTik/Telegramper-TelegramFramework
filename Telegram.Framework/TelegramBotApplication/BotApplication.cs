@@ -12,7 +12,7 @@ using Telegram.Bot.Types;
 
 namespace Telegram.Framework.TelegramBotApplication
 {
-    public class BotApplication
+    public partial class BotApplication : IBotApplication
     {
         private NextDelegate _firstMiddleware;
 
@@ -34,7 +34,7 @@ namespace Telegram.Framework.TelegramBotApplication
             UseMiddleware<UpdateContextMiddleware>();
         }
 
-        public BotApplication Use(Func<UpdateContext, NextDelegate, Task> middlware)
+        public IBotApplication Use(Func<UpdateContext, NextDelegate, Task> middlware)
         {
             ArgumentNullException.ThrowIfNull(middlware);
 
@@ -44,7 +44,7 @@ namespace Telegram.Framework.TelegramBotApplication
             return this;
         }
 
-        public BotApplication Use(Func<IServiceProvider, UpdateContext, NextDelegate, Task> middlware)
+        public IBotApplication Use(Func<IServiceProvider, UpdateContext, NextDelegate, Task> middlware)
         {
             ArgumentNullException.ThrowIfNull(middlware);
 
@@ -54,7 +54,7 @@ namespace Telegram.Framework.TelegramBotApplication
             return this;
         }
 
-        public BotApplication UseMiddleware<T>()
+        public IBotApplication UseMiddleware<T>()
             where T : class, IMiddleware
         {
             _services.AddTransient<T>();
@@ -64,7 +64,7 @@ namespace Telegram.Framework.TelegramBotApplication
             return this;
         }
 
-        public void Run(string? apiKey = null)
+        public void PollingRun(string? apiKey = null)
         {
             _apiKey = apiKey ?? _configuration["ApiKey"] ??
                 throw new ArgumentNullException("ApiKey is null in appsettings.json and parameters");
