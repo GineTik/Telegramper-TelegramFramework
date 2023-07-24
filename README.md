@@ -13,13 +13,12 @@ static void Main(string[] args)
 {
     var builder = new BotApplicationBuilder();
     builder.ConfigureApiKey("your api key");
-    builder.ReceiverOptions.ConfigureAllowedUpdates(UpdateType.Message, UpdateType.CallbackQuery);
+    builder.ReceiverOptions.ConfigureAllowedUpdates(UpdateType.Message, UpdateType.CallbackQuery); // default is UpdateType.Message
     builder.Services.AddExecutors(); // identical to the controller in ASP.Net Core
 
     var app = builder.Build();
     app.UseExecutors();
-    app.RunPolling(); // webhooks are not implemented, but in the future you will be
-        able to, for example, change polling to webhooks and vice versa
+    app.RunPolling(); // webhooks are not implemented, but in the future you will be able to, for example, change polling to webhooks and vice versa
 }
 ```
 
