@@ -8,7 +8,7 @@ How said above, Program.cs similar on Program.cs from .Net 7. WebApplicationBuil
 Scoped services will be not work. Configuration also based on appsettings.json.
 
 ### Default configuration
-```
+```cs
 static void Main(string[] args)
 {
     var builder = new BotApplicationBuilder();
@@ -18,7 +18,8 @@ static void Main(string[] args)
 
     var app = builder.Build();
     app.UseExecutors();
-    app.RunPolling(); // webhooks are not implemented, but in the future you will be able to, for example, change polling to webhooks and vice versa
+    app.RunPolling(); // webhooks are not implemented, but in the future you will be
+        able to, for example, change polling to webhooks and vice versa
 }
 ```
 
