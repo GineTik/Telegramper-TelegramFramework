@@ -4,33 +4,27 @@ namespace Telegram.Framework.TelegramBotApplication.Configuration.Middlewares.Ca
 {
     public static class CatchExceptionExtension
     {
-        public static BotApplication UseCatchException(this BotApplication app, Action<UpdateContext, Exception> action)
+        public static IBotApplication UseCatchException(this IBotApplication app, Action<UpdateContext, Exception> action)
         {
-            return app.UseCatchException<Exception>(action);
+            return app.UseCatchException<Exception>(
+                (provider, updateContext, ex) => action.Invoke(updateContext, ex)
+            );
         }
 
-        public static BotApplication UseCatchException<TException>(this BotApplication app, Action<UpdateContext, TException> action)
+        public static IBotApplication UseCatchException<TException>(this IBotApplication app, Action<UpdateContext, TException> action)
             where TException : Exception
         {
-            return app.Use(async (updateContext, next) =>
-            {
-                try
-                {
-                    await next();
-                }
-                catch (TException ex)
-                {
-                    action.Invoke(updateContext, ex);
-                }
-            });
+            return app.UseCatchException<TException>(
+                (provider, updateContext, ex) => action.Invoke(updateContext, ex)
+            );
         }
 
-        public static BotApplication UseCatchException(this BotApplication app, Action<IServiceProvider, UpdateContext, Exception> action)
+        public static IBotApplication UseCatchException(this IBotApplication app, Action<IServiceProvider, UpdateContext, Exception> action)
         {
             return app.UseCatchException<Exception>(action);
         }
 
-        public static BotApplication UseCatchException<TException>(this BotApplication app, Action<IServiceProvider, UpdateContext, TException> action)
+        public static IBotApplication UseCatchException<TException>(this IBotApplication app, Action<IServiceProvider, UpdateContext, TException> action)
            where TException : Exception
         {
             return app.Use(async (provider, updateContext, next) =>

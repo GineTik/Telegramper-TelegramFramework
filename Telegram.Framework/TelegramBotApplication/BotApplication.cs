@@ -65,7 +65,7 @@ namespace Telegram.Framework.TelegramBotApplication
             return this;
         }
 
-        public void PollingRun()
+        public void RunPolling()
         {
             _serviceProvider = _services.BuildServiceProvider();
 
@@ -75,6 +75,8 @@ namespace Telegram.Framework.TelegramBotApplication
 
             var client = new TelegramBotClient(_apiKey);
             client.StartReceiving(invokeMiddlewares, handlePollingErrorAsync, _receiverOptions);
+
+            Console.ReadLine();
         }
 
         private async Task invokeMiddlewares(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
