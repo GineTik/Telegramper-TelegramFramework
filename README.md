@@ -3,6 +3,7 @@
 It is framework similar to a ASP.Net Core. Framework contains services, middlewares, configuration, controllers(executors) and other.
 
 ## Content
+1. [Quick start](#quick-start)
 1. [Configuration bot in Program.cs](#configuration-bot)
    - [Quick configuration](#quick-configuration)
    - [BotApplicationBuilder](#BotApplicationBuilder)
@@ -22,6 +23,38 @@ It is framework similar to a ASP.Net Core. Framework contains services, middlewa
       - [Available attributes for routing](#available-attributes-for-routing)
       - [Available attributes for input data validation](#available-attributes-for-input-data-validation)
       - [Write your own attributes](#write-your-own-attribute)
+
+## Quick start
+```cs
+static void Main(string[] args)
+{
+    var builder = new BotApplicationBuilder();
+    builder.ConfigureApiKey("your api key");
+    builder.ReceiverOptions.ConfigureAllowedUpdates(UpdateType.Message, UpdateType.CallbackQuery); // default is UpdateType.Message
+    builder.Services.AddExecutors(); // identical to the controller in ASP.Net Core
+
+    var app = builder.Build();
+    app.UseExecutors();
+    app.RunPolling(); // webhooks are not implemented, but in the future you will be able to, for example, change polling to webhooks and vice versa
+}
+
+public class BasicExecutor : Executor
+{
+    [TargetCommands("start", Description = "start command")]
+    public async Task Start()
+    {
+        var username = UpdateContext.User.ToString();
+        await Client.SendTextMessageAsync($"Your username is {username}"); // send response
+    }
+
+    [TargetCommands("echo, pe", Description = "Echo description")]
+    [ParametersSeparator("")] // remove separator, by default is space(" ")
+    public async Task Echo(string phrase) // more about the parameters later 
+    {
+        await Client.SendTextMessageAsync(phrase);
+    }
+}
+```
 
 <a name="configuration-bot"></a>
 ## Configuration bot in Program.cs
