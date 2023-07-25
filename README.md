@@ -4,9 +4,12 @@ It is framework similar to a ASP.Net Core. Framework contains services, middlewa
 
 ## Content
 1. [Configuration bot in Program.cs](#configuration-bot)
-1. [Routing by Executors and attributes](#routing-by-executors-and-attributes)
+   - [Default configuration](#default-configuration)
+1. [Executors and attributes](#executors-and-attributes)
+   - [Routing](#routing-by-executors-and-attributes)
    - [Available attributes for routing](#available-attributes-for-routing)
    - [Available attributes for input data validation](#available-attributes-for-input-data-validation)
+   - [Write your own attributes](#write-your-own-attribute)
 
 <a name="configuration-bot"></a>
 ## Configuration bot in Program.cs
@@ -14,6 +17,7 @@ How said above, Program.cs similar on Program.cs from .Net 7. WebApplicationBuil
 
 Scoped services will be not work. Configuration also based on appsettings.json.
 
+<a name="default-configuration"></a>
 ### Default configuration
 ```cs
 static void Main(string[] args)
@@ -29,52 +33,38 @@ static void Main(string[] args)
 }
 ```
 
-<a name="routing-by-executors-and-attributes"></a>
-## Routing by Executors and attributes
-For the routing exists executers(identical to the controllers) and attributes.
-
+<a name="executors-and-attributes"></a>
+## Executors and attributes
 Executor is basic abstract class who provide properties and methods. Executor has UpdateContext (identical to the HttpContext), Client (for send responce to a user), ExecuteAsync method (for execute other methods of executors).
 
-### Examples
-```cs
-public class BasicExecutor : Executor
-{
-    [TargetCommands("start", Description = "start command")]
-    public async Task Start()
-    {
-        var username = UpdateContext.User.ToString();
-        await Client.SendTextMessageAsync($"Your username is {username}"); // send response
-    }
+<a name="routing-by-executors-and-attributes"></a>
+### Routing
+There are target attributes for routing. Learn about these attributes [here](#available-attributes-for-routing). You can attach one or more target attributes to a processing method.
+> The method must return a Type as Task!
 
-    [TargetCommands("params_examples, pe", Description = "Parameters examples")]
-    public async Task ParametersExamples(string parameter1, int? parameter2) // more about the parameters later 
-    {
-        // ...
-    }
-}
-```
+If at least one target attribute in the handler method matches, the method is executed.
 
 <a name="available-attributes-for-routing"></a>
 ### Available attributes for routing
 - TargetCommands
   ```cs
   [TargetCommands("command1, commmand2, command3", Description = "Commands")]
-  public async Task Handler() { }
+  public async Task Handle() { }
   ```
 - TargetCallbackData
   ```cs
   [TargetCallbacksDatas("data1, data2, data3")]
-  public async Task Handler() { }
+  public async Task Handle() { }
   ```
 - TargetUpdateType
   ```cs
   [TargetUpdateType(UpdateType.Message)]
-  public async Task Handler() { }
+  public async Task Handle() { }
   ```
 - TargetUserStateContains
   ```cs
   [TargetUserStateContains("userState1, userState2, userState3")]
-  public async Task Handler() { }
+  public async Task Handle() { }
   ```
 
 This attributes checks the input data on similarity and attempts to execute the method if it is simiral. There can be more than one TargetAttributes per handler.
@@ -85,17 +75,18 @@ This attributes checks the input data on similarity and attempts to execute the 
   ```cs
   [TargetAttribute...]
   [UpdateMessageTextNotNull(ErrorMessage="please send a text")] // by default ErrorMessage is "Test is null"
-  public async Task Handler() { }
+  public async Task Handle() { }
   ```
 - UpdatePhotoNotNull
   ```cs
   [TargetAttribute...]
   [UpdatePhotoNotNull(ErrorMessage="please send a photo")] // by default ErrorMessage is "Photo is null"
-  public async Task Handler() { }
+  public async Task Handle() { }
   ```
 
 Validation attributes don't executing Executor method if input data not correct. If validation is failed, runing next middleware. There can be more than one ValidationAttributes per handler.
 
+<a name="write-your-own-attribute"></a>
 ### Write your own attribute
 Inherit the TargetAttribute or ValidateInputDataAttribute attribute and implement the method.
 > !!! For TargetAttribute, you can add ```[TargetUpdateType(UpdateType.CallbackQuery)]```, then the routing will be faster.
@@ -119,6 +110,25 @@ public class TargetCallbacksDatasAttribute : TargetAttribute
 
         var targetData = data.Split(' ').First();
         return CallbacksDatas.Contains(targetData);
+    }
+}
+```
+
+### Basic executor
+```cs
+public class BasicExecutor : Executor
+{
+    [TargetCommands("start", Description = "start command")]
+    public async Task Start()
+    {
+        var username = UpdateContext.User.ToString();
+        await Client.SendTextMessageAsync($"Your username is {username}"); // send response
+    }
+
+    [TargetCommands("params_examples, pe", Description = "Parameters examples")]
+    public async Task ParametersExamples(string parameter1, int? parameter2) // more about the parameters later 
+    {
+        // ...
     }
 }
 ```
