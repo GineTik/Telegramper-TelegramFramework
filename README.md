@@ -13,7 +13,7 @@ It is framework similar to a ASP.Net Core. Framework contains services, middlewa
    - [IBotApplication](#IBotApplication)
       - [Middleware examples](#middleware-example)
       - [Write your own middleware](#write-your-own-middleware)
-      - [Run polling](#run-polling)
+      - [Launch your bot](#launch-your-bot)
 1. [Executors and attributes](#executors-and-attributes)
    - [Executors](#executors)
       - [Basic executor](#basic-executor)
@@ -49,16 +49,15 @@ static void Main(string[] args)
 
 #### Configure api key
 To configure the api key you can use ```builder.ConfigureApiKey("your api key")```
-You can set the api key in the appsettings.json file
+You can set the api key in the appsettings.json file. In this case, the api key is installed automatically.
 ```json
 {
    "ApiKey": "your api key"
 }
 ```
-In this case, the api key is installed automatically
 
 #### Configuration
-To use the configuration, you need to create the appsettings.json file in your project at the same level as Program.cs.
+To use the configuration, you need to create the appsettings.json file in your project at the same level as Program.cs. If the appsetting.json is not created, you will receive an exception at startup. The configuration is also identical to ASP.Net Core.
 
 #### ReceiverOptions
 ...
@@ -72,7 +71,8 @@ IBotApplication has next methods:
 - ```Use(Func<UpdateContext, NextDelegate, Task> middlware)```
 - ```Use(Func<IServiceProvider, UpdateContext, NextDelegate, Task> middlware)```
 - ```UseMiddleware<T>() where T : class, IMiddleware```
-Each with this methods return IBotApplication.
+- ```RunPolling()```
+Each Use methods return IBotApplication.
 
 <a name="middleware-example"></a>
 #### Middleware example
@@ -82,18 +82,46 @@ var app = builder.Build()
    .UseTwo()
    .UseThree()
    .UseMiddleware<CustomMiddleware>()
-   .Use((updateContext, next) =>
+   .Use(async (updateContext, next) =>
    {
       // ...
-      next.Invoke();
+      await next();
    });
 ```
 
 #### Write your own middleware
-...
+To write your own middleware, you must implement the IMiddleware interface or write a lambda to the Use method.
 
-#### Run polling
-...
+##### Implement the IMiddleware interface
+```cs
+public class CustomMiddleware : IMiddleware
+{
+   private readonly YourDependence _dependence;
+   
+   public CustomMiddleware(YourDependence dependence)
+   {
+      _dependence = dependence;
+   }
+   
+   public async Task InvokeAsync(UpdateContext updateContext, NextDelegate next)
+   {
+      // ...
+      await next();
+   }
+}
+```
+##### Write a lambda to the Use method.
+```cs
+app.Use((updateContext, next) =>
+{
+   // ...
+   next.Invoke(); // to call next middleware
+});
+```
+
+#### Launch your bot
+To start the bot, you need to call the Run method. You can call a polling using the RunPolling method.
+> In the future, we plan to create the RunWebhooks method.
 
 <a name="executors-and-attributes"></a>
 ## Executors and attributes
