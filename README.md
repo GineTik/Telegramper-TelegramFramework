@@ -4,7 +4,16 @@ It is framework similar to a ASP.Net Core. Framework contains services, middlewa
 
 ## Content
 1. [Configuration bot in Program.cs](#configuration-bot)
-   - [Default configuration](#default-configuration)
+   - [Quick configuration](#quick-configuration)
+   - [BotApplicationBuilder](#BotApplicationBuilder)
+      - [Configure api key](#Configure-api-key)
+      - [Configuration](#Configuration)
+      - [ReceiverOptions](#ReceiverOptions)
+      - [Services](#services)
+   - [IBotApplication](#IBotApplication)
+      - [Middleware examples](#middleware-example)
+      - [Write your own middleware](#write-your-own-middleware)
+      - [Run polling](#run-polling)
 1. [Executors and attributes](#executors-and-attributes)
    - [Executors](#executors)
       - [Basic executor](#basic-executor)
@@ -20,8 +29,8 @@ How said above, Program.cs similar on Program.cs from .Net 7. WebApplicationBuil
 
 Scoped services will be not work. Configuration also based on appsettings.json.
 
-<a name="default-configuration"></a>
-### Default configuration
+<a name="quick-configuration"></a>
+### Quick configuration
 ```cs
 static void Main(string[] args)
 {
@@ -35,6 +44,56 @@ static void Main(string[] args)
     app.RunPolling(); // webhooks are not implemented, but in the future you will be able to, for example, change polling to webhooks and vice versa
 }
 ```
+
+### BotApplicationBuilder 
+
+#### Configure api key
+To configure the api key you can use ```builder.ConfigureApiKey("your api key")```
+You can set the api key in the appsettings.json file
+```json
+{
+   "ApiKey": "your api key"
+}
+```
+In this case, the api key is installed automatically
+
+#### Configuration
+To use the configuration, you need to create the appsettings.json file in your project at the same level as Program.cs.
+
+#### ReceiverOptions
+...
+
+#### Services
+The functionality of services is taken over by IServiceCollection (from ASP.Net Core). Because of this, some services are not available, but you can get other services (which are not only available for ASP.Net Core), such as AutoMapper, EF Core ([How to use EF Core in Telegram.Framework](#)), and others. Although these services were developed for ASP.Net Core, you can use them here as well. 
+> You can also create your own services and add them to nuget packages to extend the functionality of the framework.
+
+### IBotApplication
+IBotApplication has next methods:
+- ```Use(Func<UpdateContext, NextDelegate, Task> middlware)```
+- ```Use(Func<IServiceProvider, UpdateContext, NextDelegate, Task> middlware)```
+- ```UseMiddleware<T>() where T : class, IMiddleware```
+Each with this methods return IBotApplication.
+
+<a name="middleware-example"></a>
+#### Middleware example
+```cs
+var app = builder.Build()
+   .UseOne()
+   .UseTwo()
+   .UseThree()
+   .UseMiddleware<CustomMiddleware>()
+   .Use((updateContext, next) =>
+   {
+      // ...
+      next.Invoke();
+   });
+```
+
+#### Write your own middleware
+...
+
+#### Run polling
+...
 
 <a name="executors-and-attributes"></a>
 ## Executors and attributes
