@@ -6,10 +6,13 @@ It is framework similar to a ASP.Net Core. Framework contains services, middlewa
 1. [Configuration bot in Program.cs](#configuration-bot)
    - [Default configuration](#default-configuration)
 1. [Executors and attributes](#executors-and-attributes)
-   - [Routing](#routing-by-executors-and-attributes)
-   - [Available attributes for routing](#available-attributes-for-routing)
-   - [Available attributes for input data validation](#available-attributes-for-input-data-validation)
-   - [Write your own attributes](#write-your-own-attribute)
+   - [Executors](#executors)
+      - [Basic executor](#basic-executor)
+   - [Attributes](#attributes)
+      - [Routing](#routing-by-executors-and-attributes)
+      - [Available attributes for routing](#available-attributes-for-routing)
+      - [Available attributes for input data validation](#available-attributes-for-input-data-validation)
+      - [Write your own attributes](#write-your-own-attribute)
 
 <a name="configuration-bot"></a>
 ## Configuration bot in Program.cs
@@ -35,17 +38,40 @@ static void Main(string[] args)
 
 <a name="executors-and-attributes"></a>
 ## Executors and attributes
+
+### Executors
 Executor is basic abstract class who provide properties and methods. Executor has UpdateContext (identical to the HttpContext), Client (for send responce to a user), ExecuteAsync method (for execute other methods of executors).
 
+#### Basic executor
+```cs
+public class BasicExecutor : Executor
+{
+    [TargetCommands("start", Description = "start command")]
+    public async Task Start()
+    {
+        var username = UpdateContext.User.ToString();
+        await Client.SendTextMessageAsync($"Your username is {username}"); // send response
+    }
+
+    [TargetCommands("params_examples, pe", Description = "Parameters examples")]
+    public async Task ParametersExamples(string parameter1, int? parameter2) // more about the parameters later 
+    {
+        // ...
+    }
+}
+```
+
+### Attributes
+
 <a name="routing-by-executors-and-attributes"></a>
-### Routing
+#### Routing
 There are target attributes for routing. Learn about these attributes [here](#available-attributes-for-routing). You can attach one or more target attributes to a processing method.
 > The method must return a Type as Task!
 
 If at least one target attribute in the handler method matches, the method is executed.
 
 <a name="available-attributes-for-routing"></a>
-### Available attributes for routing
+#### Available attributes for routing
 - TargetCommands
   ```cs
   [TargetCommands("command1, commmand2, command3", Description = "Commands")]
@@ -70,7 +96,7 @@ If at least one target attribute in the handler method matches, the method is ex
 This attributes checks the input data on similarity and attempts to execute the method if it is simiral. There can be more than one TargetAttributes per handler.
 
 <a name="available-attributes-for-input-data-validation"></a>
-### Available attributes for input data validation
+#### Available attributes for input data validation
 - UpdateMessageTextNotNull
   ```cs
   [TargetAttribute...]
@@ -87,7 +113,7 @@ This attributes checks the input data on similarity and attempts to execute the 
 Validation attributes don't executing Executor method if input data not correct. If validation is failed, runing next middleware. There can be more than one ValidationAttributes per handler.
 
 <a name="write-your-own-attribute"></a>
-### Write your own attribute
+#### Write your own attribute
 Inherit the TargetAttribute or ValidateInputDataAttribute attribute and implement the method.
 > !!! For TargetAttribute, you can add ```[TargetUpdateType(UpdateType.CallbackQuery)]```, then the routing will be faster.
 
@@ -110,25 +136,6 @@ public class TargetCallbacksDatasAttribute : TargetAttribute
 
         var targetData = data.Split(' ').First();
         return CallbacksDatas.Contains(targetData);
-    }
-}
-```
-
-### Basic executor
-```cs
-public class BasicExecutor : Executor
-{
-    [TargetCommands("start", Description = "start command")]
-    public async Task Start()
-    {
-        var username = UpdateContext.User.ToString();
-        await Client.SendTextMessageAsync($"Your username is {username}"); // send response
-    }
-
-    [TargetCommands("params_examples, pe", Description = "Parameters examples")]
-    public async Task ParametersExamples(string parameter1, int? parameter2) // more about the parameters later 
-    {
-        // ...
     }
 }
 ```
