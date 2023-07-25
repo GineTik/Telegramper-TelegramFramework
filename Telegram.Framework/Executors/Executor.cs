@@ -7,10 +7,7 @@ namespace Telegram.Framework.Executors
 {
     public abstract class Executor
     {
-        public UpdateContext UpdateContext
-        {
-            get => _updateContext ?? throw new NullReferenceException(nameof(UpdateContext) + ", maybe you created ececutor not correct");
-        }
+        public UpdateContext UpdateContext => _updateContext;
         public IAdvancedTelegramBotClient Client => UpdateContext.Client;
         public IServiceProvider ServiceProvider { get; private set; } = default!;
 
@@ -19,6 +16,9 @@ namespace Telegram.Framework.Executors
 
         public void Init(UpdateContext updateContext, IServiceProvider provider)
         {
+            ArgumentNullException.ThrowIfNull(updateContext);
+            ArgumentNullException.ThrowIfNull(provider);
+
             ServiceProvider = provider;
             _updateContext = updateContext;
             _factory = ServiceProvider.GetRequiredService<IExecutorFactory>();

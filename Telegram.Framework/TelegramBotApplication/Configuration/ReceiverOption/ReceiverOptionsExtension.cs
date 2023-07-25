@@ -12,7 +12,7 @@ namespace Telegram.Framework.TelegramBotApplication.Configuration.ReceiverOption
             return options;
         }
 
-        public static ReceiverOptions ConfigureReceiverOptions(this ReceiverOptions options, Action<ReceiverOptions> configure)
+        public static ReceiverOptions Configure(this ReceiverOptions options, Action<ReceiverOptions> configure)
         {
             configure(options);
             return options;
