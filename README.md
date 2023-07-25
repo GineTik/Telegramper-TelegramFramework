@@ -2,6 +2,11 @@
 
 It is framework similar to a ASP.Net Core. Framework contains services, middlewares, configuration, controllers(executors) and other.
 
+## Content
+1. [Configuration bot in Program.cs] (#configuration-bot)
+1. [Routing by Executors and attributes] (#routing-by-executors-and-attributes)
+
+<a name="configuration-bot"></a>
 ## Configuration bot in Program.cs
 How said above, Program.cs similar on Program.cs from .Net 7. WebApplicationBuilder and IApplication is a BotApplicaitionBuilder and BotApplication in the Telegram Framework. BotApplicationBuilder has Configuration property.
 
@@ -22,7 +27,8 @@ static void Main(string[] args)
 }
 ```
 
-## Routing
+<a name="routing-by-executors-and-attributes"></a>
+## Routing by Executors and attributes
 For the routing exists executers(identical to the controllers) and attributes.
 
 Executor is basic abstract class who provide properties and methods. Executor has UpdateContext (identical to the HttpContext), Client (for send responce to a user), ExecuteAsync method (for execute other methods of executors).
@@ -35,7 +41,7 @@ public class BasicExecutor : Executor
     public async Task Start()
     {
         var username = UpdateContext.User.ToString();
-        await Client.SendTextMessageAsync($"Your username is {username}"); // send responce
+        await Client.SendTextMessageAsync($"Your username is {username}"); // send response
     }
 
     [TargetCommands("params_examples, pe", Description = "Parameters examples")]
@@ -54,7 +60,7 @@ public class BasicExecutor : Executor
   ```
 - TargetCallbackData
   ```cs
-  [TargetCallbacksDatas("data1, data2, data3", Description = "CallbackQueryData")]
+  [TargetCallbacksDatas("data1, data2, data3")]
   public async Task Handler() { }
   ```
 - TargetUpdateType
@@ -87,8 +93,9 @@ This attributes checks the input data on similarity and attempts to execute the 
 Validation attributes don't executing Executor method if input data not correct. If validation is failed, runing next middleware. There can be more than one ValidationAttributes per handler.
 
 ### Write your own attribute
-Inherit TargetAttribute or ValidateInputDataAttribute and implements method. 
+Inherit the TargetAttribute or ValidateInputDataAttribute attribute and implement the method.
 > !!! For TargetAttribute, you can add ```[TargetUpdateType(UpdateType.CallbackQuery)]```, then the routing will be faster.
+
 For example
 ```cs
 [TargetUpdateType(UpdateType.CallbackQuery)] // if you don't add this attribute, the default is UpdateType.Unknown
