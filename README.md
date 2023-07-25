@@ -60,7 +60,22 @@ You can set the api key in the appsettings.json file. In this case, the api key 
 To use the configuration, you need to create the appsettings.json file in your project at the same level as Program.cs. If the appsetting.json is not created, you will receive an exception at startup. The configuration is also identical to ASP.Net Core.
 
 #### ReceiverOptions
-...
+Availible methods
+```cs
+ConfigureAllowedUpdates(params UpdateType[] allowedUpdates)
+Configure(Action<ReceiverOptions> configure)
+```
+
+ReceiverOptions model
+```cs
+public sealed class ReceiverOptions
+{
+   public int? Offset { get; set; }
+   public UpdateType[]? AllowedUpdates { get; set; } // default is [ UpdateType.Message ]
+   public int? Limit // default is 0
+   public bool ThrowPendingUpdates { get; set; }
+}
+```
 
 #### Services
 The functionality of services is taken over by IServiceCollection (from ASP.Net Core). Because of this, some services are not available, but you can get other services (which are not only available for ASP.Net Core), such as AutoMapper, EF Core ([How to use EF Core in Telegram.Framework](#)), and others. Although these services were developed for ASP.Net Core, you can use them here as well. 
