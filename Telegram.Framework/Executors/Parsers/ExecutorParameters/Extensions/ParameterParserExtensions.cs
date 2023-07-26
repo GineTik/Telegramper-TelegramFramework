@@ -1,7 +1,7 @@
-﻿using Telegram.Framework.Attributes.ParametersParse;
-using Telegram.Framework.Executors.Parsers.ExecutorParameters.Results;
+﻿using Telegram.Framework.Executors.Parsers.ExecutorParameters.Results;
 using Telegram.Framework.TelegramBotApplication.Context;
 using System.Reflection;
+using Telegram.Framework.Attributes.ParametersParse.Separator;
 
 namespace Telegram.Framework.Executors.Parsers.ExecutorParameters.Extensions
 {
