@@ -85,6 +85,7 @@ static void Main(string[] args)
     app.RunPolling(); // webhooks are not implemented, but in the future you will be able to, for example, change polling to webhooks and vice versa
 }
 ```
+<br>
 
 ### BotApplicationBuilder 
 
@@ -206,6 +207,8 @@ public class BasicExecutor : Executor
     }
 }
 ```
+
+<br>
 
 ### Attributes
 
