@@ -2,6 +2,8 @@
 
 It is framework similar to a ASP.Net Core. Framework contains services, middlewares, configuration, controllers(executors) and other.
 
+> The framework is under development, so unexpected errors, changes in functionality, and names are possible! I would be grateful if you could report any bugs or functionality you need.
+
 ## Content
 1. [Quick start](#quick-start)
 1. [Configuration bot in Program.cs](#configuration-bot)
@@ -24,18 +26,22 @@ It is framework similar to a ASP.Net Core. Framework contains services, middlewa
       - [Available attributes for input data validation](#available-attributes-for-input-data-validation)
       - [Write your own attributes](#write-your-own-attribute)
 
+<a name="quick-start"></a>
 ## Quick start
 ```cs
-static void Main(string[] args)
+internal class Program
 {
-    var builder = new BotApplicationBuilder();
-    builder.ConfigureApiKey("your api key");
-    builder.ReceiverOptions.ConfigureAllowedUpdates(UpdateType.Message, UpdateType.CallbackQuery); // default is UpdateType.Message
-    builder.Services.AddExecutors(); // identical to the controller in ASP.Net Core
-
-    var app = builder.Build();
-    app.UseExecutors();
-    app.RunPolling(); // webhooks are not implemented, but in the future you will be able to, for example, change polling to webhooks and vice versa
+   static void Main(string[] args)
+   {
+       var builder = new BotApplicationBuilder();
+       builder.ConfigureApiKey("your api key");
+       builder.ReceiverOptions.ConfigureAllowedUpdates(UpdateType.Message, UpdateType.CallbackQuery); // default is UpdateType.Message
+       builder.Services.AddExecutors(); // identical to the controller in ASP.Net Core
+   
+       var app = builder.Build();
+       app.UseExecutors();
+       app.RunPolling(); // webhooks are not implemented, but in the future you will be able to, for example, change polling to webhooks and vice versa
+   }
 }
 
 public class BasicExecutor : Executor
@@ -43,18 +49,20 @@ public class BasicExecutor : Executor
     [TargetCommands("start", Description = "start command")]
     public async Task Start()
     {
-        var username = UpdateContext.User.ToString();
-        await Client.SendTextMessageAsync($"Your username is {username}"); // send response
+        var sender = UpdateContext.User.ToString();
+        await Client.SendTextMessageAsync($"You are {sender}"); // send a text response
     }
 
-    [TargetCommands("echo, pe", Description = "Echo description")]
-    [ParametersSeparator("")] // remove separator, by default is space(" ")
+    [TargetCommands("echo, command2", Description = "Echo description")]
+    [EmptyParameterSeparator] // remove separator, by default is space(" ")
     public async Task Echo(string phrase) // more about the parameters later 
     {
         await Client.SendTextMessageAsync(phrase);
     }
 }
 ```
+<br>
+<br>
 
 <a name="configuration-bot"></a>
 ## Configuration bot in Program.cs
@@ -170,6 +178,9 @@ app.Use((updateContext, next) =>
 #### Launch your bot
 To start the bot, you need to call the Run method. You can call a polling using the RunPolling method.
 > In the future, we plan to create the RunWebhooks method.
+
+<br>
+<br>
 
 <a name="executors-and-attributes"></a>
 ## Executors and attributes
