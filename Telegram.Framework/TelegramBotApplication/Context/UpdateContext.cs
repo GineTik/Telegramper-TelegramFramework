@@ -1,7 +1,6 @@
-﻿using Telegram.Framework.TelegramBotApplication.AdvancedBotClient;
-using Telegram.Bot.Types;
+﻿using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Framework.TelegramBotApplication.Exceptions;
+using Telegram.Framework.TelegramBotApplication.AdvancedBotClient;
 
 namespace Telegram.Framework.TelegramBotApplication.Context
 {
@@ -15,7 +14,6 @@ namespace Telegram.Framework.TelegramBotApplication.Context
         /// <summary>
         /// UpdateType.CallbackQuery. Message content and message date will not be available if the message is too old
         /// </summary>
-        /// <exception cref="InvalidUpdateTypeException"></exception>
         public Message? Message => _message ??= Update.Type switch
         {
             UpdateType.Message => Update.Message,
@@ -23,16 +21,14 @@ namespace Telegram.Framework.TelegramBotApplication.Context
             UpdateType.EditedMessage => Update.EditedMessage,
             UpdateType.ChannelPost => Update.ChannelPost,
             UpdateType.EditedChannelPost => Update.EditedChannelPost,
-            _ => throw new InvalidUpdateTypeException("Invalid UpdateType for using a property")
+            _ => null
         };
 
         private User? _user;
         /// <summary>
         /// The sender, if you use this property, will throw exceptions if messages are sent to the channels
         /// </summary>
-        /// <exception cref="InvalidUpdateTypeException"></exception>
-        /// <exception cref="NullReferenceException"></exception>
-        public User User => _user ??= Update.Type switch
+        public User? User => _user ??= Update.Type switch
         {
             UpdateType.Message => Update.Message!.From,
             UpdateType.CallbackQuery => Update.CallbackQuery!.From,
@@ -46,14 +42,13 @@ namespace Telegram.Framework.TelegramBotApplication.Context
             UpdateType.ChatJoinRequest => Update.ChatJoinRequest!.From,
             UpdateType.ChatMember => Update.ChatMember!.From,
             UpdateType.MyChatMember => Update.MyChatMember!.From,
-            _ => throw new InvalidUpdateTypeException("Invalid UpdateType for using a property")
-        } ?? throw new NullReferenceException("Sender is empty for messages sent to channels");
+            _ => null
+        };
         
         private Chat? _chat;
         /// <summary>
         /// UpdateType.CallbackQuery. Chat will not be available if the message is too old
         /// </summary>
-        /// <exception cref="InvalidUpdateTypeException"></exception>
         public Chat? Chat => _chat ??= Update.Type switch
         {
             UpdateType.Message => Update.Message!.Chat,
@@ -64,11 +59,11 @@ namespace Telegram.Framework.TelegramBotApplication.Context
             UpdateType.ChatJoinRequest => Update.ChatJoinRequest!.Chat,
             UpdateType.ChatMember => Update.ChatMember!.Chat,
             UpdateType.MyChatMember => Update.MyChatMember!.Chat,
-            _ => throw new InvalidUpdateTypeException("Invalid UpdateType for using a property")
+            _ => null
         };
 
         public long? ChatId => Chat?.Id;
-        public long TelegramUserId => User.Id;
+        public long? TelegramUserId => User?.Id;
         public int? MessageId => Message?.MessageId;
     }
 }

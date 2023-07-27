@@ -2,6 +2,7 @@
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types;
+using Telegram.Framework.TelegramBotApplication.Exceptions;
 
 namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
 {
@@ -16,9 +17,14 @@ namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
             InlineKeyboardMarkup? replyMarkup = default,
             CancellationToken cancellationToken = default)
         {
+            var chatId = client.UpdateContext.ChatId;
+            var messageId = client.UpdateContext.MessageId;
+            if (chatId == null || messageId == null)
+                throw new MessageMayBeTooOld();
+
             await client.EditMessageTextAsync(
-                client.UpdateContext.ChatId,
-                client.UpdateContext.MessageId,
+                chatId,
+                messageId.Value,
                 text,
                 parseMode,
                 entities,
@@ -37,8 +43,12 @@ namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
             InlineKeyboardMarkup? replyMarkup = default,
             CancellationToken cancellationToken = default)
         {
+            var chatId = client.UpdateContext.ChatId;
+            if (chatId == null)
+                throw new MessageMayBeTooOld();
+
             await client.EditMessageTextAsync(
-                client.UpdateContext.ChatId,
+                chatId,
                 messageId,
                 text,
                 parseMode,

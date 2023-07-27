@@ -4,6 +4,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.Framework.TelegramBotApplication.Exceptions;
 
 namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
 {
@@ -23,8 +24,12 @@ namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
             IReplyMarkup? replyMarkup = default,
             CancellationToken cancellationToken = default)
         {
+            var chatId = client.UpdateContext.ChatId;
+            if (chatId == null)
+                throw new MessageMayBeTooOld();
+
             return await client.SendTextMessageAsync(
-                client.UpdateContext.ChatId,
+                chatId,
                 text,
                 messageThreadId,
                 parseMode,

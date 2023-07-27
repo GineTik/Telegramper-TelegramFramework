@@ -19,21 +19,33 @@ namespace Telegram.Framework.Session.Storage
             ArgumentNullException.ThrowIfNull(key);
             ArgumentNullException.ThrowIfNull(data);
 
-            await _saver.SaveAsync(_updateContext.TelegramUserId, key, data);
+            var userId = _updateContext.TelegramUserId;
+            if (userId == null)
+                throw new InvalidOperationException("User id is null");
+
+            await _saver.SaveAsync(userId.Value, key, data);
         }
 
         public async Task<T?> GetAsync<T>(string key)
         {
             ArgumentNullException.ThrowIfNull(key);
+            
+            var userId = _updateContext.TelegramUserId;
+            if (userId == null)
+                throw new InvalidOperationException("User id is null");
 
-            return await _saver.LoadAsync<T>(_updateContext.TelegramUserId, key);
+            return await _saver.LoadAsync<T>(userId.Value, key);
         }
 
         public async Task RemoveAsync(string key)
         {
             ArgumentNullException.ThrowIfNull(key);
+            
+            var userId = _updateContext.TelegramUserId;
+            if (userId == null)
+                throw new InvalidOperationException("User id is null");
 
-            await _saver.RemoveAsync(_updateContext.TelegramUserId, key);
+            await _saver.RemoveAsync(userId.Value, key);
         }
 
         public async Task<T?> GetAndRemoveAsync<T>(string key)

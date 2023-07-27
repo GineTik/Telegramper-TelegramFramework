@@ -3,6 +3,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.Framework.TelegramBotApplication.Exceptions;
 
 namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
 {
@@ -11,25 +12,30 @@ namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
         public static async Task DeleteMessageAsync(this IAdvancedTelegramBotClient client)
         {
             if (client.UpdateContext.Update.Type != UpdateType.CallbackQuery)
-            {
-                throw new InvalidOperationException("UpdateType is not CallbackQuery");
-            }
+                throw new InvalidUpdateTypeException("UpdateType is not CallbackQuery");
+
+            var chatId = client.UpdateContext.ChatId;
+            var messageId = client.UpdateContext.MessageId;
+            if (chatId == null || messageId == null)
+                throw new MessageMayBeTooOld();
 
             await client.DeleteMessageAsync(
-                client.UpdateContext.ChatId,
-                client.UpdateContext.Update.CallbackQuery!.Message!.MessageId
+                chatId.Value,
+                messageId.Value
             );
         }
 
         public static async Task DeleteMessageAsync(this IAdvancedTelegramBotClient client, int messageId)
         {
             if (client.UpdateContext.Update.Type != UpdateType.CallbackQuery)
-            {
-                throw new InvalidOperationException("UpdateType is not CallbackQuery");
-            }
+                throw new InvalidUpdateTypeException("UpdateType is not CallbackQuery");
+
+            var chatId = client.UpdateContext.ChatId;
+            if (chatId == null)
+                throw new MessageMayBeTooOld();
 
             await client.DeleteMessageAsync(
-                client.UpdateContext.ChatId,
+                chatId,
                 messageId
             );
         }
@@ -37,7 +43,11 @@ namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
         public static async Task DeleteCallbackButtonAsync(this IAdvancedTelegramBotClient client,
             Message message, params string[] callbacksDatas)
         {
-            await client.DeleteCallbackButtonAsync(client.UpdateContext.ChatId, message, callbacksDatas);
+            var chatId = client.UpdateContext.ChatId;
+            if (chatId == null)
+                throw new MessageMayBeTooOld();
+
+            await client.DeleteCallbackButtonAsync(chatId, message, callbacksDatas);
         }
 
         public static async Task DeleteCallbackButtonAsync(this IAdvancedTelegramBotClient client,
@@ -49,25 +59,28 @@ namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
 
             var messageKeyboard = message.ReplyMarkup?.InlineKeyboard;
             var messageId = message.MessageId;
-            var newKeyboard = messageKeyboard.Select(row =>
+            
+            var newKeyboard = messageKeyboard?.Select(row =>
                 row.SkipWhile(button => callbacksDatas.Contains(button.CallbackData))
             );
+            var replyMarkup = newKeyboard == null ? null : new InlineKeyboardMarkup(newKeyboard);
 
             await client.EditMessageReplyMarkupAsync(
                 chatId,
                 messageId,
-                replyMarkup: new InlineKeyboardMarkup(newKeyboard)
+                replyMarkup: replyMarkup
             );
         }
 
         public static async Task DeleteCurrentCallbackButtonAsync(this IAdvancedTelegramBotClient client)
         {
             if (client.UpdateContext.Update.CallbackQuery?.Data is not { } data)
-            {
-                throw new InvalidOperationException("UpdateType is not CallbackQuery");
-            }
+                throw new InvalidUpdateTypeException("UpdateType is not CallbackQuery");
 
-            var message = client.UpdateContext.Update.CallbackQuery!.Message!;
+            var message = client.UpdateContext.Message;
+            if (message == null)
+                throw new MessageMayBeTooOld();
+
             await client.DeleteCallbackButtonAsync(
                 message,
                 data
@@ -77,7 +90,7 @@ namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
         public static async Task AnswerCallbackQueryAsync(this IAdvancedTelegramBotClient client)
         {
             if (client.UpdateContext.Update.Type != UpdateType.CallbackQuery)
-                throw new InvalidOperationException("UpdateType is not CallbackQuery");
+                throw new InvalidUpdateTypeException("UpdateType is not CallbackQuery");
 
             await client.AnswerCallbackQueryAsync(
                client.UpdateContext.Update.CallbackQuery!.Id
