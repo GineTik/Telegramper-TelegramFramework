@@ -1,4 +1,4 @@
-﻿using Telegram.Framework.Executors.Parsers.ExecutorParameters.Results;
+﻿using Telegram.Framework.Executors.Routing.ParametersParser.Results;
 
 namespace Telegram.Framework.Attributes.ParametersParse
 {

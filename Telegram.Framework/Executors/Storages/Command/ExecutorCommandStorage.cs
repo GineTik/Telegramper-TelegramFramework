@@ -1,8 +1,8 @@
 ﻿using Telegram.Framework.Attributes.TargetExecutorAttributes;
 using System.Reflection;
 using Telegram.Bot.Types;
-using Telegram.Framework.Executors.Storages.TargetMethod;
 using Telegram.Framework.Executors.Storages.Command.Factory;
+using Telegram.Framework.Executors.Routing.Storage;
 
 namespace Telegram.Framework.Executors.Storages.Command
 {
@@ -10,7 +10,7 @@ namespace Telegram.Framework.Executors.Storages.Command
     {
         public IEnumerable<BotCommand> Commands { get; }
 
-        public ExecutorCommandStorage(ITargetMethodStorage storage, IBotCommandFactory factory)
+        public ExecutorCommandStorage(IRoutesStorage storage, IBotCommandFactory factory)
         {
             Commands = storage.Methods
                 .SelectMany(method => method

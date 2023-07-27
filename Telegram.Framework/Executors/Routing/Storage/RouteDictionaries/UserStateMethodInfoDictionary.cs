@@ -1,8 +1,8 @@
 ﻿using Telegram.Framework.Attributes.BaseAttributes;
-using Telegram.Framework.Executors.Storages.TargetMethod.Models;
 using System.Reflection;
+using Telegram.Framework.Executors.Routing.Storage.Models;
 
-namespace Telegram.Framework.Executors.Storages.TargetMethod.RouteDictionaries
+namespace Telegram.Framework.Executors.Routing.Storage.RouteDictionaries
 {
     public class UserStateMethodInfoDictionary : Dictionary<string, ICollection<TargetMethodInfo>>
     {

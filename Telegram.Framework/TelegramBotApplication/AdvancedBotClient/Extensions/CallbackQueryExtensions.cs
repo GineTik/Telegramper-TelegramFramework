@@ -1,8 +1,8 @@
-﻿using Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions;
 using Telegram.Framework.TelegramBotApplication.Exceptions;
 
 namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
@@ -87,13 +87,24 @@ namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
             );
         }
 
-        public static async Task AnswerCallbackQueryAsync(this IAdvancedTelegramBotClient client)
+        public static async Task AnswerCallbackQueryAsync(
+            this IAdvancedTelegramBotClient client,
+            string? text = null,
+            bool? showAlert = null,
+            string? url = null,
+            int? cacheTime = null,
+            CancellationToken cancellationToken = default)
         {
             if (client.UpdateContext.Update.Type != UpdateType.CallbackQuery)
                 throw new InvalidUpdateTypeException("UpdateType is not CallbackQuery");
 
             await client.AnswerCallbackQueryAsync(
-               client.UpdateContext.Update.CallbackQuery!.Id
+               client.UpdateContext.Update.CallbackQuery!.Id,
+               text,
+               showAlert,
+               url,
+               cacheTime,
+               cancellationToken
             );
         }
     }

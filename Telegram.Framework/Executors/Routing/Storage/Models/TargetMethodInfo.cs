@@ -1,7 +1,7 @@
 ﻿using Telegram.Framework.Attributes.BaseAttributes;
 using System.Reflection;
 
-namespace Telegram.Framework.Executors.Storages.TargetMethod.Models
+namespace Telegram.Framework.Executors.Routing.Storage.Models
 {
     public class TargetMethodInfo
     {

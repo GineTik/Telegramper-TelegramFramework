@@ -1,10 +1,10 @@
 ﻿using Telegram.Framework.Executors.Helpers.Factories.Executors;
-using Telegram.Framework.Executors.Parsers.ExecutorParameters.Results;
 using System.Reflection;
+using Telegram.Framework.Executors.Routing.ParametersParser.Results;
 
 namespace Telegram.Framework.Executors.Helpers.Extensions.MethodInfos
 {
-    public static class InvokeMethodExtensions
+    internal static class InvokeMethodExtensions
     {
         public static async Task InvokeMethodAsync(this MethodInfo methodInfo, IExecutorFactory factory, ParametersParseResult parseResult)
         {

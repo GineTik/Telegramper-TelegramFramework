@@ -1,9 +1,9 @@
 ﻿using Telegram.Framework.Executors.Helpers.Extensions.Nullable;
-using Telegram.Framework.Executors.Parsers.ExecutorParameters.Results;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Telegram.Framework.Executors.Routing.ParametersParser.Results;
 
-namespace Telegram.Framework.Executors.Parsers.ExecutorParameters
+namespace Telegram.Framework.Executors.Routing.ParametersParser
 {
     public class ParametersParser : IParametersParser
     {

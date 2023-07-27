@@ -1,10 +1,10 @@
 ﻿using Telegram.Framework.Attributes.BaseAttributes;
 using Telegram.Framework.Attributes.TargetExecutorAttributes;
-using Telegram.Framework.Executors.Storages.TargetMethod.Models;
 using System.Reflection;
 using Telegram.Bot.Types.Enums;
+using Telegram.Framework.Executors.Routing.Storage.Models;
 
-namespace Telegram.Framework.Executors.Storages.TargetMethod.RouteDictionaries
+namespace Telegram.Framework.Executors.Routing.Storage.RouteDictionaries
 {
     public class UpdateTypeDictionary : Dictionary<UpdateType, UserStateMethodInfoDictionary>
     {

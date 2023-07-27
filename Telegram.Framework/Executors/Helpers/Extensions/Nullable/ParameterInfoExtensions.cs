@@ -2,7 +2,7 @@
 
 namespace Telegram.Framework.Executors.Helpers.Extensions.Nullable
 {
-    public static class ParameterInfoExtensions
+    internal static class ParameterInfoExtensions
     {
         public static bool IsNullable(this ParameterInfo property)
         {
