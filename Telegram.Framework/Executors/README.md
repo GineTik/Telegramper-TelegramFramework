@@ -1,6 +1,29 @@
 # Executors and attributes
 [to general readme.md](https://github.com/GineTik/TelegramFramework)
 
+## Configure executors
+For using executors, you should add ```builder.Services.AddExecutors()``` and ```app.UseExecutors()```.
+
+Configure executors in services
+```cs
+builder.Services.AddExecutors(options =>
+{
+    // default values
+
+    options.ParameterParser.DefaultSeparator = " ";
+    options.ParameterParser.ErrorMessages.TypeParseError = "Parse type error";
+    options.ParameterParser.ErrorMessages.ArgsLengthIsLess = "Args length is less";
+    options.ParameterParser.ParserType = typeof(ParametersParser);
+
+    options.UserState.DefaultUserState = "";
+    options.UserState.SaverType = typeof(MemoryUserStateSaver);
+});
+```
+and you can configure assemblies where the executors located
+```cs
+builder.Services.AddExecutors(new[] { Assembly.GetEntryAssembly()! }); // in the second parameter to set the default values as above
+```
+
 ## Executors
 Executor is basic abstract class who provide properties and methods. Executor has UpdateContext (identical to the HttpContext), Client (for send responce to a user), ExecuteAsync method (for execute other methods of executors).
 
