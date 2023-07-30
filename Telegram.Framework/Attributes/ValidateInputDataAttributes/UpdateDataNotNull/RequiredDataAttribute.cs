@@ -1,14 +1,13 @@
 ﻿using Telegram.Framework.Attributes.BaseAttributes;
 using Telegram.Framework.TelegramBotApplication.Context;
-using Telegram.Bot.Types;
 
 namespace Telegram.Framework.Attributes.ValidateInputDataAttributes.UpdateDataNotNull
 {
-    public class UpdateDataNotNullAttribute : ValidateInputDataAttribute
+    public class RequiredDataAttribute : ValidateInputDataAttribute
     {
-        protected Func<Update, object?> TakeProperty;
+        protected Func<UpdateContext, object?> TakeProperty;
 
-        public UpdateDataNotNullAttribute(Func<Update, object?> takeProperty)
+        public RequiredDataAttribute(Func<UpdateContext, object?> takeProperty)
         {
             TakeProperty = takeProperty;
         }
@@ -18,7 +17,7 @@ namespace Telegram.Framework.Attributes.ValidateInputDataAttributes.UpdateDataNo
             if (TakeProperty == null)
                 throw new InvalidOperationException("Func TakeProperty is null");
 
-            return await Task.FromResult(TakeProperty.Invoke(updateContext.Update) != null);
+            return await Task.FromResult(TakeProperty.Invoke(updateContext) != null);
         }
     }
 }

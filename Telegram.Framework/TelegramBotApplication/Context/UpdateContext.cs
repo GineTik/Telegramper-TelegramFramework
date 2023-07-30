@@ -26,7 +26,7 @@ namespace Telegram.Framework.TelegramBotApplication.Context
 
         private User? _user;
         /// <summary>
-        /// The sender, if you use this property, will throw exceptions if messages are sent to the channels
+        /// The sender, empty if messages are sent to the channels
         /// </summary>
         public User? User => _user ??= Update.Type switch
         {

@@ -13,7 +13,7 @@ namespace Telegram.Framework.TelegramBotApplication
         public ReceiverOptions ReceiverOptions { get; }
 
         private string? _apiKey;
-        public string ApiKey => _apiKey 
+        public string ApiKey => _apiKey
             ?? throw new NullReferenceException("ApiKey is null");
 
         public BotApplicationBuilder()
