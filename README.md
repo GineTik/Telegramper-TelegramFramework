@@ -7,7 +7,7 @@ It is framework similar to a ASP.Net Core. Framework contains services, middlewa
 ## Learn more about the framework
 1. [About UpdateContext](https://github.com/GineTik/TelegramFramework/tree/master/Telegram.Framework/TelegramBotApplication/Context)
 1. [Configuration bot in Program.cs (Services, Middlewares, etc.)](https://github.com/GineTik/TelegramFramework/tree/master/Telegram.Framework/TelegramBotApplication)
-1. [Executors and attributes](https://github.com/GineTik/TelegramFramework/blob/master/Telegram.Framework/Executors/README.md)
+1. [Executors and attributes](https://github.com/GineTik/TelegramFramework/blob/master/Telegram.Framework/Executors)
 
 
 ## Quick start
