@@ -38,7 +38,7 @@ namespace Telegram.Framework.Executors.Routing.ParametersParser
 
         private static Stack<string> getArgsAsStack(string text, string parameterSeparator)
         {
-            text = Regex.Replace(text ?? "", "^/*\\w+\\s*", "");
+            text = Regex.Replace(text ?? "", "^/*\\w+\\s*", ""); // remove command
             return string.IsNullOrEmpty(text) ?
                 new Stack<string>() :
                 new Stack<string>(text.Split(parameterSeparator));

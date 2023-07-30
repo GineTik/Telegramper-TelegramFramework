@@ -17,6 +17,12 @@ namespace Telegram.Framework.Executors.Configuration.Services
     public static class ExecutorExtensions
     {
         public static IServiceCollection AddExecutors(this IServiceCollection services,
+            Action<ExecutorOptions>? configure = null)
+        {
+            return services.AddExecutors(null, configure);
+        }
+
+        public static IServiceCollection AddExecutors(this IServiceCollection services,
             Assembly[]? assemblies = null, Action<ExecutorOptions>? configure = null)
         {
             var executorsTypes = getExecutorsTypes(assemblies);
