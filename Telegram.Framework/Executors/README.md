@@ -55,7 +55,15 @@ If UpdateType is equal to CallbackQuery, then the Data property must be filled i
 
 #### Attributes for parameters
 - ```ParametersSeparatorAttribute(separator)```, the default is space(" ")
-- ```EmptyParametersSeparatorAttribute```, set the separator to "", which means that can be one parameters, for example, /command param1 param2 param3, all after /command set into first parameter
+- ```EmptyParametersSeparatorAttribute```, set the separator to "", which means that can be only one parameters, for example, a user send /command param1 param2 param3, then param1 param2 param3 set into one parameter
+  ```cs
+  [TargetCommands("echo")]
+  [EmptyParameterSeparator] // remove separator
+  public async Task Echo(string phrase)
+  {
+      await Client.SendTextMessageAsync(phrase);
+  }
+  ```
 - ```ParseErrorMessages```, set error messages that are sent to the user in response
 
 #### Example:
