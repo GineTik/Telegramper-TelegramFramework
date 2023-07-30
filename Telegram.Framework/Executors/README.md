@@ -31,9 +31,9 @@ If UpdateType is equal to Message, then the Text property must be filled in the 
 If UpdateType is equal to CallbackQuery, then the Data property must be filled in the request. In the data property, the first word is required for routing, the rest will be split into parameters
 
 #### Attributes for parameters
-- ParametersSeparatorAttribute(separator), the default is space(" ")
-- EmptyParametersSeparatorAttribute, set the separator to "", which means that can be one parameters, for example, /command param1 param2 param3, all after /command set into first parameter
-- ParseErrorMessages, set error messages that are sent to the user in response
+- ```ParametersSeparatorAttribute(separator)```, the default is space(" ")
+- ```EmptyParametersSeparatorAttribute```, set the separator to "", which means that can be one parameters, for example, /command param1 param2 param3, all after /command set into first parameter
+- ```ParseErrorMessages```, set error messages that are sent to the user in response
 
 #### Example:
 Let's look at a few cases:
