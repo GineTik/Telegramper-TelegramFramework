@@ -13,8 +13,7 @@ namespace Telegram.Framework.TelegramBotApplication
         public ReceiverOptions ReceiverOptions { get; }
 
         private string? _apiKey;
-        public string ApiKey => _apiKey
-            ?? throw new NullReferenceException("ApiKey is null");
+        public string? ApiKey => _apiKey;
 
         public BotApplicationBuilder()
         {
@@ -35,8 +34,8 @@ namespace Telegram.Framework.TelegramBotApplication
 
         public IBotApplication Build()
         {
-            _ = ApiKey; // throw if null
-            return new BotApplication(this);
+            // if ApiKey is null, will be throw exception in the constructor
+            return new BotApplication(ApiKey!, Services, ReceiverOptions);
         }
 
         public static BotApplicationBuilder CreateBuilder() => new BotApplicationBuilder();

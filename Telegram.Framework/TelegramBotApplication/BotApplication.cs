@@ -1,36 +1,37 @@
-﻿using Telegram.Framework.TelegramBotApplication.AdvancedBotClient;
-using Telegram.Framework.TelegramBotApplication.Configuration.Middlewares;
-using Telegram.Framework.TelegramBotApplication.Configuration.Middlewares.UpdateContexts;
-using Telegram.Framework.TelegramBotApplication.Context;
-using Telegram.Framework.TelegramBotApplication.Delegates;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
+using Telegram.Framework.TelegramBotApplication.AdvancedBotClient;
+using Telegram.Framework.TelegramBotApplication.Configuration.Middlewares;
+using Telegram.Framework.TelegramBotApplication.Configuration.Middlewares.UpdateContexts;
+using Telegram.Framework.TelegramBotApplication.Context;
+using Telegram.Framework.TelegramBotApplication.Delegates;
 
 namespace Telegram.Framework.TelegramBotApplication
 {
     public partial class BotApplication : IBotApplication
     {
-        private NextDelegate _firstMiddleware;
-
-        private readonly ICollection<Func<NextDelegate, NextDelegate>> _middlewares;
+        private readonly Stack<MiddlewareFactoryDelegate> _middlewareFactoies;
         private readonly IServiceCollection _services;
-        private readonly IConfiguration _configuration;
         private readonly ReceiverOptions _receiverOptions;
-        private IServiceProvider _serviceProvider;
-        private UpdateContext _currentUpdateContext;
         private string _apiKey;
+        private IServiceProvider _globalServiceProvider = default!;
 
-        public BotApplication(BotApplicationBuilder builder)
+        public BotApplication(
+            string apiKey, 
+            IServiceCollection services, 
+            ReceiverOptions receiverOptions)
         {
-            _middlewares = new List<Func<NextDelegate, NextDelegate>>();
-            _services = builder.Services;
-            _configuration = builder.Configuration;
-            _receiverOptions = builder.ReceiverOptions;
-            _apiKey = builder.ApiKey;
+            ArgumentNullException.ThrowIfNull(apiKey);
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(receiverOptions);
+
+            _middlewareFactoies = new();
+            _apiKey = apiKey;
+            _services = services;
+            _receiverOptions = receiverOptions;
 
             UseMiddleware<UpdateContextMiddleware>();
         }
@@ -39,8 +40,8 @@ namespace Telegram.Framework.TelegramBotApplication
         {
             ArgumentNullException.ThrowIfNull(middlware);
 
-            _middlewares.Add(next =>
-                async () => await middlware(_currentUpdateContext, next));
+            _middlewareFactoies.Push((serviceProvider, updateContext, next) =>
+                async () => await middlware(updateContext, next));
 
             return this;
         }
@@ -49,29 +50,25 @@ namespace Telegram.Framework.TelegramBotApplication
         {
             ArgumentNullException.ThrowIfNull(middlware);
 
-            _middlewares.Add(next =>
-                async () => await middlware(_serviceProvider, _currentUpdateContext, next));
+            _middlewareFactoies.Push((serviceProvider, updateContext, next) =>
+               async () => await middlware(serviceProvider, updateContext, next));
 
             return this;
         }
 
-        public IBotApplication UseMiddleware<T>()
+         public IBotApplication UseMiddleware<T>()
             where T : class, IMiddleware
         {
             _services.AddTransient<T>();
-            _middlewares.Add(next =>
-                async () => await (_serviceProvider.GetRequiredService<T>()).InvokeAsync(_currentUpdateContext, next));
+            _middlewareFactoies.Push((serviceProvider, updateContext, next) =>
+                async () => await serviceProvider.GetRequiredService<T>().InvokeAsync(updateContext, next));
 
             return this;
         }
 
         public void RunPolling()
         {
-            _serviceProvider = _services.BuildServiceProvider();
-
-            _firstMiddleware = () => Task.CompletedTask;
-            foreach (var middlwareFactory in _middlewares.Reverse())
-                _firstMiddleware = middlwareFactory.Invoke(_firstMiddleware);
+            _globalServiceProvider = _services.BuildServiceProvider();
 
             var client = new TelegramBotClient(_apiKey);
             client.StartReceiving(invokeMiddlewares, handlePollingErrorAsync, _receiverOptions);
@@ -81,12 +78,16 @@ namespace Telegram.Framework.TelegramBotApplication
 
         private async Task invokeMiddlewares(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            _currentUpdateContext = new UpdateContext();
-            _currentUpdateContext.Update = update;
-            _currentUpdateContext.CancellationToken = cancellationToken;
-            _currentUpdateContext.Client = new AdvancedTelegramBotClient(_apiKey, _currentUpdateContext);
+            var updateContext = new UpdateContext();
+            updateContext.Update = update;
+            updateContext.CancellationToken = cancellationToken;
+            updateContext.Client = new AdvancedTelegramBotClient(_apiKey, updateContext);
 
-            await _firstMiddleware.Invoke();
+            using (var scope = _globalServiceProvider.CreateScope())
+            {
+                var firstMiddleware = buildMiddlewares(scope, updateContext);
+                await firstMiddleware.Invoke();
+            }
         }
 
         private Task handlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -100,6 +101,18 @@ namespace Telegram.Framework.TelegramBotApplication
 
             Console.WriteLine(errorMessage);
             return Task.CompletedTask;
+        }
+
+        private NextDelegate buildMiddlewares(IServiceScope scope, UpdateContext updateContext)
+        {
+            NextDelegate firstMiddleware = () => Task.CompletedTask;
+
+            foreach (var factory in _middlewareFactoies)
+            {
+                firstMiddleware = factory.Invoke(scope.ServiceProvider, updateContext, firstMiddleware);
+            }
+
+            return firstMiddleware;
         }
     }
 }
