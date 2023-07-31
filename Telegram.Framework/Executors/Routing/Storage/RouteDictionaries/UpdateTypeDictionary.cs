@@ -36,9 +36,9 @@ namespace Telegram.Framework.Executors.Routing.Storage.RouteDictionaries
 
             foreach (var targetAttribute in targetAttributes)
             {
-                var updateTypes = getUpdateTypesOf(targetAttribute);
+                var updateTypes = takeUpdateTypesOfTargetAttribute(targetAttribute);
 
-                if (updateTypes.Count() == 0)
+                if (updateTypes.Any() == false)
                 {
                     updateTypes = new List<UpdateType>() { UpdateType.Unknown };
                 }
@@ -66,11 +66,7 @@ namespace Telegram.Framework.Executors.Routing.Storage.RouteDictionaries
         private void addMethodToUserStates(MethodInfo method, TargetAttribute targetAttribute, UpdateType updateType)
         {
             var userStateDictionary = this[updateType];
-
-            targetAttribute.UserStates ??= _defaultUserState;
-            IEnumerable<string> userStates = targetAttribute.UserStates
-                .Split(",")
-                .Select(s => s.Trim());
+            var userStates = targetAttribute.GetUserStatesAsEnumerable(_defaultUserState);
 
             foreach (var state in userStates)
             {
@@ -83,12 +79,12 @@ namespace Telegram.Framework.Executors.Routing.Storage.RouteDictionaries
             return Enum.GetValues(typeof(UpdateType)).Cast<UpdateType>();
         }
 
-        private static IEnumerable<UpdateType> getUpdateTypesOf(TargetAttribute targetAttribute)
+        private static IEnumerable<UpdateType> takeUpdateTypesOfTargetAttribute(TargetAttribute targetAttribute)
         {
             return targetAttribute
                 .GetType()
-                .GetCustomAttributes<TargetUpdateTypeAttribute>()
-                .Select(attr => attr.UpdateType);
+                .GetCustomAttributes<TargetUpdateTypesAttribute>()
+                .SelectMany(attr => attr.UpdateTypes);
         }
     }
 }

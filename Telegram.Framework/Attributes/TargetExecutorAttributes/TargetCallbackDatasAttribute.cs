@@ -4,19 +4,20 @@ using Telegram.Bot.Types.Enums;
 
 namespace Telegram.Framework.Attributes.TargetExecutorAttributes
 {
-    [TargetUpdateType(UpdateType.CallbackQuery)]
-    public class TargetCallbacksDatasAttribute : TargetAttribute
+    [TargetUpdateTypes(UpdateType.CallbackQuery)]
+    public class TargetCallbackDatasAttribute : TargetAttribute
     {
         public string[] CallbacksDatas { get; set; }
 
-        public TargetCallbacksDatasAttribute(string callbacksDatas)
+        public TargetCallbackDatasAttribute(string callbacksDatas)
         {
             CallbacksDatas = callbacksDatas.Replace(" ", "").Split(",");
         }
 
         public override bool IsTarget(Update update)
         {
-            if (update.CallbackQuery!.Data is not { } data)
+            var data = update.CallbackQuery!.Data;
+            if (data == null)
                 return false;
 
             var targetData = data.Split(' ').First();

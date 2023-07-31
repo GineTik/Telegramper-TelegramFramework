@@ -3,20 +3,20 @@ using Telegram.Framework.TelegramBotApplication.Context;
 
 namespace Telegram.Framework.Attributes.ValidateInputDataAttributes.UpdateDataNotNull
 {
-    public class RequiredDataAttribute : ValidateInputDataAttribute
+    public class RequireDataAttribute : ValidateInputDataAttribute
     {
         protected Func<UpdateContext, object?> TakeProperty;
 
-        public RequiredDataAttribute(Func<UpdateContext, object?> takeProperty)
+        public RequireDataAttribute(Func<UpdateContext, object?> takeProperty)
         {
+            if (takeProperty == null)
+                throw new InvalidOperationException("Func TakeProperty is null");
+
             TakeProperty = takeProperty;
         }
 
         public override async Task<bool> ValidateAsync(UpdateContext updateContext, IServiceProvider provider)
         {
-            if (TakeProperty == null)
-                throw new InvalidOperationException("Func TakeProperty is null");
-
             return await Task.FromResult(TakeProperty.Invoke(updateContext) != null);
         }
     }

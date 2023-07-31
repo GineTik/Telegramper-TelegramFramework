@@ -1,6 +1,6 @@
 ﻿namespace Telegram.Framework.Attributes.ValidateInputDataAttributes.UpdateDataNotNull
 {
-    public class RequireMessageTextAttribute : RequiredDataAttribute
+    public class RequireMessageTextAttribute : RequireDataAttribute
     {
         public RequireMessageTextAttribute() : base(updateContext => updateContext.Message?.Text)
         {

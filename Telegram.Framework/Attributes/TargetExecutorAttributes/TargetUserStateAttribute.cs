@@ -1,11 +1,11 @@
-﻿using Telegram.Framework.Attributes.BaseAttributes;
-using Telegram.Bot.Types;
+﻿using Telegram.Bot.Types;
+using Telegram.Framework.Attributes.BaseAttributes;
 
 namespace Telegram.Framework.Attributes.TargetExecutorAttributes
 {
-    public class TargetUserStateContainsAttribute : TargetAttribute
+    public class TargetUserStateAttribute : TargetAttribute
     {
-        public TargetUserStateContainsAttribute(string userStates)
+        public TargetUserStateAttribute(string userStates)
         {
             UserStates = userStates;
         }
