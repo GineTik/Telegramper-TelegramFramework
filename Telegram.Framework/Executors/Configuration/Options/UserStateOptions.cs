@@ -5,9 +5,9 @@ namespace Telegram.Framework.Executors.Configuration.Options
 {
     public class UserStateOptions
     {
-        public string DefaultUserState { get; set; }
+        public string DefaultUserState { get; set; } = default!;
 
-        private Type _saverType;
+        private Type _saverType = default!;
         public Type SaverType
         {
             get

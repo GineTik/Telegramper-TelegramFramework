@@ -1,16 +1,16 @@
-﻿using Telegram.Framework.Executors.Configuration.Options;
-using Telegram.Framework.Executors.Helpers.Factories.Executors;
-using Telegram.Framework.Executors.Storages.Command;
-using Telegram.Framework.Executors.Storages.Command.Factory;
-using Telegram.Framework.Executors.Storages.UserState;
-using Telegram.Framework.Executors.Storages.UserState.Saver;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Telegram.Framework.Executors.Routing.Storage;
-using Telegram.Framework.Executors.Routing.ParametersParser;
+using Telegram.Framework.Attributes.TargetExecutorAttributes;
+using Telegram.Framework.Executors.Configuration.Options;
+using Telegram.Framework.Executors.Helpers.Factories.Executors;
 using Telegram.Framework.Executors.Routing;
+using Telegram.Framework.Executors.Routing.ParametersParser;
+using Telegram.Framework.Executors.Routing.Storage;
 using Telegram.Framework.Executors.Routing.Storage.RouteDictionaries;
 using Telegram.Framework.Executors.Routing.Storage.StaticHelpers;
+using Telegram.Framework.Executors.Storages.Command;
+using Telegram.Framework.Executors.Storages.UserState;
+using Telegram.Framework.Executors.Storages.UserState.Saver;
 
 namespace Telegram.Framework.Executors.Configuration.Services
 {
@@ -26,7 +26,7 @@ namespace Telegram.Framework.Executors.Configuration.Services
             Assembly[]? assemblies = null, Action<ExecutorOptions>? configure = null)
         {
             var executorsTypes = getExecutorsTypes(assemblies);
-            var executorOptions = services.configureOptions(executorsTypes, configure);
+            var executorOptions = configureOptions(services, executorsTypes, configure);
 
             services.addTransientServices(executorsTypes, executorOptions);
             services.addSingletonServices(executorsTypes, executorOptions);
@@ -46,7 +46,7 @@ namespace Telegram.Framework.Executors.Configuration.Services
             return executorsTypes;
         }
 
-        private static ExecutorOptions configureOptions(this IServiceCollection services,
+        private static ExecutorOptions configureOptions(IServiceCollection services,
             IEnumerable<Type> executorsTypes, Action<ExecutorOptions>? configure = null)
         {
             var executorOptions = new ExecutorOptions();
@@ -65,7 +65,11 @@ namespace Telegram.Framework.Executors.Configuration.Services
                 options.SaverType = executorOptions.UserState.SaverType;
             });
 
-            services.Configure<TargetMethodOptinons>(options => options.ExecutorsTypes = executorsTypes);
+            services.Configure<TargetMethodOptinons>(options => 
+            {
+                options.ExecutorsTypes = executorsTypes;
+                options.MethodInfos = ExecutorMethodsHelper.TakeExecutorMethodsFrom(executorsTypes);
+            });
 
             return executorOptions;
         }
@@ -75,8 +79,6 @@ namespace Telegram.Framework.Executors.Configuration.Services
         {
             services.AddTransient<IExecutorRouter, ExecutorRouter>();
             services.AddTransient<IExecutorFactory, ExecutorFactory>();
-            services.AddTransient<ICommandStorage, ExecutorCommandStorage>(); // TODO: подумати чи потрібно тут Transient чи Singleton
-            services.AddTransient<IBotCommandFactory, ExecutorBotCommandFactory>();
             services.AddTransient(typeof(IParametersParser), executorOptions.ParameterParser.ParserType);
 
             foreach (var type in executorsTypes)
@@ -87,10 +89,21 @@ namespace Telegram.Framework.Executors.Configuration.Services
             ExecutorOptions executorOptions)
         {
             var routesStorage = createRoutesStorage(executorsTypes, executorOptions);
+            var commandStorage = createCommandStorage(routesStorage.Methods);
+            
+            services.AddSingleton<ICommandStorage, ExecutorCommandStorage>(_ => commandStorage);
             services.AddSingleton<IRoutesStorage, RoutesStorage>(_ => routesStorage);
             
             services.AddSingleton<IUserStateStorage, UserStateStorage>();
             services.AddSingleton(typeof(IUserStateSaver), executorOptions.UserState.SaverType);
+        }
+
+        private static ExecutorCommandStorage createCommandStorage(IEnumerable<MethodInfo> methods)
+        {
+            var commandAttributes = methods
+                .SelectMany(method => method.GetCustomAttributes<TargetCommandsAttribute>());
+
+            return new ExecutorCommandStorage(commandAttributes);
         }
 
         private static RoutesStorage createRoutesStorage(IEnumerable<Type> executorsTypes, ExecutorOptions executorOptions)

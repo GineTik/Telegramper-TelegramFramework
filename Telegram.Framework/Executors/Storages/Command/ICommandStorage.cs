@@ -1,9 +1,9 @@
-﻿using Telegram.Bot.Types;
+﻿using Telegram.Framework.Attributes.TargetExecutorAttributes;
 
 namespace Telegram.Framework.Executors.Storages.Command
 {
     public interface ICommandStorage
     {
-        public IEnumerable<BotCommand> Commands { get; }
+        public IEnumerable<TargetCommandsAttribute> Commands { get; }
     }
 }

@@ -11,7 +11,10 @@ namespace Telegram.Framework.Executors.Storages.UserState
         private readonly UpdateContext _updateContext;
         private readonly UserStateOptions _options;
 
-        public UserStateStorage(IUserStateSaver saver, UpdateContextAccessor accessor, IOptions<UserStateOptions> options)
+        public UserStateStorage(
+            IUserStateSaver saver, 
+            UpdateContextAccessor accessor, 
+            IOptions<UserStateOptions> options)
         {
             _saver = saver;
             _updateContext = accessor.UpdateContext;
@@ -21,7 +24,7 @@ namespace Telegram.Framework.Executors.Storages.UserState
         public async Task AddAsync(string state, long? telegramUserId = null)
         {
             telegramUserId ??= _updateContext.TelegramUserId;
-            
+
             var userStates = await GetAsync(telegramUserId);
             userStates = userStates.Concat(new[] { state });
 
@@ -31,13 +34,17 @@ namespace Telegram.Framework.Executors.Storages.UserState
         public async Task<IEnumerable<string>> GetAsync(long? telegramUserId = null)
         {
             telegramUserId ??= _updateContext.TelegramUserId;
-            var userStates = await _saver.LoadAsync(telegramUserId.Value);
+            ArgumentNullException.ThrowIfNull(telegramUserId);
+
+            var userStates = await _saver.GetAsync(telegramUserId.Value);
             return userStates ?? new[] { _options.DefaultUserState };
         }
 
         public async Task RemoveAsync(long? telegramUserId = null)
         {
             telegramUserId ??= _updateContext.TelegramUserId;
+            ArgumentNullException.ThrowIfNull(telegramUserId);
+
             await _saver.RemoveAsync(telegramUserId.Value);
         }
 
@@ -49,13 +56,14 @@ namespace Telegram.Framework.Executors.Storages.UserState
         public async Task SetRangeAsync(IEnumerable<string> states, long? telegramUserId = null, bool withDefaultState = false)
         {
             telegramUserId ??= _updateContext.TelegramUserId;
+            ArgumentNullException.ThrowIfNull(telegramUserId);
 
             if (withDefaultState == true)
             {
                 states = states.Concat(new List<string> { _options.DefaultUserState });
             }
 
-            await _saver.SaveAsync(telegramUserId.Value, states);
+            await _saver.AddAsync(telegramUserId.Value, states);
         }
     }
 }
