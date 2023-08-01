@@ -1,14 +1,17 @@
-# Telegram Framework
-
+# Telegramper
 It is framework similar to a ASP.Net Core. Framework contains services, middlewares, configuration, controllers(executors) and other.
 
 > The framework is under development, so unexpected errors, changes in functionality, and names are possible! I would be grateful if you could report any bugs or functionality you need.
 
 ## Learn more about the framework
-1. [About UpdateContext](https://github.com/GineTik/TelegramFramework/tree/master/Telegram.Framework/TelegramBotApplication/Context)
+1. [About UpdateContext (similar to HttpContext)](https://github.com/GineTik/TelegramFramework/tree/master/Telegram.Framework/TelegramBotApplication/Context)
 1. [Configuration bot in Program.cs (Services, Middlewares, etc.)](https://github.com/GineTik/TelegramFramework/tree/master/Telegram.Framework/TelegramBotApplication)
 1. [Executors and attributes](https://github.com/GineTik/TelegramFramework/blob/master/Telegram.Framework/Executors)
 
+### Chapters coming soon
+- Session
+- Dialog
+- Examples of projects written on the Telegramper framework
 
 ## Quick start
 ```cs
