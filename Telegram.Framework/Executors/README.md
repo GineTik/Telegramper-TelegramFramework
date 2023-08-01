@@ -130,14 +130,14 @@ If at least one target attribute in the handler method matches, the method is ex
 This attributes checks the input data on similarity and attempts to execute the method if it is simiral. There can be more than one TargetAttributes per handler.
 
 ### Available attributes for input data validation
-- RequiredUser
-- RequiredChat
-- RequiredMessageText
-- RequiredMessagePhoto
+- RequireUser
+- RequireChat
+- RequireMessageText
+- RequireMessagePhoto
 
 ```cs
 [TargetAttribute...]
-[RequiredAttribute...(ErrorMessage="error message")]
+[RequireAttribute...(ErrorMessage="error message")]
 public async Task Handle() { }
 ```
 
@@ -145,12 +145,12 @@ Validation attributes don't executing Executor method if input data not correct.
 
 ### Write your own attribute
 Inherit the TargetAttribute or ValidateInputDataAttribute attribute and implement the method.
-> !!! For TargetAttribute, you can add ```[TargetUpdateType(UpdateType.CallbackQuery)]```, then the routing will be faster.
+> For your own TargetAttribute, you can add ```[TargetUpdateType(UpdateType...)]```, then your attribute will not run if the UpdateType of the update is not equal to the one set on your own attribute. If your attribute's UpdateType is set to Unknown, then it will always run. If you set TargetUpdateType, then routing will be faster.
 
 For example
 ```cs
 [TargetUpdateType(UpdateType.CallbackQuery)] // if you don't add this attribute, the default is UpdateType.Unknown
-public class TargetCallbacksDatasAttribute : TargetAttribute
+public class TargetCallbackDatasAttribute : TargetAttribute
 {
     public string[] CallbacksDatas { get; set; }
 
@@ -161,7 +161,8 @@ public class TargetCallbacksDatasAttribute : TargetAttribute
 
     public override bool IsTarget(Update update)
     {
-        if (update.CallbackQuery!.Data is not { } data)
+        var data = update.CallbackQuery!.Data; // this attribute have [TargetUpdateType(UpdateType.CallbackQuery)], so CallbackQuery 100 percent will be availible
+        if (data == null)
             return false;
 
         var targetData = data.Split(' ').First();
