@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using Telegram.Framework.Executors.Routing.Models;
+using Telegramper.Executors.Routing.Models;
 
-namespace Telegram.Framework.Executors.Routing
+namespace Telegramper.Executors.Routing
 {
     public interface IExecutorRouter
     {

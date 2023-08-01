@@ -1,9 +1,9 @@
-﻿using Telegram.Framework.TelegramBotApplication.Context;
+﻿using Telegramper.TelegramBotApplication.Context;
 using System.Reflection;
-using Telegram.Framework.Attributes.ParametersParse.Separator;
-using Telegram.Framework.Executors.Routing.ParametersParser.Results;
+using Telegramper.Attributes.ParametersParse.Separator;
+using Telegramper.Executors.Routing.ParametersParser.Results;
 
-namespace Telegram.Framework.Executors.Routing.ParametersParser.Extensions
+namespace Telegramper.Executors.Routing.ParametersParser.Extensions
 {
     public static class ParameterParserExtensions
     {

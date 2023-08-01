@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Telegram.Framework.Executors.Helpers.Extensions.Nullable
+namespace Telegramper.Executors.Helpers.Extensions.Nullable
 {
     internal static class ParameterInfoExtensions
     {

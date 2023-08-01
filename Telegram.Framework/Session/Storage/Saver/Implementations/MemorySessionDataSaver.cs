@@ -1,4 +1,4 @@
-﻿namespace Telegram.Framework.Session.Storage.Saver.Implementations
+﻿namespace Telegramper.Session.Storage.Saver.Implementations
 {
     public class MemorySessionDataSaver : ISessionDataSaver
     {

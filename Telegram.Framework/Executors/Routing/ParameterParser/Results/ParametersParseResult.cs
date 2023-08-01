@@ -1,4 +1,4 @@
-﻿namespace Telegram.Framework.Executors.Routing.ParametersParser.Results
+﻿namespace Telegramper.Executors.Routing.ParametersParser.Results
 {
     public enum ParseStatus
     {

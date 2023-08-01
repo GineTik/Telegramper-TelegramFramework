@@ -1,9 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Framework.Attributes.BaseAttributes;
+using Telegramper.Attributes.BaseAttributes;
 
-namespace Telegram.Framework.Attributes.TargetExecutorAttributes
+namespace Telegramper.Attributes.TargetExecutorAttributes
 {
     [TargetUpdateTypes(UpdateType.Message)]
     public class TargetCommandsAttribute : TargetAttribute

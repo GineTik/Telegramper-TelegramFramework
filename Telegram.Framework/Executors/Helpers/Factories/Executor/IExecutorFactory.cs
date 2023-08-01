@@ -1,4 +1,4 @@
-﻿namespace Telegram.Framework.Executors.Helpers.Factories.Executors
+﻿namespace Telegramper.Executors.Helpers.Factories.Executors
 {
     public interface IExecutorFactory
     {

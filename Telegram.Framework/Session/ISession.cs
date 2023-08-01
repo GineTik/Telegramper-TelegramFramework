@@ -1,4 +1,4 @@
-﻿namespace Telegram.Framework.Session
+﻿namespace Telegramper.Session
 {
     public interface ISession<T>
     {

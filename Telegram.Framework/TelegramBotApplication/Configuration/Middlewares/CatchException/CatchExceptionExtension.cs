@@ -1,6 +1,6 @@
-﻿using Telegram.Framework.TelegramBotApplication.Context;
+﻿using Telegramper.TelegramBotApplication.Context;
 
-namespace Telegram.Framework.TelegramBotApplication.Configuration.Middlewares.CatchException
+namespace Telegramper.TelegramBotApplication.Configuration.Middlewares.CatchException
 {
     public static class CatchExceptionExtension
     {

@@ -1,9 +1,9 @@
-﻿using Telegram.Framework.Session.Storage;
-using Telegram.Framework.Session.Storage.Saver;
-using Telegram.Framework.Session.Storage.Saver.Implementations;
+﻿using Telegramper.Session.Storage;
+using Telegramper.Session.Storage.Saver;
+using Telegramper.Session.Storage.Saver.Implementations;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Telegram.Framework.Session.Extensions.Services
+namespace Telegramper.Session.Extensions.Services
 {
     public static class SessionExtension
     {

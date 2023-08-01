@@ -1,6 +1,6 @@
-﻿using Telegram.Framework.Attributes.TargetExecutorAttributes;
+﻿using Telegramper.Attributes.TargetExecutorAttributes;
 
-namespace Telegram.Framework.Executors.Storages.Command
+namespace Telegramper.Executors.Storages.Command
 {
     public interface ICommandStorage
     {

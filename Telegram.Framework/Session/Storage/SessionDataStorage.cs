@@ -1,7 +1,7 @@
-﻿using Telegram.Framework.Session.Storage.Saver;
-using Telegram.Framework.TelegramBotApplication.Context;
+﻿using Telegramper.Session.Storage.Saver;
+using Telegramper.TelegramBotApplication.Context;
 
-namespace Telegram.Framework.Session.Storage
+namespace Telegramper.Session.Storage
 {
     public class SessionDataStorage : ISessionDataStorage
     {

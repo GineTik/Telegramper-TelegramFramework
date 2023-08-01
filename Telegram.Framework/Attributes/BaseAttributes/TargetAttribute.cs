@@ -1,6 +1,6 @@
 ﻿using Telegram.Bot.Types;
 
-namespace Telegram.Framework.Attributes.BaseAttributes
+namespace Telegramper.Attributes.BaseAttributes
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public abstract class TargetAttribute : Attribute

@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using Telegram.Framework.Executors.Routing.Storage.RouteDictionaries;
+using Telegramper.Executors.Routing.Storage.RouteDictionaries;
 
-namespace Telegram.Framework.Executors.Routing.Storage
+namespace Telegramper.Executors.Routing.Storage
 {
     public sealed class RoutesStorage : IRoutesStorage
     {

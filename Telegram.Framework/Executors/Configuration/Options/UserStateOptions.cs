@@ -1,7 +1,7 @@
-﻿using Telegram.Framework.Executors.Helpers.Exceptions;
-using Telegram.Framework.Executors.Storages.UserState.Saver;
+﻿using Telegramper.Executors.Helpers.Exceptions;
+using Telegramper.Executors.Storages.UserState.Saver;
 
-namespace Telegram.Framework.Executors.Configuration.Options
+namespace Telegramper.Executors.Configuration.Options
 {
     public class UserStateOptions
     {

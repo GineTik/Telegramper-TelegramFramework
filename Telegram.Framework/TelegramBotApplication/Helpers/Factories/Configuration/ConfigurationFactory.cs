@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Reflection;
 
-namespace Telegram.Framework.TelegramBotApplication.Helpers.Factories.Configuration
+namespace Telegramper.TelegramBotApplication.Helpers.Factories.Configuration
 {
     public class ConfigurationFactory : IConfigurationFactory
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Telegram.Framework.Executors.Helpers.Exceptions;
-using Telegram.Framework.TelegramBotApplication.Context;
+using Telegramper.Executors.Helpers.Exceptions;
+using Telegramper.TelegramBotApplication.Context;
 
-namespace Telegram.Framework.Executors.Helpers.Factories.Executors
+namespace Telegramper.Executors.Helpers.Factories.Executors
 {
     public class ExecutorFactory : IExecutorFactory
     {

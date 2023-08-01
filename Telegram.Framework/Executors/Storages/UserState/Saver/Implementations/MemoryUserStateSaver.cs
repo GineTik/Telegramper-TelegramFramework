@@ -1,4 +1,4 @@
-﻿namespace Telegram.Framework.Executors.Storages.UserState.Saver.Implementations
+﻿namespace Telegramper.Executors.Storages.UserState.Saver.Implementations
 {
     public class MemoryUserStateSaver : IUserStateSaver
     {

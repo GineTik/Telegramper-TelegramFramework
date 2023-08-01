@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Telegram.Framework.Executors.Configuration.Options
+namespace Telegramper.Executors.Configuration.Options
 {
     public class TargetMethodOptinons
     {

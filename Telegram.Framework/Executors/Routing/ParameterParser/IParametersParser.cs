@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using Telegram.Framework.Executors.Routing.ParametersParser.Results;
+using Telegramper.Executors.Routing.ParametersParser.Results;
 
-namespace Telegram.Framework.Executors.Routing.ParametersParser
+namespace Telegramper.Executors.Routing.ParametersParser
 {
     public interface IParametersParser
     {

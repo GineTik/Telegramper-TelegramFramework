@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Telegram.Framework.Attributes.TargetExecutorAttributes;
-using Telegram.Framework.Executors.Configuration.Options;
-using Telegram.Framework.Executors.Helpers.Factories.Executors;
-using Telegram.Framework.Executors.Routing;
-using Telegram.Framework.Executors.Routing.ParametersParser;
-using Telegram.Framework.Executors.Routing.Storage;
-using Telegram.Framework.Executors.Routing.Storage.RouteDictionaries;
-using Telegram.Framework.Executors.Routing.Storage.StaticHelpers;
-using Telegram.Framework.Executors.Storages.Command;
-using Telegram.Framework.Executors.Storages.UserState;
-using Telegram.Framework.Executors.Storages.UserState.Saver;
+using Telegramper.Attributes.TargetExecutorAttributes;
+using Telegramper.Executors.Configuration.Options;
+using Telegramper.Executors.Helpers.Factories.Executors;
+using Telegramper.Executors.Routing;
+using Telegramper.Executors.Routing.ParametersParser;
+using Telegramper.Executors.Routing.Storage;
+using Telegramper.Executors.Routing.Storage.RouteDictionaries;
+using Telegramper.Executors.Routing.Storage.StaticHelpers;
+using Telegramper.Executors.Storages.Command;
+using Telegramper.Executors.Storages.UserState;
+using Telegramper.Executors.Storages.UserState.Saver;
 
-namespace Telegram.Framework.Executors.Configuration.Services
+namespace Telegramper.Executors.Configuration.Services
 {
     public static class ExecutorExtensions
     {

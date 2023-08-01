@@ -1,7 +1,7 @@
-﻿using Telegram.Framework.Attributes.BaseAttributes;
-using Telegram.Framework.TelegramBotApplication.Context;
+﻿using Telegramper.Attributes.BaseAttributes;
+using Telegramper.TelegramBotApplication.Context;
 
-namespace Telegram.Framework.Attributes.ValidateInputDataAttributes.UpdateDataNotNull
+namespace Telegramper.Attributes.ValidateInputDataAttributes.UpdateDataNotNull
 {
     public class RequireDataAttribute : ValidateInputDataAttribute
     {

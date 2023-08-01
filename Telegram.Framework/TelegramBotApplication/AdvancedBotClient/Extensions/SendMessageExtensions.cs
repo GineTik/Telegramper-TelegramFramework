@@ -1,12 +1,12 @@
-﻿using Telegram.Framework.TelegramBotApplication.AdvancedBotClient;
-using Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions;
+﻿using Telegramper.TelegramBotApplication.AdvancedBotClient;
+using Telegramper.TelegramBotApplication.AdvancedBotClient.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using Telegram.Framework.TelegramBotApplication.Exceptions;
+using Telegramper.TelegramBotApplication.Exceptions;
 
-namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions
+namespace Telegramper.TelegramBotApplication.AdvancedBotClient.Extensions
 {
     public static class SendMessageExtensions
     {

@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
-using Telegram.Framework.Attributes.BaseAttributes;
-using Telegram.Framework.Executors.Routing.ParametersParser.Results;
+using Telegramper.Attributes.BaseAttributes;
+using Telegramper.Executors.Routing.ParametersParser.Results;
 
-namespace Telegram.Framework.Executors.Routing.Models
+namespace Telegramper.Executors.Routing.Models
 {
     public class ExecutedMethodMetadata
     {

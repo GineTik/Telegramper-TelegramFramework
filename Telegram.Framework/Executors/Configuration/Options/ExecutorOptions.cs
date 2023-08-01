@@ -1,8 +1,8 @@
-﻿using Telegram.Framework.Attributes.ParametersParse;
-using Telegram.Framework.Executors.Routing.ParametersParser;
-using Telegram.Framework.Executors.Storages.UserState.Saver.Implementations;
+﻿using Telegramper.Attributes.ParametersParse;
+using Telegramper.Executors.Routing.ParametersParser;
+using Telegramper.Executors.Storages.UserState.Saver.Implementations;
 
-namespace Telegram.Framework.Executors.Configuration.Options
+namespace Telegramper.Executors.Configuration.Options
 {
     public class ExecutorOptions
     {

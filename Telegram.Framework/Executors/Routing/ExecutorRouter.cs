@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Reflection;
-using Telegram.Framework.Attributes.BaseAttributes;
-using Telegram.Framework.Executors.Configuration.Options;
-using Telegram.Framework.Executors.Helpers.Extensions.MethodInfos;
-using Telegram.Framework.Executors.Helpers.Factories.Executors;
-using Telegram.Framework.Executors.Routing.Models;
-using Telegram.Framework.Executors.Routing.ParametersParser;
-using Telegram.Framework.Executors.Routing.ParametersParser.Extensions;
-using Telegram.Framework.Executors.Routing.ParametersParser.Results;
-using Telegram.Framework.Executors.Routing.Storage;
-using Telegram.Framework.Executors.Storages.UserState;
-using Telegram.Framework.TelegramBotApplication.Context;
+using Telegramper.Attributes.BaseAttributes;
+using Telegramper.Executors.Configuration.Options;
+using Telegramper.Executors.Helpers.Extensions.MethodInfos;
+using Telegramper.Executors.Helpers.Factories.Executors;
+using Telegramper.Executors.Routing.Models;
+using Telegramper.Executors.Routing.ParametersParser;
+using Telegramper.Executors.Routing.ParametersParser.Extensions;
+using Telegramper.Executors.Routing.ParametersParser.Results;
+using Telegramper.Executors.Routing.Storage;
+using Telegramper.Executors.Storages.UserState;
+using Telegramper.TelegramBotApplication.Context;
 
-namespace Telegram.Framework.Executors.Routing
+namespace Telegramper.Executors.Routing
 {
     public class ExecutorRouter : IExecutorRouter
     {

@@ -1,7 +1,7 @@
-﻿using Telegram.Framework.TelegramBotApplication.Context;
+﻿using Telegramper.TelegramBotApplication.Context;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Telegram.Framework.TelegramBotApplication.Configuration.Services
+namespace Telegramper.TelegramBotApplication.Configuration.Services
 {
     public static class UpdateContextExtension
     {

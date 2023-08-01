@@ -1,4 +1,4 @@
-﻿namespace Telegram.Framework.Executors.Storages.UserState.Saver
+﻿namespace Telegramper.Executors.Storages.UserState.Saver
 {
     public interface IUserStateSaver
     {

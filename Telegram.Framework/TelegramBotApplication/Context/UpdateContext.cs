@@ -1,8 +1,8 @@
 ﻿using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Framework.TelegramBotApplication.AdvancedBotClient;
+using Telegramper.TelegramBotApplication.AdvancedBotClient;
 
-namespace Telegram.Framework.TelegramBotApplication.Context
+namespace Telegramper.TelegramBotApplication.Context
 {
     public class UpdateContext
     {

@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Reflection;
-using Telegram.Framework.Attributes.ParametersParse;
-using Telegram.Framework.Executors.Configuration.Options;
-using Telegram.Framework.Executors.Routing;
-using Telegram.Framework.Executors.Routing.ParametersParser.Results;
-using Telegram.Framework.TelegramBotApplication.AdvancedBotClient.Extensions;
-using Telegram.Framework.TelegramBotApplication.Configuration.Middlewares;
-using Telegram.Framework.TelegramBotApplication.Context;
-using Telegram.Framework.TelegramBotApplication.Delegates;
+using Telegramper.Attributes.ParametersParse;
+using Telegramper.Executors.Configuration.Options;
+using Telegramper.Executors.Routing;
+using Telegramper.Executors.Routing.ParametersParser.Results;
+using Telegramper.TelegramBotApplication.AdvancedBotClient.Extensions;
+using Telegramper.TelegramBotApplication.Configuration.Middlewares;
+using Telegramper.TelegramBotApplication.Context;
+using Telegramper.TelegramBotApplication.Delegates;
 
-namespace Telegram.Framework.Executors.Configuration.Middleware.TargetExecutor
+namespace Telegramper.Executors.Configuration.Middleware.TargetExecutor
 {
     public class TargetExecutorMiddleware : IMiddleware
     {

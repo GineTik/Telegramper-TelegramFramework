@@ -1,9 +1,9 @@
-﻿using Telegram.Framework.Executors.Configuration.Options;
-using Telegram.Framework.Executors.Storages.UserState.Saver;
-using Telegram.Framework.TelegramBotApplication.Context;
+﻿using Telegramper.Executors.Configuration.Options;
+using Telegramper.Executors.Storages.UserState.Saver;
+using Telegramper.TelegramBotApplication.Context;
 using Microsoft.Extensions.Options;
 
-namespace Telegram.Framework.Executors.Storages.UserState
+namespace Telegramper.Executors.Storages.UserState
 {
     public class UserStateStorage : IUserStateStorage
     {

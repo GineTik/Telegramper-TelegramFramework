@@ -1,8 +1,8 @@
-﻿using Telegram.Framework.Executors.Helpers.Factories.Executors;
+﻿using Telegramper.Executors.Helpers.Factories.Executors;
 using System.Reflection;
-using Telegram.Framework.Executors.Routing.ParametersParser.Results;
+using Telegramper.Executors.Routing.ParametersParser.Results;
 
-namespace Telegram.Framework.Executors.Helpers.Extensions.MethodInfos
+namespace Telegramper.Executors.Helpers.Extensions.MethodInfos
 {
     internal static class InvokeMethodExtensions
     {

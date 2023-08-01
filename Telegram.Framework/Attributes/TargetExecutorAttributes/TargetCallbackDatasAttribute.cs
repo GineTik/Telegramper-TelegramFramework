@@ -1,8 +1,8 @@
-﻿using Telegram.Framework.Attributes.BaseAttributes;
+﻿using Telegramper.Attributes.BaseAttributes;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace Telegram.Framework.Attributes.TargetExecutorAttributes
+namespace Telegramper.Attributes.TargetExecutorAttributes
 {
     [TargetUpdateTypes(UpdateType.CallbackQuery)]
     public class TargetCallbackDatasAttribute : TargetAttribute

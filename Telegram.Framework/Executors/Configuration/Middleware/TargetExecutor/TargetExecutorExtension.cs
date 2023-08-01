@@ -1,6 +1,6 @@
-﻿using Telegram.Framework.TelegramBotApplication;
+﻿using Telegramper.TelegramBotApplication;
 
-namespace Telegram.Framework.Executors.Configuration.Middleware.TargetExecutor
+namespace Telegramper.Executors.Configuration.Middleware.TargetExecutor
 {
     public static class TargetExecutorExtension
     {

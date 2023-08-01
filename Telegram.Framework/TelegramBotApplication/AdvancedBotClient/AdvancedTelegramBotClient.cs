@@ -1,7 +1,7 @@
-﻿using Telegram.Framework.TelegramBotApplication.Context;
+﻿using Telegramper.TelegramBotApplication.Context;
 using Telegram.Bot;
 
-namespace Telegram.Framework.TelegramBotApplication.AdvancedBotClient
+namespace Telegramper.TelegramBotApplication.AdvancedBotClient
 {
     public class AdvancedTelegramBotClient : TelegramBotClient, IAdvancedTelegramBotClient
     {

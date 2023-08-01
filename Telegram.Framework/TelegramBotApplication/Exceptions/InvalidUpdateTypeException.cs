@@ -1,4 +1,4 @@
-﻿namespace Telegram.Framework.TelegramBotApplication.Exceptions
+﻿namespace Telegramper.TelegramBotApplication.Exceptions
 {
     public class InvalidUpdateTypeException : Exception
     {

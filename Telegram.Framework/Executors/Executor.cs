@@ -1,9 +1,9 @@
-﻿using Telegram.Framework.TelegramBotApplication.Context;
-using Telegram.Framework.TelegramBotApplication.AdvancedBotClient;
+﻿using Telegramper.TelegramBotApplication.Context;
+using Telegramper.TelegramBotApplication.AdvancedBotClient;
 using Microsoft.Extensions.DependencyInjection;
-using Telegram.Framework.Executors.Helpers.Factories.Executors;
+using Telegramper.Executors.Helpers.Factories.Executors;
 
-namespace Telegram.Framework.Executors
+namespace Telegramper.Executors
 {
     public abstract class Executor
     {

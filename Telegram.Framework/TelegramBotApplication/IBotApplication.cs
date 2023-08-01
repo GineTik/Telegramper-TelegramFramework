@@ -1,8 +1,8 @@
-﻿using Telegram.Framework.TelegramBotApplication.Configuration.Middlewares;
-using Telegram.Framework.TelegramBotApplication.Context;
-using Telegram.Framework.TelegramBotApplication.Delegates;
+﻿using Telegramper.TelegramBotApplication.Configuration.Middlewares;
+using Telegramper.TelegramBotApplication.Context;
+using Telegramper.TelegramBotApplication.Delegates;
 
-namespace Telegram.Framework.TelegramBotApplication
+namespace Telegramper.TelegramBotApplication
 {
     public interface IBotApplication
     {

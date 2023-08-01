@@ -1,4 +1,4 @@
-﻿namespace Telegram.Framework.Session.Storage.Saver
+﻿namespace Telegramper.Session.Storage.Saver
 {
     public interface ISessionDataSaver
     {

@@ -1,10 +1,10 @@
-﻿using Telegram.Framework.TelegramBotApplication.Configuration.Services;
-using Telegram.Framework.TelegramBotApplication.Helpers.Factories.Configuration;
+﻿using Telegramper.TelegramBotApplication.Configuration.Services;
+using Telegramper.TelegramBotApplication.Helpers.Factories.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Polling;
 
-namespace Telegram.Framework.TelegramBotApplication
+namespace Telegramper.TelegramBotApplication
 {
     public class BotApplicationBuilder
     {

@@ -1,6 +1,6 @@
-﻿using Telegram.Framework.TelegramBotApplication.Context;
+﻿using Telegramper.TelegramBotApplication.Context;
 
-namespace Telegram.Framework.Attributes.BaseAttributes
+namespace Telegramper.Attributes.BaseAttributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public abstract class ValidateInputDataAttribute : Attribute

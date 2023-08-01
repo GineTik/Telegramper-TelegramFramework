@@ -1,4 +1,4 @@
-﻿namespace Telegram.Framework.Session.Storage
+﻿namespace Telegramper.Session.Storage
 {
     public interface ISessionDataStorage
     {

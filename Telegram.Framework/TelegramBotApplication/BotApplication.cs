@@ -3,13 +3,13 @@ using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
-using Telegram.Framework.TelegramBotApplication.AdvancedBotClient;
-using Telegram.Framework.TelegramBotApplication.Configuration.Middlewares;
-using Telegram.Framework.TelegramBotApplication.Configuration.Middlewares.UpdateContexts;
-using Telegram.Framework.TelegramBotApplication.Context;
-using Telegram.Framework.TelegramBotApplication.Delegates;
+using Telegramper.TelegramBotApplication.AdvancedBotClient;
+using Telegramper.TelegramBotApplication.Configuration.Middlewares;
+using Telegramper.TelegramBotApplication.Configuration.Middlewares.UpdateContexts;
+using Telegramper.TelegramBotApplication.Context;
+using Telegramper.TelegramBotApplication.Delegates;
 
-namespace Telegram.Framework.TelegramBotApplication
+namespace Telegramper.TelegramBotApplication
 {
     public partial class BotApplication : IBotApplication
     {

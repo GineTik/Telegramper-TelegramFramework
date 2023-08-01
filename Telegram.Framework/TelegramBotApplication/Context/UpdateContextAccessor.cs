@@ -1,4 +1,4 @@
-﻿namespace Telegram.Framework.TelegramBotApplication.Context
+﻿namespace Telegramper.TelegramBotApplication.Context
 {
     public class UpdateContextAccessor
     {

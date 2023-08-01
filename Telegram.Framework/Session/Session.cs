@@ -1,6 +1,6 @@
-﻿using Telegram.Framework.Session.Storage;
+﻿using Telegramper.Session.Storage;
 
-namespace Telegram.Framework.Session
+namespace Telegramper.Session
 {
     public class Session<T> : ISession<T>
     {

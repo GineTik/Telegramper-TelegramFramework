@@ -1,4 +1,4 @@
-﻿namespace Telegram.Framework.Executors.Helpers.Exceptions
+﻿namespace Telegramper.Executors.Helpers.Exceptions
 {
     public class InvalidTypeException : Exception
     {

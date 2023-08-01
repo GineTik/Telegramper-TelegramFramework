@@ -1,8 +1,8 @@
-﻿using Telegram.Framework.Executors;
+﻿using Telegramper.Executors;
 using System.Linq.Expressions;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Telegram.Framework.TelegramBotApplication.Helpers.Builders
+namespace Telegramper.TelegramBotApplication.Helpers.Builders
 {
     public class InlineKeyboardBuilder
     {

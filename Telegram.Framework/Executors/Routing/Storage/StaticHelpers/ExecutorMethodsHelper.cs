@@ -1,7 +1,7 @@
-﻿using Telegram.Framework.Attributes.BaseAttributes;
+﻿using Telegramper.Attributes.BaseAttributes;
 using System.Reflection;
 
-namespace Telegram.Framework.Executors.Routing.Storage.StaticHelpers
+namespace Telegramper.Executors.Routing.Storage.StaticHelpers
 {
     internal static class ExecutorMethodsHelper
     {

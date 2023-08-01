@@ -1,6 +1,6 @@
-﻿using Telegram.Framework.TelegramBotApplication.Context;
+﻿using Telegramper.TelegramBotApplication.Context;
 
-namespace Telegram.Framework.TelegramBotApplication.Delegates
+namespace Telegramper.TelegramBotApplication.Delegates
 {
     internal delegate NextDelegate MiddlewareFactoryDelegate(
         IServiceProvider serviceProvider, 
