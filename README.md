@@ -8,6 +8,10 @@ It is framework similar to a ASP.Net Core. Framework contains services, middlewa
 1. [Configuration bot in Program.cs (Services, Middlewares, etc.)](https://github.com/GineTik/TelegramFramework/tree/master/Telegram.Framework/TelegramBotApplication)
 1. [Executors and attributes](https://github.com/GineTik/TelegramFramework/blob/master/Telegram.Framework/Executors)
 
+### Chapters coming soon
+- Session
+- Dialog
+- Examples of projects written on the Telegramper framework
 
 ## Quick start
 ```cs
