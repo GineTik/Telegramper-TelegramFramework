@@ -26,7 +26,7 @@ namespace Telegramper.Executors.Attributes.TargetExecutorAttributes
             }
 
             string command = takeCommandFromText(text);
-            if (Commands.Any() == false)
+            if (Commands.Length == 0)
             {
                 return command == TransformedMethodName;
             }
