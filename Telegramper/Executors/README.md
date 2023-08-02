@@ -186,7 +186,7 @@ public class TargetCallbackDatasAttribute : TargetAttribute
         var targetData = data.Split(' ').First();
         if (CallbackDatas.Length == 0)
         {
-            return targetData == TransformedMethodName;
+            return targetData == MethodName;
         }
 
         return CallbackDatas.Contains(targetData);
