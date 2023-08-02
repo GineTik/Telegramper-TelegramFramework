@@ -53,7 +53,7 @@ public sealed class ReceiverOptions
 
 
 ### Services
-The functionality of services is taken over by IServiceCollection (from ASP.Net Core). Because of this, some services are not available, but you can get other services (which are not only available for ASP.Net Core), such as AutoMapper, EF Core ([How to use EF Core in Telegram.Framework](#)), and others. Although these services were developed for ASP.Net Core, you can use them here as well. 
+The functionality of services is taken over by IServiceCollection (from ASP.Net Core). Because of this, some services are not available, but you can get other services (which are not only available for ASP.Net Core), such as AutoMapper, EF Core ([How to use EF Core in Telegramper](#)), and others. Although these services were developed for ASP.Net Core, you can use them here as well. 
 > You can also create your own services and add them to nuget packages to extend the functionality of the framework.
 
 <br>

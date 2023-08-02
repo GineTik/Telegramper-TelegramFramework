@@ -43,7 +43,7 @@ public class ExecutorName : Executor // the name does not affect anything
 
 ### Executor infrastructure 
 Executor contains:
-- UpdateContext, [about this](https://github.com/GineTik/TelegramFramework/tree/master/Telegram.Framework/TelegramBotApplication/Context)
+- UpdateContext, [about this](https://github.com/GineTik/TelegramFramework/tree/master/Telegramper/TelegramBotApplication/Context)
 - ExecuteAsync method for invoke other methods other executors.
 
 You can take dependencies from the constructor. 
