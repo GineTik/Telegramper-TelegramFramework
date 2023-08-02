@@ -159,7 +159,7 @@ Validation attributes don't executing Executor method if input data not correct.
 Inherit the TargetAttribute or ValidateInputD ataAttribute attribute and implement the method.
 > For your own TargetAttribute, you can add ```[TargetUpdateType(UpdateType...)]```, then your attribute will not run if the UpdateType of the update is not equal to the one set on your own attribute. If your attribute's UpdateType is set to Unknown, then it will always run. If you set TargetUpdateType, then routing will be faster.
 
-> TargetAttribute has MethodName and TransformedMethodName properties, TransformedMethodName contains the transformed method name using INameTransformer (you can customize the INameTransformer implementation in ``AddExecutors(options => options.MethodNameTransformer.Type = typeof(SnakeCaseNameTransformer))```.
+> TargetAttribute has MethodName and TransformedMethodName properties, TransformedMethodName contains the transformed method name using INameTransformer (you can customize the INameTransformer implementation in ```AddExecutors(options => options.MethodNameTransformer.Type = typeof(SnakeCaseNameTransformer))```.
 
 For example
 
