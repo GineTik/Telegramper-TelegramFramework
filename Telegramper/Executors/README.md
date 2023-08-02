@@ -10,6 +10,8 @@ builder.Services.AddExecutors(options =>
 {
     // default values
 
+    options.MethodNameTransformer.Type = typeof(SnakeCaseNameTransformer); // the class that transform the method name for use [TargetCommands] and [TargetCallbackData] without parameters
+
     options.ParameterParser.DefaultSeparator = " ";
     options.ParameterParser.ErrorMessages.TypeParseError = "Parse type error";
     options.ParameterParser.ErrorMessages.ArgsLengthIsLess = "Args length is less";
@@ -126,6 +128,16 @@ If at least one target attribute in the handler method matches, the method is ex
   [TargetUserStateContains("userState1, userState2, userState3")]
   public async Task Handle() { }
   ```
+- TargetText
+  ```cs
+  [TargetText("target text")]
+  public async Task Handle() { }
+  ```
+- TargetContainsText
+  ```cs
+  [TargetContainsText("target contains text")]
+  public async Task Handle() { }
+  ```
 
 This attributes checks the input data on similarity and attempts to execute the method if it is simiral. There can be more than one TargetAttributes per handler.
 
@@ -144,29 +156,40 @@ public async Task Handle() { }
 Validation attributes don't executing Executor method if input data not correct. If validation is failed, runing next middleware. One handler can have more than one ValidationAttributes.
 
 ### Write your own attribute
-Inherit the TargetAttribute or ValidateInputDataAttribute attribute and implement the method.
+Inherit the TargetAttribute or ValidateInputD ataAttribute attribute and implement the method.
 > For your own TargetAttribute, you can add ```[TargetUpdateType(UpdateType...)]```, then your attribute will not run if the UpdateType of the update is not equal to the one set on your own attribute. If your attribute's UpdateType is set to Unknown, then it will always run. If you set TargetUpdateType, then routing will be faster.
 
+> TargetAttribute has MethodName and TransformedMethodName properties, TransformedMethodName contains the transformed method name using INameTransformer (you can customize the INameTransformer implementation in ```AddExecutors(options => options.MethodNameTransformer.Type = typeof(SnakeCaseNameTransformer))```.
+
 For example
+
 ```cs
 [TargetUpdateType(UpdateType.CallbackQuery)] // if you don't add this attribute, the default is UpdateType.Unknown
 public class TargetCallbackDatasAttribute : TargetAttribute
 {
     public string[] CallbacksDatas { get; set; }
 
-    public TargetCallbacksDatasAttribute(string callbacksDatas)
+    public TargetCallbackDatasAttribute(string? callbacksDatas = null)
     {
-        CallbacksDatas = callbacksDatas.Replace(" ", "").Split(",");
+        CallbackDatas = callbacksDatas?.Replace(" ", "").Split(",")
+            ?? new string[0];
     }
 
     public override bool IsTarget(Update update)
     {
-        var data = update.CallbackQuery!.Data; // this attribute have [TargetUpdateType(UpdateType.CallbackQuery)], so CallbackQuery 100 percent will be availible
+        var data = update.CallbackQuery!.Data;
         if (data == null)
+        {
             return false;
+        }
 
         var targetData = data.Split(' ').First();
-        return CallbacksDatas.Contains(targetData);
+        if (CallbackDatas.Length == 0)
+        {
+            return targetData == TransformedMethodName;
+        }
+
+        return CallbackDatas.Contains(targetData);
     }
 }
 ```
