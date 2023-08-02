@@ -26,7 +26,7 @@ namespace Telegramper.Executors.Attributes.TargetExecutorAttributes
             var targetData = data.Split(' ').First();
             if (CallbackDatas.Length == 0)
             {
-                return targetData == TransformedMethodName;
+                return targetData == MethodName;
             }
 
             return CallbackDatas.Contains(targetData);
