@@ -1,18 +1,22 @@
-﻿using Telegramper.Attributes.BaseAttributes;
-using Telegramper.Attributes.TargetExecutorAttributes;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Telegram.Bot.Types.Enums;
+using Telegramper.Executors.Attributes.BaseAttributes;
+using Telegramper.Executors.Attributes.TargetExecutorAttributes;
+using Telegramper.Executors.NameTransformer;
 using Telegramper.Executors.Routing.Storage.Models;
 
 namespace Telegramper.Executors.Routing.Storage.RouteDictionaries
 {
     public class UpdateTypeDictionary : Dictionary<UpdateType, UserStateMethodInfoDictionary>
     {
-        private string _defaultUserState;
+        private readonly string _defaultUserState;
+        private readonly IServiceProvider _serviceProvider;
 
-        public UpdateTypeDictionary(string defaultUserState)
+        public UpdateTypeDictionary(IServiceProvider serviceProvider, string defaultUserState)
         {
             _defaultUserState = defaultUserState;
+            _serviceProvider = serviceProvider;
 
             var updateTypes = getExistngUpdateTypes();
 
@@ -33,6 +37,7 @@ namespace Telegramper.Executors.Routing.Storage.RouteDictionaries
         public void AddMethod(MethodInfo method)
         {
             var targetAttributes = method.GetCustomAttributes<TargetAttribute>();
+            initializeTargetAttributes(method, targetAttributes);
 
             foreach (var targetAttribute in targetAttributes)
             {
@@ -47,6 +52,15 @@ namespace Telegramper.Executors.Routing.Storage.RouteDictionaries
                 {
                     addMethodToUserStates(method, targetAttribute, updateType);
                 }
+            }
+        }
+
+        private void initializeTargetAttributes(MethodInfo method, IEnumerable<TargetAttribute> targetAttributes)
+        {
+            foreach (var attribute in targetAttributes)
+            {
+                var commandNameTransformer = _serviceProvider.GetRequiredService<INameTransformer>();
+                attribute.InitializationMethodName(method, commandNameTransformer);
             }
         }
 

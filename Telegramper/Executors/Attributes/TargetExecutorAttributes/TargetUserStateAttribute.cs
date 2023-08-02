@@ -1,7 +1,7 @@
 ﻿using Telegram.Bot.Types;
-using Telegramper.Attributes.BaseAttributes;
+using Telegramper.Executors.Attributes.BaseAttributes;
 
-namespace Telegramper.Attributes.TargetExecutorAttributes
+namespace Telegramper.Executors.Attributes.TargetExecutorAttributes
 {
     public class TargetUserStateAttribute : TargetAttribute
     {

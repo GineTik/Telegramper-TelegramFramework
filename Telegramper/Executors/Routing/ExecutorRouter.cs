@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Reflection;
-using Telegramper.Attributes.BaseAttributes;
+using Telegramper.Executors.Attributes.BaseAttributes;
 using Telegramper.Executors.Configuration.Options;
 using Telegramper.Executors.Helpers.Extensions.MethodInfos;
 using Telegramper.Executors.Helpers.Factories.Executors;

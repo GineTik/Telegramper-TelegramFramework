@@ -1,4 +1,4 @@
-﻿namespace Telegramper.Attributes.ValidateInputDataAttributes.UpdateDataNotNull
+﻿namespace Telegramper.Executors.Attributes.ValidateInputDataAttributes.UpdateDataNotNull
 {
     public class RequireMessagePhotoAttribute : RequireDataAttribute
     {

@@ -1,4 +1,5 @@
-﻿using Telegramper.Attributes.ParametersParse;
+﻿using Telegramper.Executors.Attributes.ParametersParse;
+using Telegramper.Executors.NameTransformer;
 using Telegramper.Executors.Routing.ParametersParser;
 using Telegramper.Executors.Storages.UserState.Saver.Implementations;
 
@@ -6,6 +7,11 @@ namespace Telegramper.Executors.Configuration.Options
 {
     public class ExecutorOptions
     {
+        public CommandExecutorOptions MethodNameTransformer { get; set; } = new CommandExecutorOptions
+        {
+            Type = typeof(SnakeCaseNameTransformer)
+        };
+
         public ParameterParserOptions ParameterParser { get; set; } = new ParameterParserOptions
         {
             DefaultSeparator = " ",

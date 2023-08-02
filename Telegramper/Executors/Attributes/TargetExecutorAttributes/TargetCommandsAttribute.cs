@@ -1,9 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegramper.Attributes.BaseAttributes;
+using Telegramper.Executors.Attributes.BaseAttributes;
 
-namespace Telegramper.Attributes.TargetExecutorAttributes
+namespace Telegramper.Executors.Attributes.TargetExecutorAttributes
 {
     [TargetUpdateTypes(UpdateType.Message)]
     public class TargetCommandsAttribute : TargetAttribute
@@ -11,9 +11,10 @@ namespace Telegramper.Attributes.TargetExecutorAttributes
         public string[] Commands { get; set; }
         public string? Description { get; set; }
 
-        public TargetCommandsAttribute(string commands)
+        public TargetCommandsAttribute(string? commands = null)
         {
-            Commands = commands.Replace(" ", "").Split(',');
+            Commands = commands?.Replace(" ", "").Split(',')
+                ?? new string[0];
         }
 
         public override bool IsTarget(Update update)
@@ -25,6 +26,11 @@ namespace Telegramper.Attributes.TargetExecutorAttributes
             }
 
             string command = takeCommandFromText(text);
+            if (Commands.Any() == false)
+            {
+                return command == TransformedMethodName;
+            }
+
             return Commands.Contains(command);
         }
 

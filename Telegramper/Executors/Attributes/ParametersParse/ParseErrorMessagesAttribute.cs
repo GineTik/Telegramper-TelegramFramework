@@ -1,6 +1,6 @@
 ﻿using Telegramper.Executors.Routing.ParametersParser.Results;
 
-namespace Telegramper.Attributes.ParametersParse
+namespace Telegramper.Executors.Attributes.ParametersParse
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class ParseErrorMessagesAttribute : Attribute

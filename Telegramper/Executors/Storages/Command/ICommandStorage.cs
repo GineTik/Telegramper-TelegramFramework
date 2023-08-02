@@ -1,4 +1,4 @@
-﻿using Telegramper.Attributes.TargetExecutorAttributes;
+﻿using Telegramper.Executors.Attributes.TargetExecutorAttributes;
 
 namespace Telegramper.Executors.Storages.Command
 {

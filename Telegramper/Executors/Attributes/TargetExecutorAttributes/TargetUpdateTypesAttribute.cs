@@ -1,8 +1,8 @@
 ﻿using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegramper.Attributes.BaseAttributes;
+using Telegramper.Executors.Attributes.BaseAttributes;
 
-namespace Telegramper.Attributes.TargetExecutorAttributes
+namespace Telegramper.Executors.Attributes.TargetExecutorAttributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class TargetUpdateTypesAttribute : TargetAttribute

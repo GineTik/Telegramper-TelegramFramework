@@ -1,4 +1,4 @@
-﻿namespace Telegramper.Attributes.ParametersParse.Separator
+﻿namespace Telegramper.Executors.Attributes.ParametersParse.Separator
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class ParametersSeparatorAttribute : Attribute

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Telegramper.Attributes.TargetExecutorAttributes;
+using Telegramper.Executors.Attributes.BaseAttributes;
+using Telegramper.Executors.Attributes.TargetExecutorAttributes;
+using Telegramper.Executors.NameTransformer;
 using Telegramper.Executors.Configuration.Options;
 using Telegramper.Executors.Helpers.Factories.Executors;
 using Telegramper.Executors.Routing;
@@ -34,7 +36,8 @@ namespace Telegramper.Executors.Configuration.Services
             return services;
         }
 
-        private static IEnumerable<Type> getExecutorsTypes(Assembly[]? assemblies = null)
+        private static IEnumerable<Type> getExecutorsTypes(
+            Assembly[]? assemblies = null)
         {
             assemblies ??= new[] { Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly() };
 
@@ -46,8 +49,10 @@ namespace Telegramper.Executors.Configuration.Services
             return executorsTypes;
         }
 
-        private static ExecutorOptions configureOptions(IServiceCollection services,
-            IEnumerable<Type> executorsTypes, Action<ExecutorOptions>? configure = null)
+        private static ExecutorOptions configureOptions(
+            IServiceCollection services,
+            IEnumerable<Type> executorsTypes, 
+            Action<ExecutorOptions>? configure = null)
         {
             var executorOptions = new ExecutorOptions();
             configure?.Invoke(executorOptions);
@@ -74,7 +79,9 @@ namespace Telegramper.Executors.Configuration.Services
             return executorOptions;
         }
 
-        private static void addTransientServices(this IServiceCollection services, IEnumerable<Type> executorsTypes,
+        private static void addTransientServices(
+            this IServiceCollection services, 
+            IEnumerable<Type> executorsTypes,
             ExecutorOptions executorOptions)
         {
             services.AddTransient<IExecutorRouter, ExecutorRouter>();
@@ -85,34 +92,20 @@ namespace Telegramper.Executors.Configuration.Services
                 services.AddTransient(type);
         }
 
-        private static void addSingletonServices(this IServiceCollection services, IEnumerable<Type> executorsTypes,
+        private static void addSingletonServices(
+            this IServiceCollection services, 
+            IEnumerable<Type> executorsTypes,
             ExecutorOptions executorOptions)
         {
-            var routesStorage = createRoutesStorage(executorsTypes, executorOptions);
-            var commandStorage = createCommandStorage(routesStorage.Methods);
-            
-            services.AddSingleton<ICommandStorage, ExecutorCommandStorage>(_ => commandStorage);
-            services.AddSingleton<IRoutesStorage, RoutesStorage>(_ => routesStorage);
-            
+            services.AddSingleton(typeof(INameTransformer), executorOptions.MethodNameTransformer.Type);
+
             services.AddSingleton<IUserStateStorage, UserStateStorage>();
             services.AddSingleton(typeof(IUserStateSaver), executorOptions.UserState.SaverType);
-        }
 
-        private static ExecutorCommandStorage createCommandStorage(IEnumerable<MethodInfo> methods)
-        {
-            var commandAttributes = methods
-                .SelectMany(method => method.GetCustomAttributes<TargetCommandsAttribute>());
-
-            return new ExecutorCommandStorage(commandAttributes);
-        }
-
-        private static RoutesStorage createRoutesStorage(IEnumerable<Type> executorsTypes, ExecutorOptions executorOptions)
-        {
-            var methods = ExecutorMethodsHelper.TakeExecutorMethodsFrom(executorsTypes);
-            var routes = new UpdateTypeDictionary(executorOptions.UserState.DefaultUserState);
-            routes.AddMethods(methods);
-
-            return new RoutesStorage(methods, routes);
+            var routesStorage = StaticRoutesStorageFactory.Create(services.BuildServiceProvider(), executorsTypes, executorOptions);
+            var commandStorage = StaticExecutorCommandStorageFactory.Create(routesStorage.Methods);
+            services.AddSingleton<IRoutesStorage, RoutesStorage>(_ => routesStorage);
+            services.AddSingleton<ICommandStorage, ExecutorCommandStorage>(_ => commandStorage);
         }
     }
 }
