@@ -7,9 +7,9 @@ It is framework similar to a ASP.Net Core. Framework contains services, middlewa
 1. [About UpdateContext (similar to HttpContext)](https://github.com/GineTik/Telegramper-TelegramFramework/tree/master/Telegramper/TelegramBotApplication/Context)
 1. [Configuration bot in Program.cs (Services, Middlewares, etc.)](https://github.com/GineTik/Telegramper-TelegramFramework/tree/master/Telegramper/TelegramBotApplication)
 1. [Executors and attributes](https://github.com/GineTik/Telegramper-TelegramFramework/tree/master/Telegramper/Executors)
+1. [Session](https://github.com/GineTik/Telegramper-TelegramFramework/tree/master/Telegramper/Sessions)
 
 ### Chapters coming soon
-- Session
 - Dialog
 - Examples of projects written on the Telegramper framework
 
@@ -32,7 +32,7 @@ internal class Program
 
 public class BasicExecutor : Executor
 {
-    [TargetCommands("start")]
+    [TargetCommands] // identical to [TargetCommands("start")]
     public async Task Start()
     {
         var sender = UpdateContext.User.ToString();
