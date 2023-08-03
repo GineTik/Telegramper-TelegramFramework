@@ -3,11 +3,12 @@
     public class MemorySessionDataSaver : ISessionDataSaver
     {
         private readonly Dictionary<string, object> _sessions;
-        private readonly object _locker = new object();
+        private readonly object _locker;
 
         public MemorySessionDataSaver()
         {
             _sessions = new();
+            _locker = new object();
         }
 
         public async Task RemoveAsync(long userId, string key)
