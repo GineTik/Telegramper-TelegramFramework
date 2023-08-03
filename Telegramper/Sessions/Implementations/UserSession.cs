@@ -10,6 +10,11 @@ namespace Telegramper.Sessions.Implementations
         {
         }
 
+        protected override string? BuildKey<T>()
+        {
+            return "User:" + typeof(T).Name;
+        }
+
         protected override long GetCurrentEntityId(UpdateContext updateContext)
         {
             return updateContext.TelegramUserId

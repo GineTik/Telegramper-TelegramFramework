@@ -27,7 +27,7 @@ namespace Telegramper.Sessions
         public async Task<T?> GetAsync<T>(long? entityId = null, string? key = null)
         {
             entityId ??= GetCurrentEntityId(_updateContext);
-            key ??= buildKey<T>();
+            key ??= BuildKey<T>();
 
             return await _sessionDataSaver.GetAsync<T>(entityId!.Value, key!);
         }
@@ -47,7 +47,7 @@ namespace Telegramper.Sessions
             ArgumentNullException.ThrowIfNull(value);
 
             entityId ??= GetCurrentEntityId(_updateContext);
-            key ??= buildKey<T>();
+            key ??= BuildKey<T>();
 
             await _sessionDataSaver.SetAsync(entityId!.Value, key!, value);
         }
@@ -77,17 +77,13 @@ namespace Telegramper.Sessions
         public async Task RemoveAsync<T>(long? entityId = null, string? key = null)
         {
             entityId ??= GetCurrentEntityId(_updateContext);
-            key ??= buildKey<T>();
+            key ??= BuildKey<T>();
 
             await _sessionDataSaver.RemoveAsync(entityId!.Value, key!);
         }
         #endregion
 
         protected abstract long GetCurrentEntityId(UpdateContext updateContext);
-
-        private static string? buildKey<T>()
-        {
-            return typeof(T).Name;
-        }
+        protected abstract string? BuildKey<T>();
     }
 }
