@@ -1,18 +1,21 @@
 ﻿using Telegramper.TelegramBotApplication.Context;
 using System.Reflection;
 using Telegramper.Executors.Routing.ParametersParser.Results;
-using Telegramper.Executors.Attributes.ParametersParse.Separator;
+using Telegramper.Executors.Routing.Attributes.ParametersParse.Separator;
 
 namespace Telegramper.Executors.Routing.ParametersParser.Extensions
 {
     public static class ParameterParserExtensions
     {
-        public static ParametersParseResult Parse(this IParametersParser parser, UpdateContext actual,
-            MethodInfo method, string defaultSeparator)
+        public static ParametersParseResult Parse(
+            this IParametersParser parser, 
+            UpdateContext actual,
+            MethodInfo methodInfo, 
+            string defaultSeparator)
         {
             var text = getTextWithArgs(actual);
-            var parameters = method.GetParameters();
-            var separator = getSeparator(method, defaultSeparator);
+            var parameters = methodInfo.GetParameters();
+            var separator = getSeparator(methodInfo, defaultSeparator);
 
             return parser.Parse(
                 text,
