@@ -8,12 +8,13 @@ using Telegramper.TelegramBotApplication.Configuration.Middlewares;
 using Telegramper.TelegramBotApplication.Configuration.Middlewares.UpdateContexts;
 using Telegramper.TelegramBotApplication.Context;
 using Telegramper.TelegramBotApplication.Delegates;
+using Telegramper.TelegramBotApplication.Pipelines;
 
 namespace Telegramper.TelegramBotApplication
 {
     public partial class BotApplication : IBotApplication
     {
-        private readonly Stack<MiddlewareFactoryDelegate> _middlewareFactoies;
+        private readonly IPipeline _pipeline;
         private readonly IServiceCollection _services;
         private readonly ReceiverOptions _receiverOptions;
         private string _apiKey;
@@ -28,7 +29,7 @@ namespace Telegramper.TelegramBotApplication
             ArgumentNullException.ThrowIfNull(services);
             ArgumentNullException.ThrowIfNull(receiverOptions);
 
-            _middlewareFactoies = new();
+            _pipeline = new Pipeline();
             _apiKey = apiKey;
             _services = services;
             _receiverOptions = receiverOptions;
@@ -38,21 +39,13 @@ namespace Telegramper.TelegramBotApplication
 
         public IBotApplication Use(Func<UpdateContext, NextDelegate, Task> middlware)
         {
-            ArgumentNullException.ThrowIfNull(middlware);
-
-            _middlewareFactoies.Push((serviceProvider, updateContext, next) =>
-                async () => await middlware(updateContext, next));
-
+            _pipeline.Use(middlware);
             return this;
         }
 
         public IBotApplication Use(Func<IServiceProvider, UpdateContext, NextDelegate, Task> middlware)
         {
-            ArgumentNullException.ThrowIfNull(middlware);
-
-            _middlewareFactoies.Push((serviceProvider, updateContext, next) =>
-               async () => await middlware(serviceProvider, updateContext, next));
-
+            _pipeline.Use(middlware);
             return this;
         }
 
@@ -60,9 +53,10 @@ namespace Telegramper.TelegramBotApplication
             where T : class, IMiddleware
         {
             _services.AddTransient<T>();
-            _middlewareFactoies.Push((serviceProvider, updateContext, next) =>
-                async () => await serviceProvider.GetRequiredService<T>().InvokeAsync(updateContext, next));
-
+            _pipeline.Use(async (serviceProvider, updateContext, next) =>
+            {
+                await serviceProvider.GetRequiredService<T>().InvokeAsync(updateContext, next);
+            });
             return this;
         }
 
@@ -83,11 +77,7 @@ namespace Telegramper.TelegramBotApplication
             updateContext.CancellationToken = cancellationToken;
             updateContext.Client = new AdvancedTelegramBotClient(_apiKey, updateContext);
 
-            using (var scope = _globalServiceProvider.CreateScope())
-            {
-                var firstMiddleware = buildMiddlewares(scope, updateContext);
-                await firstMiddleware.Invoke();
-            }
+            await _pipeline.InvokeMiddlewaresAsync(_globalServiceProvider, updateContext);
         }
 
         private Task handlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -101,18 +91,6 @@ namespace Telegramper.TelegramBotApplication
 
             Console.WriteLine(errorMessage);
             return Task.CompletedTask;
-        }
-
-        private NextDelegate buildMiddlewares(IServiceScope scope, UpdateContext updateContext)
-        {
-            NextDelegate firstMiddleware = () => Task.CompletedTask;
-
-            foreach (var factory in _middlewareFactoies)
-            {
-                firstMiddleware = factory.Invoke(scope.ServiceProvider, updateContext, firstMiddleware);
-            }
-
-            return firstMiddleware;
         }
     }
 }

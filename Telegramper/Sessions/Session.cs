@@ -18,6 +18,7 @@ namespace Telegramper.Sessions
 
         #region Get
         public async Task<T?> GetAndRemoveAsync<T>(long? entityId = null, string? key = null)
+            where T : class
         {
             var value = await GetAsync<T>(entityId, key);
             await RemoveAsync<T>(entityId, key);
@@ -25,6 +26,7 @@ namespace Telegramper.Sessions
         }
 
         public async Task<T?> GetAsync<T>(long? entityId = null, string? key = null)
+            where T : class
         {
             entityId ??= GetCurrentEntityId(_updateContext);
             key ??= BuildKey<T>();
@@ -33,6 +35,7 @@ namespace Telegramper.Sessions
         }
 
         public async Task<T> GetAsync<T>(T defaultValue, long? entityId = null, string? key = null)
+            where T : class
         {
             ArgumentNullException.ThrowIfNull(defaultValue);
 
@@ -43,6 +46,7 @@ namespace Telegramper.Sessions
 
         #region Set
         public async Task SetAsync<T>(T value, long? entityId = null, string? key = null)
+            where T : class
         {
             ArgumentNullException.ThrowIfNull(value);
 
@@ -52,7 +56,8 @@ namespace Telegramper.Sessions
             await _sessionDataSaver.SetAsync(entityId!.Value, key!, value);
         }
 
-        public async Task SetAsync<T>(Action<T?> changeValues, long? entityId = null, string? key = null)
+        public async Task SetAsync<T>(Action<T> changeValues, long? entityId = null, string? key = null)
+            where T : class
         {
             ArgumentNullException.ThrowIfNull(changeValues);
 
@@ -64,6 +69,7 @@ namespace Telegramper.Sessions
         }
 
         public async Task SetAsync<T>(T defaultValue, Action<T> changeValues, long? entityId = null, string? key = null)
+            where T : class
         {
             ArgumentNullException.ThrowIfNull(changeValues);
 
@@ -75,6 +81,7 @@ namespace Telegramper.Sessions
 
         #region Remove
         public async Task RemoveAsync<T>(long? entityId = null, string? key = null)
+            where T : class
         {
             entityId ??= GetCurrentEntityId(_updateContext);
             key ??= BuildKey<T>();

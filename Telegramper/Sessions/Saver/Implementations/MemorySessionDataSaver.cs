@@ -23,10 +23,11 @@
         }
 
         public async Task<T?> GetAsync<T>(long userId, string key)
+            where T : class
         {
-            return await Task.Run(() =>
+            return await Task.Run(new Func<T?>(() =>
             {
-                object? value;
+                object? value = null;
 
                 lock (_locker)
                 {
@@ -39,10 +40,11 @@
                 }
 
                 return default;
-            });
+            }));
         }
 
-        public async Task SetAsync<T>(long userId, string key, T data)
+        public async Task SetAsync<T>(long userId, string key, T data) 
+            where T : class
         {
             await Task.Run(() =>
             {
