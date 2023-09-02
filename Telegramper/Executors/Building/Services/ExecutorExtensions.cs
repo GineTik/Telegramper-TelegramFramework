@@ -23,7 +23,7 @@ namespace Telegramper.Executors.Build.Services
         }
 
         public static IServiceCollection AddExecutors(this IServiceCollection services,
-            IEnumerable<Assembly>? assemblies = null, Action<ExecutorOptions>? configureAction = null)
+            IEnumerable<Assembly>? assemblies, Action<ExecutorOptions>? configureAction = null)
         {
             assemblies ??= new[] { Assembly.GetExecutingAssembly(), Assembly.GetEntryAssembly()! }.Where(a => a != null);
 

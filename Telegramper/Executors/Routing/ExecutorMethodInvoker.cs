@@ -26,7 +26,6 @@ namespace Telegramper.Executors.Routing
             
             foreach (var invokableMethod in verifiedInvokableMethods)
             {
-                Console.WriteLine(invokableMethod.Method.MethodInfo.Name);
                 await invokableMethod.InvokeAsync(_executorFactory);
             }
             
