@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Telegramper.Storage.Dictionary;
-using Telegramper.Storage.Initializators;
+using Telegramper.Storage.Initializers;
 using Telegramper.Storage.List;
 
 namespace Telegramper.Storage.Services
@@ -36,14 +36,14 @@ namespace Telegramper.Storage.Services
             return services;
         }
 
-        public static IServiceCollection AddListStorage<TItem, TInitializator>(this IServiceCollection services)
-            where TInitializator : class, IListStorageInitializator<TItem>
+        public static IServiceCollection AddListStorage<TItem, TInitializer>(this IServiceCollection services)
+            where TInitializer : class, IListStorageInitializer<TItem>
         {
-            services.AddSingleton<TInitializator>();
+            services.AddSingleton<TInitializer>();
             services.AddSingleton<IListStorage<TItem>, ListStorage<TItem>>(
                 serviceProvider =>
                 {
-                    var initializator = serviceProvider.GetRequiredService<TInitializator>();
+                    var initializator = serviceProvider.GetRequiredService<TInitializer>();
                     var items = initializator.Initialization().ToList();
                     return new ListStorage<TItem>(items);
                 }
@@ -51,15 +51,15 @@ namespace Telegramper.Storage.Services
             return services;
         }
 
-        public static IServiceCollection AddDictionaryStorage<TKey, TValue, TInitializator>(this IServiceCollection services)
+        public static IServiceCollection AddDictionaryStorage<TKey, TValue, TInitializer>(this IServiceCollection services)
             where TKey : notnull
-            where TInitializator : class, IDictionaryStorageInitializator<TKey, TValue>
+            where TInitializer : class, IDictionaryStorageInitializer<TKey, TValue>
         {
-            services.AddSingleton<TInitializator>();
+            services.AddSingleton<TInitializer>();
             services.AddSingleton<IDictionaryStorage<TKey, TValue>, DictionaryStorage<TKey, TValue>>(
                 serviceProvider =>
                 {
-                    var initializator = serviceProvider.GetRequiredService<TInitializator>();
+                    var initializator = serviceProvider.GetRequiredService<TInitializer>();
                     var items = initializator.Initialization();
                     return new DictionaryStorage<TKey, TValue>(items);
                 }
