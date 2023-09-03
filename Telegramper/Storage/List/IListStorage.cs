@@ -2,6 +2,6 @@
 {
     public interface IListStorage<TItem>
     {
-        IEnumerable<TItem> Items { get; }
+        ICollection<TItem> Items { get; }
     }
 }
