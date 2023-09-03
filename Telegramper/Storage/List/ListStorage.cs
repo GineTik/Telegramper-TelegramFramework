@@ -2,11 +2,11 @@
 {
     public class ListStorage<TItem> : IListStorage<TItem>
     {
-        public ListStorage(IEnumerable<TItem> items)
+        public ListStorage(ICollection<TItem> items)
         {
             Items = items;
         }
 
-        public IEnumerable<TItem> Items { get; }
+        public ICollection<TItem> Items { get; }
     }
 }

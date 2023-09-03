@@ -7,19 +7,23 @@ namespace Telegramper.Storage.Services
 {
     public static class StorageExtensions
     {
-        public static IServiceCollection AddListStorage<TItem>(this IServiceCollection services, Func<IServiceProvider, IEnumerable<TItem>> initializeStorage)
+        public static IServiceCollection AddListStorage<TItem>(
+            this IServiceCollection services, 
+            Func<IServiceProvider, IEnumerable<TItem>> initializeStorage)
         {
             services.AddSingleton<IListStorage<TItem>, ListStorage<TItem>>(
                 serviceProvider =>
                 {
-                    var items = initializeStorage(serviceProvider);
-                    return new ListStorage<TItem>(initializeStorage(serviceProvider));
+                    var items = initializeStorage(serviceProvider).ToList();
+                    return new ListStorage<TItem>(items);
                 }
             );
             return services;
         }
 
-        public static IServiceCollection AddDictionaryStorage<TKey, TValue>(this IServiceCollection services, Func<IServiceProvider, IDictionary<TKey, TValue>> initializeStorage)
+        public static IServiceCollection AddDictionaryStorage<TKey, TValue>(
+            this IServiceCollection services, 
+            Func<IServiceProvider, IDictionary<TKey, TValue>> initializeStorage)
             where TKey : notnull
         {
             services.AddSingleton<IDictionaryStorage<TKey, TValue>, DictionaryStorage<TKey, TValue>>(
@@ -40,7 +44,7 @@ namespace Telegramper.Storage.Services
                 serviceProvider =>
                 {
                     var initializator = serviceProvider.GetRequiredService<TInitializator>();
-                    var items = initializator.Initialization();
+                    var items = initializator.Initialization().ToList();
                     return new ListStorage<TItem>(items);
                 }
             );
