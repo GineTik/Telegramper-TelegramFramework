@@ -7,6 +7,7 @@ using Telegramper.Executors.QueryHandlers.ParametersParser.Extensions;
 using Microsoft.Extensions.Options;
 using Telegramper.Executors.Common.Options;
 using Telegramper.Executors.Common.Models;
+using Telegramper.Executors.QueryHandlers.Preparer.ErrorHandler;
 
 namespace Telegramper.Executors.QueryHandlers.Preparer
 {
@@ -15,15 +16,18 @@ namespace Telegramper.Executors.QueryHandlers.Preparer
         private readonly IParametersParser _parametersParser;
         private readonly UpdateContext _updateContext;
         private readonly ParameterParserOptions _parameterParserOptions;
+        private readonly IParseErrorHandler _parseErrorHandler;
 
         public ExecutorMethodPreparer(
             IParametersParser parametersParser,
             UpdateContextAccessor updateContextAccessor,
-            IOptions<ParameterParserOptions> parameterParserOptions)
+            IOptions<ParameterParserOptions> parameterParserOptions,
+            IParseErrorHandler parseErrorHandler)
         {
             _parametersParser = parametersParser;
             _updateContext = updateContextAccessor.UpdateContext;
             _parameterParserOptions = parameterParserOptions.Value;
+            _parseErrorHandler = parseErrorHandler;
         }
 
         public IEnumerable<InvokableExecutorMethod> PrepareMethodsForExecution(
@@ -48,10 +52,11 @@ namespace Telegramper.Executors.QueryHandlers.Preparer
 
                 if (parseResult.Status != ParseStatus.Success)
                 {
+                    var errorMessage = _parseErrorHandler.GetErrorMessage(parseResult.Status, method);
                     prepareErrorsList.Add(new PrepareError
                     {
                         Method = method,
-                        Message = parseResult.Status.ToString() // not completed
+                        Message = errorMessage
                     });
                     continue;
                 }

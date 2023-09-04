@@ -9,6 +9,7 @@ using Telegramper.Executors.QueryHandlers.Factory;
 using Telegramper.Executors.QueryHandlers.MethodInvoker;
 using Telegramper.Executors.QueryHandlers.ParametersParser;
 using Telegramper.Executors.QueryHandlers.Preparer;
+using Telegramper.Executors.QueryHandlers.Preparer.ErrorHandler;
 using Telegramper.Executors.QueryHandlers.RouteDictionaries;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
 using Telegramper.Executors.QueryHandlers.UserState;
@@ -65,7 +66,10 @@ namespace Telegramper.Executors.Initialization.Services
             IEnumerable<Assembly> assemblies)
         {
             var executorsTypes = StaticExecutorFinder.FindExecutorTypes(assemblies);
-            services.AddListStorage<ExecutorType>(_ => executorsTypes.Cast<ExecutorType>());
+            services.AddListStorage<ExecutorTypeWrapper>(_ => executorsTypes.Select(type => new ExecutorTypeWrapper
+            {
+                Type = type
+            }));
             services.AddListStorage<ExecutorMethod, ExecutorMethodStorageInitializer>();
             services.AddListStorage<TargetCommandAttribute, CommandStorageInitializer>();
             services.AddDictionaryStorage<RouteTree, RouteStorageInitializer>();
@@ -75,6 +79,7 @@ namespace Telegramper.Executors.Initialization.Services
             services.AddTransient<ISuitableMethodFinder, SuitableMethodFinder>();
             services.AddTransient<IExecutorMethodPreparer, ExecutorMethodPreparer>();
             services.AddTransient<IUserStates, UserStates>();
+            services.AddTransient<IParseErrorHandler, ParseErrorHandler>();
             services.AddSingleton(typeof(IUserStateSaver), executorOptions.UserState.SaverType);
             services.AddTransient(typeof(IParametersParser), executorOptions.ParameterParser.ParserType);
             services.AddSingleton(typeof(INameTransformer), executorOptions.MethodNameTransformer.Type);

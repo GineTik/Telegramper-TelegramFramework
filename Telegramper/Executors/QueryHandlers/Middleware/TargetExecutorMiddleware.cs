@@ -1,4 +1,5 @@
-﻿using Telegramper.Executors.QueryHandlers.MethodInvoker;
+﻿using Telegram.Bot.Types.Enums;
+using Telegramper.Executors.QueryHandlers.MethodInvoker;
 using Telegramper.Executors.QueryHandlers.Preparer;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
 using Telegramper.TelegramBotApplication.AdvancedBotClient.Extensions;
@@ -34,7 +35,7 @@ namespace Telegramper.Executors.QueryHandlers.Middleware
 
             foreach (var error in errors)
             {
-                await _updateContext.Client.SendTextMessageAsync(error.Message);
+                await _updateContext.Client.SendTextMessageAsync(error.Message, parseMode: ParseMode.MarkdownV2);
             }
 
             if (invokableMethods.Any() == false)

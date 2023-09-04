@@ -3,9 +3,9 @@ using Telegramper.Storage.Initializers;
 
 namespace Telegramper.Executors.Initialization.StorageInitializers
 {
-    public class ExecutorTypeStorageInitializer : IListStorageInitializer<ExecutorType>
+    public class ExecutorTypeStorageInitializer : IListStorageInitializer<ExecutorTypeWrapper>
     {
-        public IEnumerable<ExecutorType> Initialization()
+        public IEnumerable<ExecutorTypeWrapper> Initialization()
         {
             throw new NotImplementedException();
         }
