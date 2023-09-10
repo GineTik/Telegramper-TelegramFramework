@@ -1,6 +1,6 @@
 ﻿using Telegramper.Sessions.Interfaces;
 using Telegramper.Sessions.Saver;
-using Telegramper.TelegramBotApplication.Context;
+using Telegramper.Core.Context;
 
 namespace Telegramper.Sessions.Implementations
 {

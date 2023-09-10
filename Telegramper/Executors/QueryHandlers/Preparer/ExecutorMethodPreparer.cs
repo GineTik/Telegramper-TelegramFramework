@@ -2,7 +2,7 @@
 using Telegramper.Executors.QueryHandlers.ParametersParser;
 using Telegramper.Executors.QueryHandlers.ParametersParser.Results;
 using Telegramper.Executors.QueryHandlers.Preparer.PrepareErrors;
-using Telegramper.TelegramBotApplication.Context;
+using Telegramper.Core.Context;
 using Telegramper.Executors.QueryHandlers.ParametersParser.Extensions;
 using Microsoft.Extensions.Options;
 using Telegramper.Executors.Common.Options;

@@ -1,5 +1,5 @@
-﻿using Telegramper.TelegramBotApplication.Context;
-using Telegramper.TelegramBotApplication.AdvancedBotClient;
+﻿using Telegramper.Core.Context;
+using Telegramper.Core.AdvancedBotClient;
 using Microsoft.Extensions.DependencyInjection;
 using Telegramper.Executors.QueryHandlers.Factory;
 
