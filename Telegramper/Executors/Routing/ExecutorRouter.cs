@@ -10,7 +10,7 @@ using Telegramper.Executors.Routing.ParametersParser.Extensions;
 using Telegramper.Executors.Routing.ParametersParser.Results;
 using Telegramper.Executors.Routing.Storage;
 using Telegramper.Executors.Storages.UserState;
-using Telegramper.TelegramBotApplication.Context;
+using Telegramper.Core.Context;
 
 namespace Telegramper.Executors.Routing
 {

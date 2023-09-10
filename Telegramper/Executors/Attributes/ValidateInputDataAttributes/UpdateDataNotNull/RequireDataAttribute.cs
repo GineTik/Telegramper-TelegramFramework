@@ -1,5 +1,5 @@
 ﻿using Telegramper.Executors.Attributes.BaseAttributes;
-using Telegramper.TelegramBotApplication.Context;
+using Telegramper.Core.Context;
 
 namespace Telegramper.Executors.Attributes.ValidateInputDataAttributes.UpdateDataNotNull
 {

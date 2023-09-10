@@ -4,10 +4,10 @@ using Telegramper.Executors.Attributes.ParametersParse;
 using Telegramper.Executors.Configuration.Options;
 using Telegramper.Executors.Routing;
 using Telegramper.Executors.Routing.ParametersParser.Results;
-using Telegramper.TelegramBotApplication.AdvancedBotClient.Extensions;
-using Telegramper.TelegramBotApplication.Configuration.Middlewares;
-using Telegramper.TelegramBotApplication.Context;
-using Telegramper.TelegramBotApplication.Delegates;
+using Telegramper.Core.AdvancedBotClient.Extensions;
+using Telegramper.Core.Configuration.Middlewares;
+using Telegramper.Core.Context;
+using Telegramper.Core.Delegates;
 
 namespace Telegramper.Executors.Configuration.Middleware.TargetExecutor
 {

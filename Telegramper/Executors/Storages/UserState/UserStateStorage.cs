@@ -1,6 +1,6 @@
 ﻿using Telegramper.Executors.Configuration.Options;
 using Telegramper.Executors.Storages.UserState.Saver;
-using Telegramper.TelegramBotApplication.Context;
+using Telegramper.Core.Context;
 using Microsoft.Extensions.Options;
 
 namespace Telegramper.Executors.Storages.UserState
