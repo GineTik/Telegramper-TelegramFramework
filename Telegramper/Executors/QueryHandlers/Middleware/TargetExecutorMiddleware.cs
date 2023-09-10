@@ -2,10 +2,10 @@
 using Telegramper.Executors.QueryHandlers.MethodInvoker;
 using Telegramper.Executors.QueryHandlers.Preparer;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
-using Telegramper.TelegramBotApplication.AdvancedBotClient.Extensions;
-using Telegramper.TelegramBotApplication.Configuration.Middlewares;
-using Telegramper.TelegramBotApplication.Context;
-using Telegramper.TelegramBotApplication.Delegates;
+using Telegramper.Core.AdvancedBotClient.Extensions;
+using Telegramper.Core.Configuration.Middlewares;
+using Telegramper.Core.Context;
+using Telegramper.Core.Delegates;
 
 namespace Telegramper.Executors.QueryHandlers.Middleware
 {

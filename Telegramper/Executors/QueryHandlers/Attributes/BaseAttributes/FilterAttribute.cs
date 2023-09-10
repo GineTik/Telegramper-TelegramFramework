@@ -1,4 +1,4 @@
-﻿using Telegramper.TelegramBotApplication.Context;
+﻿using Telegramper.Core.Context;
 
 namespace Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes
 {

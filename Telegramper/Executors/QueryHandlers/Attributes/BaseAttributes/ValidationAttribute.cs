@@ -1,7 +1,7 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
-using Telegramper.TelegramBotApplication.AdvancedBotClient.Extensions;
-using Telegramper.TelegramBotApplication.Context;
+using Telegramper.Core.AdvancedBotClient.Extensions;
+using Telegramper.Core.Context;
 
 namespace Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes
 {

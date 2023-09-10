@@ -2,7 +2,7 @@
 using Telegramper.Executors.QueryHandlers.RouteDictionaries;
 using Telegramper.Executors.QueryHandlers.UserState;
 using Telegramper.Storage.Dictionary;
-using Telegramper.TelegramBotApplication.Context;
+using Telegramper.Core.Context;
 
 namespace Telegramper.Executors.QueryHandlers.SuitableMethodFinder
 {
