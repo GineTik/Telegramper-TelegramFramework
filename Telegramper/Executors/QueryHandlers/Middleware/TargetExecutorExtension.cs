@@ -1,4 +1,4 @@
-﻿using Telegramper.TelegramBotApplication;
+﻿using Telegramper.Core;
 
 namespace Telegramper.Executors.QueryHandlers.Middleware
 {

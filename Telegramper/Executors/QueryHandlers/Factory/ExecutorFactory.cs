@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Telegramper.Executors.Common.Exceptions;
 using Telegramper.Executors.Common.Models;
-using Telegramper.TelegramBotApplication.Context;
+using Telegramper.Core.Context;
 
 namespace Telegramper.Executors.QueryHandlers.Factory
 {

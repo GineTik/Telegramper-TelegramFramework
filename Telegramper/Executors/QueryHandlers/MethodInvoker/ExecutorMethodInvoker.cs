@@ -1,6 +1,6 @@
 ﻿using Telegramper.Executors.QueryHandlers.Factory;
 using Telegramper.Executors.QueryHandlers.Models;
-using Telegramper.TelegramBotApplication.Context;
+using Telegramper.Core.Context;
 
 namespace Telegramper.Executors.QueryHandlers.MethodInvoker
 {

@@ -1,4 +1,4 @@
-﻿using Telegramper.TelegramBotApplication.Context;
+﻿using Telegramper.Core.Context;
 using System.Reflection;
 using Telegramper.Executors.QueryHandlers.ParametersParser.Results;
 using Telegramper.Executors.QueryHandlers.Attributes.ParametersParse.Separator;
