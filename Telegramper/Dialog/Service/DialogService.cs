@@ -1,9 +1,8 @@
-﻿using Telegram.Bot.Types.ReplyMarkups;
+﻿using Telegramper.Core.AdvancedBotClient.Extensions;
+using Telegramper.Core.Context;
 using Telegramper.Dialog.Models;
 using Telegramper.Executors.QueryHandlers.UserState;
 using Telegramper.Storage.Dictionary;
-using Telegramper.TelegramBotApplication.AdvancedBotClient.Extensions;
-using Telegramper.TelegramBotApplication.Context;
 
 namespace Telegramper.Dialog.Instance
 {
