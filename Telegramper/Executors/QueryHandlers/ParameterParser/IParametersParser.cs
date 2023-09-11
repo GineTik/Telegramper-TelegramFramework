@@ -5,6 +5,6 @@ namespace Telegramper.Executors.QueryHandlers.ParametersParser
 {
     public interface IParametersParser
     {
-        public ParametersParseResult Parse(string text, ParameterInfo[] parameters, string parameterSeparator);
+        public ParametersParseResult Parse(string args, ICollection<ParameterInfo> parametersInfos, string argsSeparator);
     }
 }

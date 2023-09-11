@@ -2,6 +2,9 @@
 using System.Reflection;
 using Telegramper.Executors.QueryHandlers.ParametersParser.Results;
 using Telegramper.Executors.QueryHandlers.Attributes.ParametersParse.Separator;
+using Telegram.Bot.Types;
+using System.Text.RegularExpressions;
+using Telegramper.Executors.QueryHandlers.ParameterParser.Extensions;
 
 namespace Telegramper.Executors.QueryHandlers.ParametersParser.Extensions
 {
@@ -9,13 +12,13 @@ namespace Telegramper.Executors.QueryHandlers.ParametersParser.Extensions
     {
         public static ParametersParseResult Parse(
             this IParametersParser parser, 
-            UpdateContext actual,
+            UpdateContext actualUpdateContext,
             MethodInfo methodInfo, 
             string defaultSeparator)
         {
-            var text = getTextWithArgs(actual);
+            var text = takeArgs(actualUpdateContext.Update);
             var parameters = methodInfo.GetParameters();
-            var separator = getSeparator(methodInfo, defaultSeparator);
+            var separator = takeSeparator(methodInfo, defaultSeparator);
 
             return parser.Parse(
                 text,
@@ -24,15 +27,15 @@ namespace Telegramper.Executors.QueryHandlers.ParametersParser.Extensions
             );
         }
 
-        private static string getTextWithArgs(UpdateContext updateContext)
+        private static string takeArgs(Update udpate)
         {
             return
-                updateContext.Update.Message?.Text ??
-                updateContext.Update.CallbackQuery?.Data ??
+                udpate.Message?.Text?.RemoveCommand() ??
+                udpate.CallbackQuery?.Data?.RemoveFirstTargetCallbackData() ??
                 "";
         }
 
-        private static string getSeparator(MethodInfo methodInfo, string defaultSeparator)
+        private static string takeSeparator(MethodInfo methodInfo, string defaultSeparator)
         {
             return
                 methodInfo.GetCustomAttribute<ParametersSeparatorAttribute>()?.Separator ??
