@@ -8,7 +8,7 @@ namespace Telegramper.Executors.QueryHandlers.ParameterParser.Extensions
         {
             ArgumentNullException.ThrowIfNull(text);
 
-            return Regex.Replace(text, "^/*\\w+\\s*", "");
+            return Regex.Replace(text, "^/\\w+\\s*", "");
         }
 
         public static string RemoveFirstTargetCallbackData(this string text)
