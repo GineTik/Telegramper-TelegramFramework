@@ -28,10 +28,10 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes
             MethodName = method.MethodInfo.Name;
             TransformedMethodName = transformer.Transform(MethodName);
 
-            BeforeInitialization(method, serviceProvider);
+            Initialization(method);
         }
 
         public abstract bool IsTarget(Update update);
-        protected virtual void BeforeInitialization(ExecutorMethod method, IServiceProvider serviceProvider) { }
+        protected virtual void Initialization(ExecutorMethod method) { }
     }
 }
