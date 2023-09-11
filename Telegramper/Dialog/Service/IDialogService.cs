@@ -1,4 +1,4 @@
-﻿namespace Telegramper.Dialog.Instance
+﻿namespace Telegramper.Dialog.Service
 {
     public interface IDialogService
     {

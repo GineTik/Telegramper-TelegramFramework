@@ -4,7 +4,7 @@ using Telegramper.Dialog.Models;
 using Telegramper.Executors.QueryHandlers.UserState;
 using Telegramper.Storage.Dictionary;
 
-namespace Telegramper.Dialog.Instance
+namespace Telegramper.Dialog.Service
 {
     public class DialogService : IDialogService
     {
