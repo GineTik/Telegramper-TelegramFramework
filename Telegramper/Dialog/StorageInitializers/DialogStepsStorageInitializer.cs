@@ -29,7 +29,7 @@ namespace Telegramper.Dialog.StorageInitializers
 
             foreach (var groupedStep in groupedSteps)
             {
-                var sortedSteps = groupedStep.ToList().OrderBy(step => step.StepAttribute.Priority).ToList();
+                var sortedSteps = groupedStep.ToList().OrderBy(step => step.StepAttribute.Index).ToList();
                 builedStepsDictionary.Add(groupedStep.Key, sortedSteps);
             }
 

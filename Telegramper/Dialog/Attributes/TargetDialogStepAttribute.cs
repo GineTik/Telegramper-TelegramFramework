@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
 using Telegramper.Executors.QueryHandlers.Attributes.Targets;
@@ -11,14 +10,16 @@ namespace Telegramper.Dialog.Attributes
     [TargetUpdateType(UpdateType.Unknown)]
     public class TargetDialogStepAttribute : TargetAttribute
     {
-        public string DialogName => _dialogName;
+        public string DialogName { get; private set; } = default!;
+        
+        public string? Key { get; set; }
         public int Priority { get; set; }
-        public string Question { get; }
-        public ParseMode ParseMode { get; set; } = ParseMode.MarkdownV2;
+        public int Index { get; private set; }
 
-        private string _dialogName = default!;
-        private string _userState = default!;
-        public override string? UserStates => _userState ??= "Dialog:" + _dialogName + ":" + Priority;
+        public string Question { get; }
+        public ParseMode? ParseMode { get; set; }
+
+        public override string? UserStates => StaticDialogUserStateFactory.CreateByIndex(DialogName, Index);
 
         public TargetDialogStepAttribute(string question)
         {
@@ -32,14 +33,14 @@ namespace Telegramper.Dialog.Attributes
 
         protected override void Initialization(ExecutorMethod method)
         {
-            _dialogName = 
+            DialogName = 
                 method.ExecutorType.GetCustomAttribute<DialogNameAttribute>()?.DialogName
                 ?? method.ExecutorType.Name;
 
-            Priority = method.ExecutorType
+            Index = method.ExecutorType
                 .GetMethods()
                 .Where(method => method.GetCustomAttribute<TargetDialogStepAttribute>() != null)
-                .OrderBy(method => method.GetCustomAttribute<TargetDialogStepAttribute>()!.Priority)
+                .OrderByDescending(method => method.GetCustomAttribute<TargetDialogStepAttribute>()!.Priority)
                 .ToList()
                 .IndexOf(method.MethodInfo);
         }
