@@ -9,7 +9,8 @@ namespace Telegramper.Core.Helpers.Factories.Configuration
         {
             return new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Assembly.GetCallingAssembly().Location, "../../../../"))
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
                 .Build();
         }
     }
