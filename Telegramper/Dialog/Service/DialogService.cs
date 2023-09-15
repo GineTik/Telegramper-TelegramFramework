@@ -1,6 +1,8 @@
-﻿using Telegramper.Core.AdvancedBotClient.Extensions;
+﻿using Telegram.Bot;
+using Telegramper.Core.AdvancedBotClient.Extensions;
 using Telegramper.Core.Context;
 using Telegramper.Dialog.Models;
+using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.QueryHandlers.UserState;
 using Telegramper.Storage.Dictionary;
 
@@ -29,9 +31,14 @@ namespace Telegramper.Dialog.Service
                 throw new ArgumentException("The dialog with current name not exists");
             }
 
-            // the steps will definitely be one or more
+            // The steps will definitely be one or more
             var firstStep = steps.First();
             await runStepAsync(firstStep);
+        }
+
+        public async Task StartAsync<T>() where T : Executor
+        {
+            await StartAsync(typeof(T).Name);
         }
 
         public async Task NextAsync()
@@ -75,12 +82,27 @@ namespace Telegramper.Dialog.Service
 
         private async Task runStepAsync(DialogStep step)
         {
-            var userstate = step.StepAttribute.UserStates!;
-            var question = step.StepAttribute.Question;
-            var parseMode = step.StepAttribute.ParseMode;
+            var stepAttribute = step.StepAttribute;
 
-            await _userStates.SetAsync(userstate);
-            await _updateContext.Client.SendTextMessageAsync(question, parseMode: parseMode);
+            await _userStates.SetRangeAsync(new[] {
+                stepAttribute.UserStates!,
+                StaticDialogUserStateFactory.Create(stepAttribute.DialogName),
+            });
+
+            if (stepAttribute.Key != null)
+            {
+                await _userStates.AddAsync(
+                    StaticDialogUserStateFactory.CreateByKey(
+                        stepAttribute.DialogName,
+                        stepAttribute.Key
+                    )
+                );
+            }
+
+            await _updateContext.Client.SendTextMessageAsync(
+                stepAttribute.Question,
+                parseMode: stepAttribute.ParseMode
+            );
         }
     } 
 }
