@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -14,11 +16,15 @@ namespace Telegramper.Core
 {
     public partial class BotApplication : IBotApplication
     {
+        public IServiceProvider Services => _publicServiceProvider;
+        public ILogger Logger { get; }
+
         private readonly IPipeline _pipeline;
-        private readonly IServiceCollection _services;
+        private readonly IServiceCollection _serviceCollection;
         private readonly ReceiverOptions _receiverOptions;
         private string _apiKey;
-        private IServiceProvider _globalServiceProvider = default!;
+        private IServiceProvider _serviceProviderWithMiddlewares = default!;
+        private IServiceProvider _publicServiceProvider = default!;
 
         public BotApplication(
             string apiKey, 
@@ -31,8 +37,11 @@ namespace Telegramper.Core
 
             _pipeline = new Pipeline();
             _apiKey = apiKey;
-            _services = services;
+            _serviceCollection = services;
             _receiverOptions = receiverOptions;
+            _publicServiceProvider = services.BuildServiceProvider();
+
+            Logger = _publicServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Program");
 
             UseMiddleware<UpdateContextMiddleware>();
         }
@@ -52,7 +61,7 @@ namespace Telegramper.Core
          public IBotApplication UseMiddleware<T>()
             where T : class, IMiddleware
         {
-            _services.AddTransient<T>();
+            _serviceCollection.AddTransient<T>();
             _pipeline.Use(async (serviceProvider, updateContext, next) =>
             {
                 await serviceProvider.GetRequiredService<T>().InvokeAsync(updateContext, next);
@@ -62,7 +71,7 @@ namespace Telegramper.Core
 
         public void RunPolling()
         {
-            _globalServiceProvider = _services.BuildServiceProvider();
+            _serviceProviderWithMiddlewares = _serviceCollection.BuildServiceProvider();
 
             var client = new TelegramBotClient(_apiKey);
             client.StartReceiving(invokeMiddlewares, handlePollingErrorAsync, _receiverOptions);
@@ -77,7 +86,7 @@ namespace Telegramper.Core
             updateContext.CancellationToken = cancellationToken;
             updateContext.Client = new AdvancedTelegramBotClient(_apiKey, updateContext);
 
-            await _pipeline.InvokeMiddlewaresAsync(_globalServiceProvider, updateContext);
+            await _pipeline.InvokeMiddlewaresAsync(_serviceProviderWithMiddlewares, updateContext);
         }
 
         private Task handlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
