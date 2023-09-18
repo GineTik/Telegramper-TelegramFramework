@@ -76,6 +76,7 @@ namespace Telegramper.Core
             var client = new TelegramBotClient(_apiKey);
             client.StartReceiving(invokeMiddlewares, handlePollingErrorAsync, _receiverOptions);
 
+            Logger.LogInformation("The bot is up and running");
             Console.ReadLine();
         }
 
@@ -98,7 +99,7 @@ namespace Telegramper.Core
                 _ => exception.ToString()
             };
 
-            Console.WriteLine(errorMessage);
+            Logger.LogError(errorMessage);
             return Task.CompletedTask;
         }
     }
