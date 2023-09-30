@@ -10,7 +10,7 @@ It is framework similar to a ASP.Net Core. Framework contains services, middlewa
 1. [Session](https://github.com/GineTik/Telegramper-TelegramFramework/tree/master/Telegramper/Sessions)
 
 ### Chapters coming soon
-- Dialog
+- Dialog (comleted, documentation in process)
 - Examples of projects written on the Telegramper framework
 
 ## Quick start
@@ -32,14 +32,14 @@ internal class Program
 
 public class BasicExecutor : Executor
 {
-    [TargetCommands] // identical to [TargetCommands("start")]
+    [TargetCommand] // identical to [TargetCommand("start")]
     public async Task Start()
     {
         var sender = UpdateContext.User.ToString();
         await Client.SendTextMessageAsync($"You are {sender}"); // send a text response
     }
 
-    [TargetCommands("echo, command2")]
+    [TargetCommand("echo, command2")]
     [EmptyParameterSeparator] // remove separator, by default is space(" ")
     public async Task Echo(string phrase) // more about the parameters later 
     {
