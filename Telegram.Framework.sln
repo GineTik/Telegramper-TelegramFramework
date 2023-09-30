@@ -9,6 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirstTelegramBotWithExecuto
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegramper", "Telegramper\Telegramper.csproj", "{98309BE0-BC5E-46D4-8A0A-3934EDDE28AB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotTest", "Examples\BotTest\BotTest.csproj", "{5870ABBD-E422-4DD2-A442-850C422FF046}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{73207993-3FA7-4067-B997-316F713ACB9E}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\UpdateContext.md = Documentation\UpdateContext.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,12 +30,17 @@ Global
 		{98309BE0-BC5E-46D4-8A0A-3934EDDE28AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98309BE0-BC5E-46D4-8A0A-3934EDDE28AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98309BE0-BC5E-46D4-8A0A-3934EDDE28AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5870ABBD-E422-4DD2-A442-850C422FF046}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5870ABBD-E422-4DD2-A442-850C422FF046}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5870ABBD-E422-4DD2-A442-850C422FF046}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5870ABBD-E422-4DD2-A442-850C422FF046}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{94D54920-4B34-42EA-85F0-F7A5491CD721} = {6689840E-3CA3-4AEF-B258-1D8927FCB8BC}
+		{5870ABBD-E422-4DD2-A442-850C422FF046} = {6689840E-3CA3-4AEF-B258-1D8927FCB8BC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ECEFAFD6-7560-43B7-BCC0-E2C7EF9244B4}
