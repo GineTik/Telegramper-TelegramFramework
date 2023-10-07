@@ -16,12 +16,12 @@ namespace Telegramper.Dialog.Attributes
         public int Priority { get; set; }
         public int Index { get; private set; }
 
-        public string Question { get; }
+        public string? Question { get; }
         public ParseMode? ParseMode { get; set; }
 
         public override string? UserStates => StaticDialogUserStateFactory.CreateByIndex(DialogName, Index);
 
-        public TargetDialogStepAttribute(string question)
+        public TargetDialogStepAttribute(string? question)
         {
             Question = question;
         }

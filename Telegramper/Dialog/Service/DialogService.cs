@@ -99,10 +99,13 @@ namespace Telegramper.Dialog.Service
                 );
             }
 
-            await _updateContext.Client.SendTextMessageAsync(
-                stepAttribute.Question,
-                parseMode: stepAttribute.ParseMode
-            );
+            if (stepAttribute.Question != null)
+            {
+                await _updateContext.Client.SendTextMessageAsync(
+                    stepAttribute.Question,
+                    parseMode: stepAttribute.ParseMode
+                );
+            }
         }
     } 
 }
