@@ -6,10 +6,10 @@
 # Test project
 Examples/
 
-# NuGet
-nuget.exe
+# NuGet packege files
 *.nupkg
 *.nuspec
+nuget.exe
 
 # User-specific files
 *.rsuser

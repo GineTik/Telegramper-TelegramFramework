@@ -3,14 +3,17 @@ It is framework similar to a ASP.Net Core. Framework contains services, middlewa
 
 > The framework is under development, so unexpected errors, changes in functionality, and names are possible! I would be grateful if you could report any bugs or functionality you need.
 
+## Installation
+To install the framework, you can use NuGet.org https://www.nuget.org/packages/Telegramper.
+
 ## Learn more about the framework
-1. [About UpdateContext (similar to HttpContext)](https://github.com/GineTik/Telegramper-TelegramFramework/tree/master/Telegramper/TelegramBotApplication/Context)
-1. [Configuration bot in Program.cs (Services, Middlewares, etc.)](https://github.com/GineTik/Telegramper-TelegramFramework/tree/master/Telegramper/TelegramBotApplication)
-1. [Executors and attributes](https://github.com/GineTik/Telegramper-TelegramFramework/tree/master/Telegramper/Executors)
-1. [Session](https://github.com/GineTik/Telegramper-TelegramFramework/tree/master/Telegramper/Sessions)
+1. [About UpdateContext (similar to HttpContext)](https://github.com/GineTik/Telegramper-TelegramFramework/blob/master/Documentation/Core/UpdateContext.md)
+1. [Configuration bot in Program.cs (Services, Middlewares, etc.)](https://github.com/GineTik/Telegramper-TelegramFramework/blob/master/Documentation/Core/ConfigurationOfFramework.md)
+1. [Executors and attributes](https://github.com/GineTik/Telegramper-TelegramFramework/tree/master/Documentation/Executors)
+1. [Session](https://github.com/GineTik/Telegramper-TelegramFramework/tree/master/Documentation/Sessions)
 
 ### Chapters coming soon
-- Dialog
+- Dialog (comleted, documentation in process)
 - Examples of projects written on the Telegramper framework
 
 ## Quick start
@@ -32,14 +35,14 @@ internal class Program
 
 public class BasicExecutor : Executor
 {
-    [TargetCommands] // identical to [TargetCommands("start")]
+    [TargetCommand] // identical to [TargetCommand("start")]
     public async Task Start()
     {
         var sender = UpdateContext.User.ToString();
         await Client.SendTextMessageAsync($"You are {sender}"); // send a text response
     }
 
-    [TargetCommands("echo, command2")]
+    [TargetCommand("echo, command2")]
     [EmptyParameterSeparator] // remove separator, by default is space(" ")
     public async Task Echo(string phrase) // more about the parameters later 
     {
