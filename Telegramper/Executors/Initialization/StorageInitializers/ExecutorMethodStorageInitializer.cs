@@ -20,11 +20,12 @@ namespace Telegramper.Executors.Initialization.StorageInitializers
 
         public IEnumerable<ExecutorMethod> Initialization()
         {
-            foreach (var executorTypeWrapper in _executorsTypes)
+            foreach (ExecutorTypeWrapper executorTypeWrapper in _executorsTypes)
             {
                 foreach (MethodInfo methodInfo in executorTypeWrapper.Type.GetMethods())
                 {
-                    var executorMethod = new ExecutorMethod(methodInfo, _serviceProvider);
+                    ExecutorMethod executorMethod = new ExecutorMethod(methodInfo, _serviceProvider, executorTypeWrapper.Attributes);
+
                     if (executorMethod.TargetAttributes.Any() == true)
                     {
                         yield return executorMethod;

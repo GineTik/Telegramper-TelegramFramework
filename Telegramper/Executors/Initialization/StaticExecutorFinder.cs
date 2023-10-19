@@ -1,15 +1,14 @@
-﻿using System.Reflection;
-using Telegramper.Executors.Common.Models;
+﻿using Telegramper.Executors.Common.Models;
 
 namespace Telegramper.Executors.Initialization
 {
     public static class StaticExecutorFinder
     {
-        private static Type _baseExecutorType = typeof(Executor);
+        private static readonly Type _baseExecutorType = typeof(Executor);
 
-        public static IEnumerable<Type> FindExecutorTypes(IEnumerable<Assembly> assemblies)
+        public static IEnumerable<ExecutorTypeWrapper> FindExecutorTypes(IEnumerable<SmartAssembly> assemblies)
         {
-            return assemblies.SelectMany(assembly => assembly.GetTypes().Where(isInheritedFromBaseExecutorType));
+            return assemblies.SelectMany(smartAssembly => smartAssembly.Assembly.GetTypes().Where(isInheritedFromBaseExecutorType).Select(type => new ExecutorTypeWrapper(type, smartAssembly.GlobalAttributes)));
         }
 
         private static bool isInheritedFromBaseExecutorType(Type executorType)

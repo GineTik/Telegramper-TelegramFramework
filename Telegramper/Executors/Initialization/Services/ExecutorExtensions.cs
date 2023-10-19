@@ -27,11 +27,22 @@ namespace Telegramper.Executors.Initialization.Services
         }
 
         public static IServiceCollection AddExecutors(this IServiceCollection services,
-            IEnumerable<Assembly>? assemblies, Action<ExecutorOptions>? configureAction = null)
+            IEnumerable<SmartAssembly>? assemblies, Action<ExecutorOptions>? configureAction = null)
         {
-            assemblies ??= new[] { Assembly.GetExecutingAssembly(), Assembly.GetEntryAssembly()! }.Where(a => a != null);
+            if (assemblies == null)
+            {
+                List<SmartAssembly> listAsseblies = new List<SmartAssembly>();
+                listAsseblies.Add(new SmartAssembly(Assembly.GetExecutingAssembly()));
 
-            var executorOptions = services.configureOptions(configureAction);
+                if (Assembly.GetEntryAssembly() != null)
+                {
+                    listAsseblies.Add(new SmartAssembly(Assembly.GetEntryAssembly()!));
+                }
+
+                assemblies = listAsseblies;
+            }
+
+            ExecutorOptions executorOptions = services.configureOptions(configureAction);
             services.addExecutorServices(executorOptions, assemblies);
 
             return services;
@@ -41,7 +52,7 @@ namespace Telegramper.Executors.Initialization.Services
             this IServiceCollection services,
             Action<ExecutorOptions>? configure)
         {
-            var executorOptions = new ExecutorOptions();
+            ExecutorOptions executorOptions = new ExecutorOptions();
             configure?.Invoke(executorOptions);
 
             services.Configure<ParameterParserOptions>(options =>
@@ -63,13 +74,10 @@ namespace Telegramper.Executors.Initialization.Services
         private static void addExecutorServices(
             this IServiceCollection services,
             ExecutorOptions executorOptions,
-            IEnumerable<Assembly> assemblies)
+            IEnumerable<SmartAssembly> assemblies)
         {
-            var executorsTypes = StaticExecutorFinder.FindExecutorTypes(assemblies);
-            services.AddListStorage<ExecutorTypeWrapper>(_ => executorsTypes.Select(type => new ExecutorTypeWrapper
-            {
-                Type = type
-            }));
+            IEnumerable<ExecutorTypeWrapper> executorsTypes = StaticExecutorFinder.FindExecutorTypes(assemblies);
+            services.AddListStorage<ExecutorTypeWrapper>(_ => executorsTypes);
             services.AddListStorage<ExecutorMethod, ExecutorMethodStorageInitializer>();
             services.AddListStorage<TargetCommandAttribute, CommandStorageInitializer>();
             services.AddDictionaryStorage<RouteTree, RouteStorageInitializer>();
@@ -84,8 +92,10 @@ namespace Telegramper.Executors.Initialization.Services
             services.AddTransient(typeof(IParametersParser), executorOptions.ParameterParser.ParserType);
             services.AddSingleton(typeof(INameTransformer), executorOptions.MethodNameTransformer.Type);
 
-            foreach (var executor in executorsTypes)
+            foreach (Type executor in executorsTypes.Select(wrapper => wrapper.Type))
+            {
                 services.AddTransient(executor);
+            }
         }
     }
 }
