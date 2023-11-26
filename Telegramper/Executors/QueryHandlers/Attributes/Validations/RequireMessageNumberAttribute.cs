@@ -7,7 +7,7 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.Validations
     {
         public override async Task<bool> ValidateAsync(UpdateContext updateContext, IServiceProvider provider)
         {
-            string? text = updateContext.Message?.Text;
+            var text = updateContext.Message?.Text;
             return await Task.FromResult(text != null && int.TryParse(text, out _));
         }
     }

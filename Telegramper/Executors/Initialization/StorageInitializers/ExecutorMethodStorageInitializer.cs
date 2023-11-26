@@ -7,11 +7,11 @@ namespace Telegramper.Executors.Initialization.StorageInitializers
 {
     public class ExecutorMethodStorageInitializer : IListStorageInitializer<ExecutorMethod>
     {
-        private readonly IEnumerable<ExecutorTypeWrapper> _executorsTypes;
+        private readonly IEnumerable<ExecutorType> _executorsTypes;
         private readonly IServiceProvider _serviceProvider;
 
         public ExecutorMethodStorageInitializer(
-            IListStorage<ExecutorTypeWrapper> executorsTypes,
+            IListStorage<ExecutorType> executorsTypes,
             IServiceProvider serviceProvider)
         {
             _executorsTypes = executorsTypes.Items;
@@ -20,7 +20,7 @@ namespace Telegramper.Executors.Initialization.StorageInitializers
 
         public IEnumerable<ExecutorMethod> Initialization()
         {
-            foreach (ExecutorTypeWrapper executorTypeWrapper in _executorsTypes)
+            foreach (ExecutorType executorTypeWrapper in _executorsTypes)
             {
                 foreach (MethodInfo methodInfo in executorTypeWrapper.Type.GetMethods())
                 {

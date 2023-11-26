@@ -4,17 +4,17 @@ namespace Telegramper.Executors.Initialization
 {
     public static class StaticExecutorFinder
     {
-        private static readonly Type _baseExecutorType = typeof(Executor);
+        private static readonly Type BaseExecutorType = typeof(Executor);
 
-        public static IEnumerable<ExecutorTypeWrapper> FindExecutorTypes(IEnumerable<SmartAssembly> assemblies)
+        public static IEnumerable<ExecutorType> FindExecutorTypes(IEnumerable<SmartAssembly> assemblies)
         {
-            return assemblies.SelectMany(smartAssembly => smartAssembly.Assembly.GetTypes().Where(isInheritedFromBaseExecutorType).Select(type => new ExecutorTypeWrapper(type, smartAssembly.GlobalAttributes)));
+            return assemblies.SelectMany(smartAssembly => smartAssembly.Assembly.GetTypes().Where(isInheritedFromBaseExecutorType).Select(type => new ExecutorType(type, smartAssembly.GlobalAttributes)));
         }
 
         private static bool isInheritedFromBaseExecutorType(Type executorType)
         {
-            return executorType != _baseExecutorType
-                && _baseExecutorType.IsAssignableFrom(executorType);
+            return executorType != BaseExecutorType
+                && BaseExecutorType.IsAssignableFrom(executorType);
         }
     }
 }

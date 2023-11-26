@@ -6,8 +6,8 @@ namespace Telegramper.Executors.Initialization
     public class SmartAssembly
     {
 
-        public Assembly Assembly { get; set; } = default!;
-        public IEnumerable<FilterAttribute> GlobalAttributes { get; set; }
+        public Assembly Assembly { get; }
+        public IEnumerable<FilterAttribute> GlobalAttributes { get; }
 
         public SmartAssembly(Assembly assembly, IEnumerable<Attribute>? globalAttributes = null)
         {

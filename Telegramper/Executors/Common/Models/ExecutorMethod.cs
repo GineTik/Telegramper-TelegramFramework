@@ -13,8 +13,8 @@ namespace Telegramper.Executors.Common.Models
                     MethodInfo.DeclaringType ??
                     MethodInfo.ReflectedType ??
                     throw new InvalidOperationException($"Method {MethodInfo.Name} don't have DeclaringType and ReflectedType");
-        public IEnumerable<TargetAttribute> TargetAttributes { get; } = default!;
-        public IEnumerable<FilterAttribute> FilterAttributes { get; } = default!;
+        public IEnumerable<TargetAttribute> TargetAttributes { get; }
+        public IEnumerable<FilterAttribute> FilterAttributes { get; }
 
         public ExecutorMethod(MethodInfo methodInfo, IServiceProvider serviceProvider, IEnumerable<Attribute> globalAttributes)
         {
@@ -22,12 +22,12 @@ namespace Telegramper.Executors.Common.Models
             _serviceProvider = serviceProvider;
             _globalAttributes = globalAttributes;
 
-            FilterAttributes = GetCustomAttributes<FilterAttribute>();
-            TargetAttributes = GetCustomAttributes<TargetAttribute>();
-            initializationTargetAttributes();
+            FilterAttributes = getCustomAttributes<FilterAttribute>();
+            TargetAttributes = getCustomAttributes<TargetAttribute>();
+            initializationTargetAttributes(TargetAttributes);
         }
 
-        public IEnumerable<T> GetCustomAttributes<T>()
+        private IEnumerable<T> getCustomAttributes<T>()
             where T : Attribute
         {
             return MethodInfo
@@ -37,9 +37,9 @@ namespace Telegramper.Executors.Common.Models
                     .Cast<T>());
         }
 
-        private void initializationTargetAttributes()
+        private void initializationTargetAttributes(IEnumerable<TargetAttribute> targetAttributes)
         {
-            foreach (TargetAttribute targetAttribute in TargetAttributes)
+            foreach (var targetAttribute in targetAttributes)
             {
                 targetAttribute.Initialization(this, _serviceProvider);
             }

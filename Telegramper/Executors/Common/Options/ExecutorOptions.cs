@@ -1,9 +1,14 @@
-﻿namespace Telegramper.Executors.Common.Options
+﻿using System.Reflection;
+using Telegramper.Executors.Initialization;
+
+namespace Telegramper.Executors.Common.Options
 {
     public class ExecutorOptions
     {
-        public CommandExecutorOptions MethodNameTransformer { get; set; } = new CommandExecutorOptions();
-        public ParameterParserOptions ParameterParser { get; set; } = new ParameterParserOptions();
-        public UserStateOptions UserState { get; set; } = new UserStateOptions();
+        public IEnumerable<SmartAssembly> Assemblies { get; set; } = new List<SmartAssembly>
+            { new(Assembly.GetExecutingAssembly()) };
+        public CommandExecutorOptions MethodNameTransformer { get; set; } = new();
+        public ParameterParserOptions ParameterParser { get; set; } = new();
+        public UserStateOptions UserState { get; set; } = new();
     }
 }
