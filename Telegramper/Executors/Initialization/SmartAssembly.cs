@@ -9,10 +9,10 @@ namespace Telegramper.Executors.Initialization
         public Assembly Assembly { get; }
         public IEnumerable<FilterAttribute> GlobalAttributes { get; }
 
-        public SmartAssembly(Assembly assembly, IEnumerable<Attribute>? globalAttributes = null)
+        public SmartAssembly(Assembly assembly, IEnumerable<FilterAttribute>? globalAttributes = null)
         {
             Assembly = assembly;
-            GlobalAttributes = (IEnumerable<FilterAttribute>)(globalAttributes ?? new List<Attribute>());
+            GlobalAttributes = globalAttributes ?? new List<FilterAttribute>();
         }
     }
 }
