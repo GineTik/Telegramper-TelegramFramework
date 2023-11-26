@@ -66,67 +66,6 @@ namespace Telegramper.Executors.QueryHandlers.ParametersParser
             }
 
             return ParametersParseResult.Success(convertedArgs.ToArray());
-
-            //var args = getArgsAsStack(text, argsSeparator);
-            //var parametersStack = new Stack<ParameterInfo>(args);
-
-            //if (isCorrectArgsCount(args, parametersStack))
-            //{ 
-            //    return ParametersParseResult.ArgsLengthIsLess;
-            //}
-
-            //_missingArgs = parametersStack.Count - args.Count;
-            //var convertedArgs = new Stack<object?>();
-
-            //try
-            //{
-            //    while (parametersStack.Count != 0)
-            //    {
-            //        var value = convertArgsToMethodParameter(args, parametersStack);
-            //        convertedArgs.Push(value);
-            //    }
-            //}
-            //catch
-            //{
-            //    return ParametersParseResult.ParseError;
-            //}
-
-            //return ParametersParseResult.Success(convertedArgs.ToArray());
         }
-
-        //private static Stack<string> getArgsAsStack(string text, string parameterSeparator)
-        //{
-        //    text = Regex.Replace(text ?? "", "^/*\\w+\\s*", ""); // remove command
-        //    return string.IsNullOrEmpty(text) ?
-        //        new Stack<string>() :
-        //        new Stack<string>(text.Split(parameterSeparator));
-        //}
-
-        //private bool isCorrectArgsCount(ICollection<string> args, ICollection<ParameterInfo> parameterTypes)
-        //{
-        //    var numberOfMandatoryParameters = parameterTypes.Count - parameterTypes.NullableCount();
-        //    return numberOfMandatoryParameters > args.Count;
-        //}
-
-        //private object? convertArgsToMethodParameter(Stack<string> args, Stack<ParameterInfo> parameters)
-        //{
-        //    var parameter = parameters.Pop();
-        //    var targetType = parameter.ParameterType;
-
-        //    if (parameter.IsNullable() == true && _missingArgs != 0)
-        //    {
-        //        _missingArgs--;
-        //        return null;
-        //    }
-
-        //    if (targetType.IsGenericType && targetType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-        //    {
-        //        targetType = Nullable.GetUnderlyingType(targetType)!;
-        //    }
-
-        //    var stringValue = args.Pop();
-
-        //    return Convert.ChangeType(stringValue, targetType);
-        //}
     }
 }

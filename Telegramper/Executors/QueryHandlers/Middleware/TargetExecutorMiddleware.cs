@@ -1,11 +1,14 @@
 ﻿using Telegram.Bot.Types.Enums;
-using Telegramper.Executors.QueryHandlers.MethodInvoker;
-using Telegramper.Executors.QueryHandlers.Preparer;
-using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
 using Telegramper.Core.AdvancedBotClient.Extensions;
 using Telegramper.Core.Configuration.Middlewares;
 using Telegramper.Core.Context;
 using Telegramper.Core.Delegates;
+using Telegramper.Executors.Common.Models;
+using Telegramper.Executors.QueryHandlers.MethodInvoker;
+using Telegramper.Executors.QueryHandlers.Models;
+using Telegramper.Executors.QueryHandlers.Preparer;
+using Telegramper.Executors.QueryHandlers.Preparer.PrepareErrors;
+using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
 
 namespace Telegramper.Executors.QueryHandlers.Middleware
 {
@@ -30,10 +33,10 @@ namespace Telegramper.Executors.QueryHandlers.Middleware
 
         public async Task InvokeAsync(UpdateContext updateContext, NextDelegate next)
         {
-            var suitableMethods = await _suitableMethodFinder.FindForCurrentUpdateAsync();
-            var invokableMethods = _executorMethodPreparer.PrepareMethodsForExecution(suitableMethods, out var errors);
+            IEnumerable<ExecutorMethod> suitableMethods = await _suitableMethodFinder.FindForCurrentUpdateAsync();
+            IEnumerable<InvokableExecutorMethod> invokableMethods = _executorMethodPreparer.PrepareMethodsForExecution(suitableMethods, out IEnumerable<Preparer.PrepareErrors.PrepareError>? errors);
 
-            foreach (var error in errors)
+            foreach (PrepareError error in errors)
             {
                 await _updateContext.Client.SendTextMessageAsync(error.Message, parseMode: ParseMode.MarkdownV2);
             }

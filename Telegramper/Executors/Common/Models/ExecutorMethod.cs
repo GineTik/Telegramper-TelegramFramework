@@ -1,49 +1,48 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
-using Telegramper.Executors.Initialization.NameTransformer;
+﻿using System.Reflection;
 using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
 
 namespace Telegramper.Executors.Common.Models
 {
     public class ExecutorMethod
     {
-        private readonly MethodInfo _methodInfo;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IEnumerable<Attribute> _globalAttributes;
 
-        public ExecutorMethod(MethodInfo methodInfo, IServiceProvider serviceProvider)
+        public MethodInfo MethodInfo { get; }
+        public Type ExecutorType =>
+                    MethodInfo.DeclaringType ??
+                    MethodInfo.ReflectedType ??
+                    throw new InvalidOperationException($"Method {MethodInfo.Name} don't have DeclaringType and ReflectedType");
+        public IEnumerable<TargetAttribute> TargetAttributes { get; }
+        public IEnumerable<FilterAttribute> FilterAttributes { get; }
+
+        public ExecutorMethod(MethodInfo methodInfo, IServiceProvider serviceProvider, IEnumerable<Attribute> globalAttributes)
         {
-            _methodInfo = methodInfo;
+            MethodInfo = methodInfo;
             _serviceProvider = serviceProvider;
+            _globalAttributes = globalAttributes;
+
+            FilterAttributes = getCustomAttributes<FilterAttribute>();
+            TargetAttributes = getCustomAttributes<TargetAttribute>();
+            initializationTargetAttributes(TargetAttributes);
         }
 
-        public MethodInfo MethodInfo => _methodInfo;
-
-        public Type ExecutorType =>
-                    _methodInfo.DeclaringType ??
-                    _methodInfo.ReflectedType ??
-                    throw new InvalidOperationException($"Method {_methodInfo.Name} don't have DeclaringType and ReflectedType");
-
-        private IEnumerable<TargetAttribute> _targetAttributes = default!;
-        public IEnumerable<TargetAttribute> TargetAttributes
+        private IEnumerable<T> getCustomAttributes<T>()
+            where T : Attribute
         {
-            get
+            return MethodInfo
+                .GetCustomAttributes<T>()
+                .Concat(_globalAttributes
+                    .Where(attr => typeof(T).IsAssignableFrom(attr.GetType()))
+                    .Cast<T>());
+        }
+
+        private void initializationTargetAttributes(IEnumerable<TargetAttribute> targetAttributes)
+        {
+            foreach (var targetAttribute in targetAttributes)
             {
-                if (_targetAttributes == null)
-                {
-                    _targetAttributes = _methodInfo.GetCustomAttributes<TargetAttribute>();
-
-                    foreach (var targetAttribute in _targetAttributes)
-                    {
-                        targetAttribute.Initialization(this, _serviceProvider);
-                    }
-                }
-
-                return _targetAttributes;
+                targetAttribute.Initialization(this, _serviceProvider);
             }
         }
-
-        private IEnumerable<FilterAttribute> _filterAttributes = default!;
-        public IEnumerable<FilterAttribute> FilterAttributes =>
-            _filterAttributes ??= _methodInfo.GetCustomAttributes<FilterAttribute>();
     }
 }

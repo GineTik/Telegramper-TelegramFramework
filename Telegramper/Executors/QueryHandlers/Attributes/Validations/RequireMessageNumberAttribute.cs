@@ -1,5 +1,5 @@
-﻿using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
-using Telegramper.Core.Context;
+﻿using Telegramper.Core.Context;
+using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
 
 namespace Telegramper.Executors.QueryHandlers.Attributes.Validations
 {
