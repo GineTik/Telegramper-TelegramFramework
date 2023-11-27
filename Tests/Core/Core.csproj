@@ -23,7 +23,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Telegramper\Telegramper.csproj" />
-      <ProjectReference Include="..\Telegramper\Telegramper.csproj" />
     </ItemGroup>
 
 </Project>
