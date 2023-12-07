@@ -147,6 +147,15 @@ This attributes checks the input data and acept to execute the method if validat
 [TargetAttribute...]
 [RequiredData...(UpdateProperty.Example, ErrorMessage="error message")]
 public async Task Handle() { }
+
+// Available values
+public enum UpdateProperty
+{
+    User,
+    Chat,
+    MessageText,
+    MessagePhoto,
+}
 ```
 
 Validation attributes don't executing Executor method if input data not correct. If validation is failed, runing next middleware. One handler can have more than one ValidationAttributes.
