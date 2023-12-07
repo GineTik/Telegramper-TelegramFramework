@@ -16,7 +16,7 @@ To install the framework, you can use NuGet.org https://www.nuget.org/packages/T
 - Dialog (comleted, documentation in process)
 - Examples of projects written on the Telegramper framework
 
-### Donates
+## Donates
 If you want to support to me, you can do it send me a crypto: BNB Smart Chain 0x0aB4b9A02bcaF822c3AeA91bc566aEA4194e1cEF
 
 ## Quick start
