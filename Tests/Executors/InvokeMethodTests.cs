@@ -3,11 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Types;
 using Telegramper.Core.Configuration.Services;
 using Telegramper.Core.Context;
-using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.Initialization;
 using Telegramper.Executors.Initialization.Services;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
-using Telegramper.Storage.List;
 using Xunit.Abstractions;
 
 namespace Executors;
@@ -33,6 +31,7 @@ public class InvokeMethodTests
     }
     
     [Theory]
+    // this commands exists in the Executors folder
     [InlineData("/start", "Start")]
     public async Task Method_FindSuitableByUpdateContext_SnakeCase(string text, string expectedMethodName)
     {
