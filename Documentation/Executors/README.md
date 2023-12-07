@@ -145,7 +145,7 @@ This attributes checks the input data and acept to execute the method if validat
 - RequiredData
 ```cs
 [TargetAttribute...]
-[RequiredData...(UpdateProperty.Example, ErrorMessage="error message")]
+[RequiredData(UpdateProperty.Example, ErrorMessage="error message")]
 public async Task Handle() { }
 
 // Available values
