@@ -139,17 +139,13 @@ If at least one target attribute in the handler method matches, the method is ex
   public async Task Handle() { }
   ```
 
-This attributes checks the input data on similarity and attempts to execute the method if it is simiral. There can be more than one TargetAttributes per handler.
+This attributes checks the input data and acept to execute the method if validation result is successfully. There can be one or more ValidationAttribute for handle method.
 
 ### Available attributes for input data validation
-- RequireUser
-- RequireChat
-- RequireMessageText
-- RequireMessagePhoto
-
+- RequiredData
 ```cs
 [TargetAttribute...]
-[RequireAttribute...(ErrorMessage="error message")]
+[RequiredData...(UpdateProperty.Example, ErrorMessage="error message")]
 public async Task Handle() { }
 ```
 
