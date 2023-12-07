@@ -6,7 +6,6 @@ namespace Telegramper.Executors.Common.Models
     public class ExecutorMethod
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IEnumerable<Attribute> _globalAttributes;
 
         public MethodInfo MethodInfo { get; }
         public Type ExecutorType =>
@@ -20,22 +19,21 @@ namespace Telegramper.Executors.Common.Models
         {
             MethodInfo = methodInfo;
             _serviceProvider = serviceProvider;
-            _globalAttributes = globalAttributes;
 
-            FilterAttributes = getCustomAttributes<FilterAttribute>();
-            TargetAttributes = getCustomAttributes<TargetAttribute>();
+            TargetAttributes = MethodInfo.GetCustomAttributes<TargetAttribute>();
+            FilterAttributes = MethodInfo.GetCustomAttributes<FilterAttribute>().Concat(globalAttributes.Cast<FilterAttribute>());
             initializationTargetAttributes(TargetAttributes);
         }
 
-        private IEnumerable<T> getCustomAttributes<T>()
-            where T : Attribute
-        {
-            return MethodInfo
-                .GetCustomAttributes<T>()
-                .Concat(_globalAttributes
-                    .Where(attr => typeof(T).IsAssignableFrom(attr.GetType()))
-                    .Cast<T>());
-        }
+        // private IEnumerable<T> getCustomAttributes<T>()
+        //     where T : Attribute
+        // {
+        //     return MethodInfo
+        //         .GetCustomAttributes<T>()
+        //         .Concat(_globalAttributes
+        //             .Where(attr => attr is T)
+        //             .Cast<T>());
+        // }
 
         private void initializationTargetAttributes(IEnumerable<TargetAttribute> targetAttributes)
         {
