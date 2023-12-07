@@ -5,8 +5,8 @@ namespace Telegramper.Executors.Common.Options
 {
     public class ExecutorOptions
     {
-        public IEnumerable<SmartAssembly> Assemblies { get; set; } = new List<SmartAssembly>
-            { new(Assembly.GetExecutingAssembly()) };
+        public IEnumerable<SmartAssembly> Assemblies { get; set; } =
+            new[] { new SmartAssembly(Assembly.GetExecutingAssembly()), new SmartAssembly(Assembly.GetEntryAssembly()!) };
         public CommandExecutorOptions MethodNameTransformer { get; set; } = new();
         public ParameterParserOptions ParameterParser { get; set; } = new();
         public UserStateOptions UserState { get; set; } = new();
