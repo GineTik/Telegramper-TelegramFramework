@@ -38,14 +38,13 @@ namespace Telegramper.Core
         public IBotApplication Build()
         {
             if (ApiKey == null)
-                throw new NullReferenceException(ApiKey);
+                throw new NullReferenceException("Api key is null, please fill the api key");
 
             addCurrentBotInformationToServices(ApiKey);
-            // if ApiKey is null, will be throw exception in the BotApplication constructor
             return new BotApplication(ApiKey!, Services, ReceiverOptions);
         }
 
-        public static BotApplicationBuilder CreateBuilder() => new BotApplicationBuilder();
+        public static BotApplicationBuilder CreateBuilder() => new();
 
         private void addCurrentBotInformationToServices(string apiKey)
         {

@@ -1,5 +1,6 @@
 using Executors.Executors;
 using Microsoft.Extensions.DependencyInjection;
+using Telegramper.Core;
 using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.Initialization.NameTransformer;
 using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
@@ -19,9 +20,9 @@ public class ExecutorMethodTests
 
     public ExecutorMethodTests()
     {
-        var serviceCollection = new ServiceCollection();
-        serviceCollection.AddTransient<INameTransformer, SnakeCaseNameTransformer>();
-        _serviceProvider = serviceCollection.BuildServiceProvider();
+        var builder = BotApplicationBuilder.CreateBuilder();
+        builder.Services.AddTransient<INameTransformer, SnakeCaseNameTransformer>();
+        _serviceProvider = builder.Build().Services;
     }
     
     [Theory]
