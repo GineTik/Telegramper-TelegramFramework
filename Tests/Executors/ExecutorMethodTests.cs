@@ -10,7 +10,7 @@ namespace Executors;
 
 public class ExecutorMethodTests
 {
-    private static readonly IEnumerable<FilterAttribute> _globalAttrbiute = new[]
+    private static readonly IEnumerable<FilterAttribute> GlobalAttribute = new[]
     {
         new RequiredDataAttribute(UpdateProperty.User)
     };
@@ -32,7 +32,7 @@ public class ExecutorMethodTests
         var executorMethod = new ExecutorMethod(
             typeof(ExectorMethodsForTests).GetMethod(methodName)!, 
             _serviceProvider, 
-            Array.Empty<Attribute>());
+            Array.Empty<FilterAttribute>());
         
         Assert.Equal(expectedAttributes, executorMethod.TargetAttributes.Select(a => a.GetType()));
     }
@@ -44,7 +44,7 @@ public class ExecutorMethodTests
         var executorMethod = new ExecutorMethod(
             typeof(ExectorMethodsForTests).GetMethod(methodName)!, 
             _serviceProvider, 
-            Array.Empty<Attribute>());
+            Array.Empty<FilterAttribute>());
         
         Assert.Equal(expectedAttributes, executorMethod.FilterAttributes.Select(a => a.GetType()));
     }
@@ -56,10 +56,10 @@ public class ExecutorMethodTests
         var executorMethod = new ExecutorMethod(
             typeof(ExectorMethodsForTests).GetMethod(methodName)!, 
             _serviceProvider, 
-            _globalAttrbiute);
+            GlobalAttribute);
         
         Assert.Equal(
-            expectedAttributes.Concat(_globalAttrbiute.Select(a => a.GetType())),
+            expectedAttributes.Concat(GlobalAttribute.Select(a => a.GetType())),
             executorMethod.FilterAttributes.Select(a => a.GetType()));
     }
 }

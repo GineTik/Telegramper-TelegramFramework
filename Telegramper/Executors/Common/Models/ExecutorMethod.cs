@@ -15,25 +15,26 @@ namespace Telegramper.Executors.Common.Models
         public IEnumerable<TargetAttribute> TargetAttributes { get; }
         public IEnumerable<FilterAttribute> FilterAttributes { get; }
 
-        public ExecutorMethod(MethodInfo methodInfo, IServiceProvider serviceProvider, IEnumerable<Attribute> globalAttributes)
+        public ExecutorMethod(MethodInfo methodInfo, IServiceProvider serviceProvider, IEnumerable<Attribute> executorAttributes)
         {
             MethodInfo = methodInfo;
             _serviceProvider = serviceProvider;
 
-            TargetAttributes = MethodInfo.GetCustomAttributes<TargetAttribute>();
-            FilterAttributes = MethodInfo.GetCustomAttributes<FilterAttribute>().Concat(globalAttributes.Cast<FilterAttribute>());
+            var attributes = executorAttributes.ToList();
+            TargetAttributes = getCustomAttributes<TargetAttribute>(attributes);
+            FilterAttributes = getCustomAttributes<FilterAttribute>(attributes);
             initializationTargetAttributes(TargetAttributes);
         }
 
-        // private IEnumerable<T> getCustomAttributes<T>()
-        //     where T : Attribute
-        // {
-        //     return MethodInfo
-        //         .GetCustomAttributes<T>()
-        //         .Concat(_globalAttributes
-        //             .Where(attr => attr is T)
-        //             .Cast<T>());
-        // }
+        private IEnumerable<TAttribute> getCustomAttributes<TAttribute>(IEnumerable<Attribute> globalAttributes)
+            where TAttribute : Attribute
+        {
+            return MethodInfo
+                .GetCustomAttributes<TAttribute>()
+                .Concat(globalAttributes
+                    .Where(a => a is TAttribute)
+                    .Cast<TAttribute>());
+        }
 
         private void initializationTargetAttributes(IEnumerable<TargetAttribute> targetAttributes)
         {

@@ -7,12 +7,12 @@ namespace Telegramper.Executors.Initialization
     {
 
         public Assembly Assembly { get; }
-        public IEnumerable<FilterAttribute> GlobalAttributes { get; }
+        public IEnumerable<FilterAttribute> AssemblyAttributes { get; }
 
         public SmartAssembly(Assembly assembly, IEnumerable<FilterAttribute>? globalAttributes = null)
         {
             Assembly = assembly;
-            GlobalAttributes = globalAttributes ?? new List<FilterAttribute>();
+            AssemblyAttributes = globalAttributes ?? new List<FilterAttribute>();
         }
     }
 }

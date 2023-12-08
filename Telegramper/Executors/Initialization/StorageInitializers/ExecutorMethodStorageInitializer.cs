@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Telegramper.Executors.Common.Models;
+﻿using Telegramper.Executors.Common.Models;
 using Telegramper.Storage.Initializers;
 using Telegramper.Storage.List;
 
@@ -20,13 +19,13 @@ namespace Telegramper.Executors.Initialization.StorageInitializers
 
         public IEnumerable<ExecutorMethod> Initialization()
         {
-            foreach (ExecutorType executorTypeWrapper in _executorsTypes)
+            foreach (var executorTypeWrapper in _executorsTypes)
             {
-                foreach (MethodInfo methodInfo in executorTypeWrapper.Type.GetMethods())
+                foreach (var methodInfo in executorTypeWrapper.Type.GetMethods())
                 {
-                    ExecutorMethod executorMethod = new ExecutorMethod(methodInfo, _serviceProvider, executorTypeWrapper.Attributes);
+                    var executorMethod = new ExecutorMethod(methodInfo, _serviceProvider, executorTypeWrapper.Attributes);
 
-                    if (executorMethod.TargetAttributes.Any() == true)
+                    if (executorMethod.TargetAttributes.Any())
                     {
                         yield return executorMethod;
                     }

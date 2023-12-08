@@ -1,23 +1,17 @@
 ﻿using System.Reflection;
+using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
 
 namespace Telegramper.Executors.Common.Models
 {
     public class ExecutorType
     {
-        public Type Type { get; set; }
-        public IEnumerable<Attribute> Attributes { get; set; }
+        public Type Type { get; }
+        public IEnumerable<Attribute> Attributes { get; }
 
-        public ExecutorType(Type type, IEnumerable<Attribute> additionalAttributes)
+        public ExecutorType(Type type, IEnumerable<FilterAttribute> assemblyAttributes)
         {
             Type = type;
-            Attributes = getCustomAttributes(additionalAttributes);
-        }
-
-        private IEnumerable<Attribute> getCustomAttributes(IEnumerable<Attribute> additionalAttributes)
-        {
-            return Type
-                .GetCustomAttributes()
-                .Concat(additionalAttributes);
+            Attributes = Type.GetCustomAttributes().Concat(assemblyAttributes);
         }
     }
 }
