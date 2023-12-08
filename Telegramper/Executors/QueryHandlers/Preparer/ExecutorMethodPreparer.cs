@@ -15,18 +15,18 @@ namespace Telegramper.Executors.QueryHandlers.Preparer
     {
         private readonly IParametersParser _parametersParser;
         private readonly UpdateContext _updateContext;
-        private readonly ParameterParserOptions _parameterParserOptions;
+        private readonly ParametersParserOptions _parametersParserOptions;
         private readonly IParseErrorHandler _parseErrorHandler;
 
         public ExecutorMethodPreparer(
             IParametersParser parametersParser,
             UpdateContextAccessor updateContextAccessor,
-            IOptions<ParameterParserOptions> parameterParserOptions,
+            IOptions<ParametersParserOptions> parameterParserOptions,
             IParseErrorHandler parseErrorHandler)
         {
             _parametersParser = parametersParser;
             _updateContext = updateContextAccessor.UpdateContext;
-            _parameterParserOptions = parameterParserOptions.Value;
+            _parametersParserOptions = parameterParserOptions.Value;
             _parseErrorHandler = parseErrorHandler;
         }
 
@@ -42,7 +42,7 @@ namespace Telegramper.Executors.QueryHandlers.Preparer
                 var parseResult = _parametersParser.Parse(
                     _updateContext,
                     method.MethodInfo,
-                    _parameterParserOptions.DefaultSeparator
+                    _parametersParserOptions.DefaultSeparator
                 );
 
                 if (parseResult == null)

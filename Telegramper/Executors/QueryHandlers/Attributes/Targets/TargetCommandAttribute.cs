@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Telegram.Bot.Types;
+﻿using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
@@ -13,35 +12,37 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.Targets
         public bool? Visible { get; set; }
         public string? Key { get; set; }
         
+        private string? _commandName;
         private string? _command;
+        private string? _commandWithBotUserName;
 
         public TargetCommandAttribute(string? command = null)
         {
-            _command = command;
+            _commandName = command;
+        }
+        
+        protected override void Initialization(ExecutorMethod method)
+        {
+            _commandName ??= TransformedMethodName;
+            _command = "/" + _commandName;
+            _commandWithBotUserName = _command + "@" + Bot.Username;
         }
 
         public override bool IsTarget(Update update)
         {
             var text = update.Message!.Text;
-            
+
             if (text == null)
             {
                 return false;
             }
-            
-            return _command == takeCommandFromText(text);
-        }
 
-        private static string takeCommandFromText(string text)
-        {
-            var command = text.Split(' ').First().TrimStart('/');
-            command = Regex.Replace(command, "@\\w+", ""); // remove username
-            return command;
-        }
+            var command = text
+                .Split(" ")
+                .First();
 
-        protected override void Initialization(ExecutorMethod method)
-        {
-            _command ??= TransformedMethodName;
+            return command.Equals(_command)
+                   || command.Equals(_commandWithBotUserName);
         }
     }
 }
