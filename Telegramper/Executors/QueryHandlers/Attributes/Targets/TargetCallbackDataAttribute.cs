@@ -1,5 +1,6 @@
 ﻿using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
 
 namespace Telegramper.Executors.QueryHandlers.Attributes.Targets
@@ -7,29 +8,30 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.Targets
     [TargetUpdateType(UpdateType.CallbackQuery)]
     public class TargetCallbackDataAttribute : TargetAttribute
     {
-        public string[] CallbackDatas { get; set; }
+        private const char SeparatorBetweenNameAndParameters = ' ';
+        
+        private string? _callbackData;
 
-        public TargetCallbackDataAttribute(string? callbacksDatas = null)
+        public TargetCallbackDataAttribute(string? callbacksData = null)
         {
-            CallbackDatas = callbacksDatas?.Replace(" ", "").Split(",")
-                ?? new string[0];
+            _callbackData = callbacksData;
         }
 
         public override bool IsTarget(Update update)
         {
-            var data = update.CallbackQuery!.Data;
-            if (data == null)
+            var dataWithParameters = update.CallbackQuery!.Data;
+            if (dataWithParameters == null)
             {
                 return false;
             }
 
-            var targetData = data.Split(' ').First();
-            if (CallbackDatas.Length == 0)
-            {
-                return targetData == MethodName;
-            }
+            var targetCallbackData = dataWithParameters.Split(SeparatorBetweenNameAndParameters).First();
+            return _callbackData == targetCallbackData;
+        }
 
-            return CallbackDatas.Contains(targetData);
+        protected override void Initialization(ExecutorMethod method)
+        {
+            _callbackData ??= MethodName;
         }
     }
 }

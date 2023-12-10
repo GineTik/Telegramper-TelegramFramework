@@ -9,10 +9,10 @@ namespace Telegramper.Executors.QueryHandlers.Preparer.ErrorHandler
 {
     public class ParseErrorHandler : IParseErrorHandler
     {
-        private readonly ParameterParserOptions _parseOptions;
+        private readonly ParametersParserOptions _parseOptions;
 
         public ParseErrorHandler(
-            IOptions<ParameterParserOptions> parseOptions)
+            IOptions<ParametersParserOptions> parseOptions)
         {
             _parseOptions = parseOptions.Value;
         }

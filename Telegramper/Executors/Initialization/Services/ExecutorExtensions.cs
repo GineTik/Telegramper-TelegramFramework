@@ -34,17 +34,22 @@ namespace Telegramper.Executors.Initialization.Services
             var executorOptions = new ExecutorOptions();
             configure?.Invoke(executorOptions);
 
-            services.Configure<ParameterParserOptions>(options =>
+            services.Configure<ParametersParserOptions>(options =>
             {
-                options.DefaultSeparator = executorOptions.ParameterParser.DefaultSeparator;
-                options.ParserType = executorOptions.ParameterParser.ParserType;
-                options.ErrorMessages = executorOptions.ParameterParser.ErrorMessages;
+                options.DefaultSeparator = executorOptions.ParametersParser.DefaultSeparator;
+                options.ParserType = executorOptions.ParametersParser.ParserType;
+                options.ErrorMessages = executorOptions.ParametersParser.ErrorMessages;
             });
 
             services.Configure<UserStateOptions>(options =>
             {
                 options.DefaultUserState = executorOptions.UserState.DefaultUserState;
                 options.SaverType = executorOptions.UserState.SaverType;
+            });
+            
+            services.Configure<HandlerQueueOptions>(options =>
+            {
+                options.LimitOfHandlersPerRequest = executorOptions.HandlerQueue.LimitOfHandlersPerRequest;
             });
 
             return executorOptions;
@@ -58,7 +63,7 @@ namespace Telegramper.Executors.Initialization.Services
             services.AddListStorage<ExecutorType>(_ => executorsTypes);
             services.AddListStorage<ExecutorMethod, ExecutorMethodStorageInitializer>();
             services.AddListStorage<TargetCommandAttribute, CommandStorageInitializer>();
-            services.AddDictionaryStorage<RouteTree, RouteStorageInitializer>();
+            services.AddDictionaryStorage<RoutesDictionary, RouteStorageInitializer>();
 
             services.AddTransient<IExecutorMethodInvoker, ExecutorMethodInvoker>();
             services.AddTransient<IExecutorFactory, ExecutorFactory>();
@@ -67,8 +72,8 @@ namespace Telegramper.Executors.Initialization.Services
             services.AddTransient<IUserStates, UserStates>();
             services.AddTransient<IParseErrorHandler, ParseErrorHandler>();
             services.AddSingleton(typeof(IUserStateSaver), executorOptions.UserState.SaverType);
-            services.AddTransient(typeof(IParametersParser), executorOptions.ParameterParser.ParserType);
-            services.AddSingleton(typeof(INameTransformer), executorOptions.MethodNameTransformer.Type);
+            services.AddTransient(typeof(IParametersParser), executorOptions.ParametersParser.ParserType);
+            services.AddSingleton(typeof(INameTransformer), executorOptions.MethodNameTransformer.NameTransformerType);
 
             foreach (var executor in executorsTypes.Select(wrapper => wrapper.Type))
             {

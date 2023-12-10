@@ -1,6 +1,6 @@
-﻿using System.Text.RegularExpressions;
-using Telegram.Bot.Types;
+﻿using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
 
 namespace Telegramper.Executors.QueryHandlers.Attributes.Targets
@@ -8,37 +8,41 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.Targets
     [TargetUpdateType(UpdateType.Message)]
     public class TargetCommandAttribute : TargetAttribute
     {
-        public string[] Commands { get; set; }
         public string? Description { get; set; }
+        public bool? Visible { get; set; }
+        public string? Key { get; set; }
+        
+        private string? _commandName;
+        private string? _command;
+        private string? _commandWithBotUserName;
 
-        public TargetCommandAttribute(string? commands = null)
+        public TargetCommandAttribute(string? command = null)
         {
-            Commands = commands?.Replace(" ", "").Split(',')
-                ?? new string[0];
+            _commandName = command;
+        }
+        
+        protected override void Initialization(ExecutorMethod method)
+        {
+            _commandName ??= TransformedMethodName;
+            _command = "/" + _commandName;
+            _commandWithBotUserName = _command + "@" + Bot.Username;
         }
 
         public override bool IsTarget(Update update)
         {
             var text = update.Message!.Text;
+
             if (text == null)
             {
                 return false;
             }
 
-            string command = takeCommandFromText(text);
-            if (Commands.Length == 0)
-            {
-                return command == TransformedMethodName;
-            }
+            var command = text
+                .Split(" ")
+                .First();
 
-            return Commands.Contains(command);
-        }
-
-        private static string takeCommandFromText(string text)
-        {
-            var command = text.Split(' ').First().TrimStart('/');
-            command = Regex.Replace(command, "@\\w+", ""); // remove username
-            return command;
+            return command.Equals(_command)
+                   || command.Equals(_commandWithBotUserName);
         }
     }
 }

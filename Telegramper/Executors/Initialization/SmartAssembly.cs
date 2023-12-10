@@ -5,14 +5,13 @@ namespace Telegramper.Executors.Initialization
 {
     public class SmartAssembly
     {
-
         public Assembly Assembly { get; }
-        public IEnumerable<FilterAttribute> GlobalAttributes { get; }
+        public IEnumerable<FilterAttribute> AssemblyAttributes { get; }
 
-        public SmartAssembly(Assembly assembly, IEnumerable<FilterAttribute>? globalAttributes = null)
+        public SmartAssembly(Assembly assembly, IEnumerable<FilterAttribute>? assemblyAttributes = null)
         {
             Assembly = assembly;
-            GlobalAttributes = globalAttributes ?? new List<FilterAttribute>();
+            AssemblyAttributes = assemblyAttributes ?? new List<FilterAttribute>();
         }
     }
 }

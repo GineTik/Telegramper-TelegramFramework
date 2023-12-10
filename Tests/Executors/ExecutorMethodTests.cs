@@ -1,7 +1,11 @@
+using System.Reflection;
 using Executors.Executors;
 using Microsoft.Extensions.DependencyInjection;
+using Telegramper.Core;
 using Telegramper.Executors.Common.Models;
+using Telegramper.Executors.Initialization;
 using Telegramper.Executors.Initialization.NameTransformer;
+using Telegramper.Executors.Initialization.Services;
 using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
 using Telegramper.Executors.QueryHandlers.Attributes.Targets;
 using Telegramper.Executors.QueryHandlers.Attributes.Validations;
@@ -10,7 +14,7 @@ namespace Executors;
 
 public class ExecutorMethodTests
 {
-    private static readonly IEnumerable<FilterAttribute> _globalAttrbiute = new[]
+    private static readonly IEnumerable<FilterAttribute> GlobalAttribute = new[]
     {
         new RequiredDataAttribute(UpdateProperty.User)
     };
@@ -19,9 +23,15 @@ public class ExecutorMethodTests
 
     public ExecutorMethodTests()
     {
-        var serviceCollection = new ServiceCollection();
-        serviceCollection.AddTransient<INameTransformer, SnakeCaseNameTransformer>();
-        _serviceProvider = serviceCollection.BuildServiceProvider();
+        var builder = BotApplicationBuilder.CreateBuilder();
+        builder.Services.AddExecutors(options =>
+        {
+            options.Assemblies = new[]
+            {
+                new SmartAssembly(Assembly.GetExecutingAssembly())
+            };
+        });
+        _serviceProvider = builder.Build().Services;
     }
     
     [Theory]
@@ -32,7 +42,7 @@ public class ExecutorMethodTests
         var executorMethod = new ExecutorMethod(
             typeof(ExectorMethodsForTests).GetMethod(methodName)!, 
             _serviceProvider, 
-            Array.Empty<Attribute>());
+            Array.Empty<FilterAttribute>());
         
         Assert.Equal(expectedAttributes, executorMethod.TargetAttributes.Select(a => a.GetType()));
     }
@@ -44,7 +54,7 @@ public class ExecutorMethodTests
         var executorMethod = new ExecutorMethod(
             typeof(ExectorMethodsForTests).GetMethod(methodName)!, 
             _serviceProvider, 
-            Array.Empty<Attribute>());
+            Array.Empty<FilterAttribute>());
         
         Assert.Equal(expectedAttributes, executorMethod.FilterAttributes.Select(a => a.GetType()));
     }
@@ -56,10 +66,10 @@ public class ExecutorMethodTests
         var executorMethod = new ExecutorMethod(
             typeof(ExectorMethodsForTests).GetMethod(methodName)!, 
             _serviceProvider, 
-            _globalAttrbiute);
+            GlobalAttribute);
         
         Assert.Equal(
-            expectedAttributes.Concat(_globalAttrbiute.Select(a => a.GetType())),
+            expectedAttributes.Concat(GlobalAttribute.Select(a => a.GetType())),
             executorMethod.FilterAttributes.Select(a => a.GetType()));
     }
 }

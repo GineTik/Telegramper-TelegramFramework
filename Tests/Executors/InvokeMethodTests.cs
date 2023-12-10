@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Types;
+using Telegramper.Core;
 using Telegramper.Core.Configuration.Services;
 using Telegramper.Core.Context;
 using Telegramper.Executors.Initialization;
@@ -18,16 +19,16 @@ public class InvokeMethodTests
     public InvokeMethodTests(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
-        
-        var serviceCollection = new ServiceCollection();
-        serviceCollection.AddUpdateContextAccessor();
-        serviceCollection.AddTransient<ISuitableMethodFinder, SuitableMethodFinder>();
-        serviceCollection.AddExecutors(options =>
+
+        var builder = new BotApplicationBuilder();
+        builder.Services.AddExecutors(options =>
         {
-             options.Assemblies = new[] { new SmartAssembly(Assembly.GetExecutingAssembly()) };
+            options.Assemblies = new[]
+            {
+                new SmartAssembly(Assembly.GetExecutingAssembly())
+            };
         });
-        
-        _serviceProvider = serviceCollection.BuildServiceProvider();
+        _serviceProvider = builder.Build().Services;
     }
     
     [Theory]
@@ -37,8 +38,8 @@ public class InvokeMethodTests
     {
         var updateContextAccessor = _serviceProvider.GetRequiredService<UpdateContextAccessor>();
         updateContextAccessor.UpdateContext = buildFakeUpdateContext(text);
-        
         var suitableMethodFinder = _serviceProvider.GetRequiredService<ISuitableMethodFinder>();
+        
         var suitableMethods = await suitableMethodFinder.FindForCurrentUpdateAsync();
 
         Assert.Contains(suitableMethods, suitableMethod => suitableMethod.MethodInfo.Name == expectedMethodName);
