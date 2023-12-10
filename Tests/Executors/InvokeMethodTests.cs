@@ -21,13 +21,13 @@ public class InvokeMethodTests
         _testOutputHelper = testOutputHelper;
 
         var builder = new BotApplicationBuilder();
-        builder.Services.AddUpdateContextAccessor();
-        builder.Services.AddTransient<ISuitableMethodFinder, SuitableMethodFinder>();
         builder.Services.AddExecutors(options =>
         {
-             options.Assemblies = new[] { new SmartAssembly(Assembly.GetExecutingAssembly()) };
+            options.Assemblies = new[]
+            {
+                new SmartAssembly(Assembly.GetExecutingAssembly())
+            };
         });
-        
         _serviceProvider = builder.Build().Services;
     }
     
@@ -38,8 +38,8 @@ public class InvokeMethodTests
     {
         var updateContextAccessor = _serviceProvider.GetRequiredService<UpdateContextAccessor>();
         updateContextAccessor.UpdateContext = buildFakeUpdateContext(text);
-        
         var suitableMethodFinder = _serviceProvider.GetRequiredService<ISuitableMethodFinder>();
+        
         var suitableMethods = await suitableMethodFinder.FindForCurrentUpdateAsync();
 
         Assert.Contains(suitableMethods, suitableMethod => suitableMethod.MethodInfo.Name == expectedMethodName);

@@ -1,8 +1,11 @@
+using System.Reflection;
 using Executors.Executors;
 using Microsoft.Extensions.DependencyInjection;
 using Telegramper.Core;
 using Telegramper.Executors.Common.Models;
+using Telegramper.Executors.Initialization;
 using Telegramper.Executors.Initialization.NameTransformer;
+using Telegramper.Executors.Initialization.Services;
 using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
 using Telegramper.Executors.QueryHandlers.Attributes.Targets;
 using Telegramper.Executors.QueryHandlers.Attributes.Validations;
@@ -21,7 +24,13 @@ public class ExecutorMethodTests
     public ExecutorMethodTests()
     {
         var builder = BotApplicationBuilder.CreateBuilder();
-        builder.Services.AddTransient<INameTransformer, SnakeCaseNameTransformer>();
+        builder.Services.AddExecutors(options =>
+        {
+            options.Assemblies = new[]
+            {
+                new SmartAssembly(Assembly.GetExecutingAssembly())
+            };
+        });
         _serviceProvider = builder.Build().Services;
     }
     

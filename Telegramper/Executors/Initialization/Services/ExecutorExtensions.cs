@@ -63,7 +63,7 @@ namespace Telegramper.Executors.Initialization.Services
             services.AddListStorage<ExecutorType>(_ => executorsTypes);
             services.AddListStorage<ExecutorMethod, ExecutorMethodStorageInitializer>();
             services.AddListStorage<TargetCommandAttribute, CommandStorageInitializer>();
-            services.AddDictionaryStorage<RouteTree, RouteStorageInitializer>();
+            services.AddDictionaryStorage<RoutesDictionary, RouteStorageInitializer>();
 
             services.AddTransient<IExecutorMethodInvoker, ExecutorMethodInvoker>();
             services.AddTransient<IExecutorFactory, ExecutorFactory>();
