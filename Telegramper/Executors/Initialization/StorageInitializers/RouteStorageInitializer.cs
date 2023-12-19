@@ -30,7 +30,7 @@ namespace Telegramper.Executors.Initialization.StorageInitializers
             {
                 foreach (var updateType in temporaryMethod.TargetAttribute.UpdateTypes)
                 {
-                    foreach (var userState in temporaryMethod.TargetAttribute.UserStatesAsEnumerable)
+                    foreach (var userState in temporaryMethod.TargetAttribute.UserStates)
                     {
                         routes[updateType].AddOrSet(userState, temporaryMethod);
                     }

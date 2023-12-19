@@ -9,9 +9,4 @@ public class UserStateAttribute : Attribute
     {
         UserStates = userStates;
     }
-
-    public bool Contains(string userState)
-    {
-        return UserStates.Contains(userState);
-    }
 }

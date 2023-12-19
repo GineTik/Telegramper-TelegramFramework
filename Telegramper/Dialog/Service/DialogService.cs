@@ -51,8 +51,8 @@ namespace Telegramper.Dialog.Service
             var states = await _userStates.GetAsync();
             var dialogParams = states.First(state => state.StartsWith(DialogConstants.Modificator)).Split(":");
             var dialogName = dialogParams[1];
-            int currentStepIndex = int.Parse(dialogParams[2]);
-            int nextStepIndex = ++currentStepIndex;
+            var currentStepIndex = int.Parse(dialogParams[2]);
+            var nextStepIndex = ++currentStepIndex;
 
             if (_steps.TryGetValue(dialogName, out var steps) == false)
             {
@@ -84,10 +84,10 @@ namespace Telegramper.Dialog.Service
         {
             var stepAttribute = step.StepAttribute;
 
-            await _userStates.SetRangeAsync(new[] {
-                stepAttribute.UserStates!,
-                StaticDialogUserStateFactory.Create(stepAttribute.DialogName),
-            });
+            await _userStates.SetRangeAsync(
+                stepAttribute.UserStates
+                .Append(StaticDialogUserStateFactory.Create(stepAttribute.DialogName))
+            );
 
             if (stepAttribute.Key != null)
             {

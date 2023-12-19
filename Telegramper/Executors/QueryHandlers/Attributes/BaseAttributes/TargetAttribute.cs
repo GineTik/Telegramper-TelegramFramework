@@ -16,47 +16,53 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes
     public abstract class TargetAttribute : Attribute
     {
         public IEnumerable<UpdateType> UpdateTypes { get; private set; } = null!;
-        public virtual string? UserStates { get; set; }
-
-        public IEnumerable<string> UserStatesAsEnumerable
+        public IEnumerable<string> UserStates
         {
-            get
-            {
-                UserStates ??= _defaultUserState;
-                return UserStates
-                    .Split(",")
-                    .Select(s => s.Trim())
-                    .Concat(_userStatesOfMethod);
-            }
+            get => buildUserStates();
+            protected set => _userStatesOfAttribute = value;
         }
-
         protected string MethodName { get; private set; } = null!;
         protected string TransformedMethodName { get; private set; } = null!;
         protected User Bot { get; private set; } = null!;
 
         private string _defaultUserState = null!;
         private IEnumerable<string> _userStatesOfMethod = null!;
+        private IEnumerable<string> _userStatesOfExecutor = null!;
+        private IEnumerable<string> _userStatesOfAttribute = Array.Empty<string>();
 
         public void Initialization(ExecutorMethod method, IServiceProvider serviceProvider)
         {
             var transformer = serviceProvider.GetRequiredService<INameTransformer>();
-            var currentBot = serviceProvider.GetRequiredService<CurrentBot>();
+            var botAccessor = serviceProvider.GetRequiredService<BotAccessor>();
             var userStateOptions = serviceProvider.GetRequiredService<IOptions<UserStateOptions>>().Value;
-            var userStateAttribute = method.GetCustomAttribute<UserStateAttribute>();
+            var userStateAttributeOfMethod = method.GetCustomAttribute<UserStateAttribute>();
+            var userStateAttributeOfExecutor = method.ExecutorType.GetCustomAttribute<UserStateAttribute>();
 
             MethodName = method.MethodInfo.Name;
             TransformedMethodName = transformer.Transform(MethodName);
-            Bot = currentBot.Data;
+            Bot = botAccessor.Bot;
             UpdateTypes = GetType()
                 .GetCustomAttribute<TargetUpdateTypeAttribute>()
                 ?.UpdateTypes ?? new[] { UpdateType.Unknown };
             _defaultUserState = userStateOptions.DefaultUserState;
-            _userStatesOfMethod = userStateAttribute?.UserStates ?? Array.Empty<string>();
+            _userStatesOfMethod = userStateAttributeOfMethod?.UserStates ?? Array.Empty<string>();
+            _userStatesOfExecutor = userStateAttributeOfExecutor?.UserStates ?? Array.Empty<string>();
 
             Initialization(method);
         }
 
         public abstract bool IsTarget(Update update);
         protected virtual void Initialization(ExecutorMethod method) { }
+        
+        private IEnumerable<string> buildUserStates()
+        {
+            var userStates =
+                Array.Empty<string>()
+                    .Concat(_userStatesOfAttribute)
+                    .Concat(_userStatesOfMethod)
+                    .Concat(_userStatesOfExecutor)
+                    .Select(s => s.Trim());
+            return userStates.Any() ? userStates : new[] { _defaultUserState };
+        }
     }
 }
