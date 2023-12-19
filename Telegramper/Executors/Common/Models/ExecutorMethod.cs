@@ -28,7 +28,6 @@ namespace Telegramper.Executors.Common.Models
             _serviceProvider = serviceProvider;
             _assemblyAttributes = assemblyAttributes;
 
-            // var attributes = assemblyAttributes.ToList();
             TargetAttributes = GetCustomAttributes<TargetAttribute>();
             FilterAttributes = GetCustomAttributes<FilterAttribute>();
             initializationTargetAttributes(TargetAttributes);

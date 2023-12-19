@@ -20,7 +20,7 @@ namespace Telegramper.Executors.QueryHandlers.RouteDictionaries
             }
         }
         
-        public IEnumerable<MethodsByUserState> GetTargetMethodInfos(IEnumerable<string> userStates)
+        public IEnumerable<MethodsByUserState> GetSuitableMethodsBy(IEnumerable<string> userStates)
         {
             foreach (var state in userStates)
             {

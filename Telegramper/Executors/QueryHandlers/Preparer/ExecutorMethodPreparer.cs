@@ -45,12 +45,7 @@ namespace Telegramper.Executors.QueryHandlers.Preparer
                     _parametersParserOptions.DefaultSeparator
                 );
 
-                if (parseResult == null)
-                {
-                    continue;
-                }
-
-                if (parseResult.Status != ParseStatus.Success)
+                if (parseResult.Status != ParseStatus.Success) 
                 {
                     var errorMessage = _parseErrorHandler.GetErrorMessage(parseResult.Status, method);
                     prepareErrorsList.Add(new PrepareError

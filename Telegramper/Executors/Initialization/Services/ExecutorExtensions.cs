@@ -11,6 +11,7 @@ using Telegramper.Executors.QueryHandlers.Preparer;
 using Telegramper.Executors.QueryHandlers.Preparer.ErrorHandler;
 using Telegramper.Executors.QueryHandlers.RouteDictionaries;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
+using Telegramper.Executors.QueryHandlers.SuitableMethodFinder.Strategies;
 using Telegramper.Executors.QueryHandlers.UserState;
 using Telegramper.Executors.QueryHandlers.UserState.Saver;
 using Telegramper.Storage.Services;
@@ -68,6 +69,9 @@ namespace Telegramper.Executors.Initialization.Services
             services.AddTransient<IExecutorMethodInvoker, ExecutorMethodInvoker>();
             services.AddTransient<IExecutorFactory, ExecutorFactory>();
             services.AddTransient<ISuitableMethodFinder, SuitableMethodFinder>();
+            services.AddTransient<ManyFinderStrategy>();
+            services.AddTransient<SingleFinderStrategy>();
+            services.AddTransient<LimitedFinderStrategy>();
             services.AddTransient<IExecutorMethodPreparer, ExecutorMethodPreparer>();
             services.AddTransient<IUserStates, UserStates>();
             services.AddTransient<IParseErrorHandler, ParseErrorHandler>();
