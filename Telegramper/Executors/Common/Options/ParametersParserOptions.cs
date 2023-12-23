@@ -7,6 +7,8 @@ namespace Telegramper.Executors.Common.Options
     public class ParametersParserOptions
     {
         /// default values see in <see cref="ExecutorOptions"/>
+
+        public static string NoneSeparator = "";
         
         private Type _parametersParserType = null!;
 

@@ -22,7 +22,7 @@ namespace Telegramper.Executors.Common.Options
         public ParametersParserOptions ParametersParser { get; set; } = new()
         {
             ParserType = typeof(ParametersParser),
-            DefaultSeparator = " ",
+            DefaultSeparator = ParametersParserOptions.NoneSeparator,
             ErrorMessages = new ParseErrorMessagesAttribute
             {
                 TypeParseError = "Type parse error",
