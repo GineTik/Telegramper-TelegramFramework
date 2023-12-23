@@ -16,10 +16,10 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes
     public abstract class TargetAttribute : Attribute
     {
         public IEnumerable<UpdateType> UpdateTypes { get; private set; } = null!;
-        public IEnumerable<string> UserStates
+        public string[] UserStates
         {
             get => buildUserStates();
-            protected set => _userStatesOfAttribute = value;
+            set => _userStatesOfAttribute = value;
         }
         protected string MethodName { get; private set; } = null!;
         protected string TransformedMethodName { get; private set; } = null!;
@@ -54,14 +54,15 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes
         public abstract bool IsTarget(Update update);
         protected virtual void Initialization(ExecutorMethod method) { }
         
-        private IEnumerable<string> buildUserStates()
+        private string[] buildUserStates()
         {
             var userStates =
                 Array.Empty<string>()
                     .Concat(_userStatesOfAttribute)
                     .Concat(_userStatesOfMethod)
                     .Concat(_userStatesOfExecutor)
-                    .Select(s => s.Trim());
+                    .Select(s => s.Trim())
+                    .ToArray();
             return userStates.Any() ? userStates : new[] { _defaultUserState };
         }
     }
