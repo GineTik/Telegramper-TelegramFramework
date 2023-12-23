@@ -60,7 +60,7 @@ namespace Telegramper.Executors.Initialization.Services
             this IServiceCollection services,
             ExecutorOptions executorOptions)
         {
-            var executorsTypes = StaticExecutorFinder.FindExecutorTypes(executorOptions.Assemblies);
+            var executorsTypes = new ExecutorTypeStorageInitializer(executorOptions.Assemblies).Initialization();
             services.AddListStorage<ExecutorType>(_ => executorsTypes);
             services.AddListStorage<ExecutorMethod, ExecutorMethodStorageInitializer>();
             services.AddListStorage<TargetCommandAttribute, CommandStorageInitializer>();
