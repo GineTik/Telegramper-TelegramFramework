@@ -2,7 +2,9 @@
 using Telegramper.Executors.Initialization;
 using Telegramper.Executors.Initialization.NameTransformer;
 using Telegramper.Executors.QueryHandlers.Attributes.ParametersParse;
-using Telegramper.Executors.QueryHandlers.ParametersParser;
+using Telegramper.Executors.QueryHandlers.ParameterParser;
+using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler.Strategies;
+using Telegramper.Executors.QueryHandlers.ParameterParser.Strategies;
 using Telegramper.Executors.QueryHandlers.UserState.Saver.Implementations;
 
 namespace Telegramper.Executors.Common.Options
@@ -22,12 +24,14 @@ namespace Telegramper.Executors.Common.Options
         public ParametersParserOptions ParametersParser { get; set; } = new()
         {
             ParserType = typeof(ParametersParser),
+            ErrorHandlerStrategyType = typeof(DefaultParseErrorStrategy),
             DefaultSeparator = ParametersParserOptions.NoneSeparator,
             ErrorMessages = new ParseErrorMessagesAttribute
             {
                 TypeParseError = "Type parse error",
                 ArgsLengthIsLess = "Args length is less"
-            }
+            },
+            ParameterParseStrategyType = typeof(DefaultParseStrategy)
         };
             
         public UserStateOptions UserState { get; set; } = new()

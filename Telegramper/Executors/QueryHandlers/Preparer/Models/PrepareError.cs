@@ -1,6 +1,6 @@
 ﻿using Telegramper.Executors.Common.Models;
 
-namespace Telegramper.Executors.QueryHandlers.Preparer.PrepareErrors
+namespace Telegramper.Executors.QueryHandlers.Preparer.Models
 {
     public class PrepareError
     {

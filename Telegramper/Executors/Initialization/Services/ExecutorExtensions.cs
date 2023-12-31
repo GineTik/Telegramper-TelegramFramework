@@ -6,9 +6,10 @@ using Telegramper.Executors.Initialization.StorageInitializers;
 using Telegramper.Executors.QueryHandlers.Attributes.Targets;
 using Telegramper.Executors.QueryHandlers.Factory;
 using Telegramper.Executors.QueryHandlers.MethodInvoker;
-using Telegramper.Executors.QueryHandlers.ParametersParser;
+using Telegramper.Executors.QueryHandlers.ParameterParser;
+using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler;
+using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler.Strategies;
 using Telegramper.Executors.QueryHandlers.Preparer;
-using Telegramper.Executors.QueryHandlers.Preparer.ErrorHandler;
 using Telegramper.Executors.QueryHandlers.RouteDictionaries;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder.Strategies;
@@ -74,11 +75,11 @@ namespace Telegramper.Executors.Initialization.Services
             services.AddTransient<LimitedFinderStrategy>();
             services.AddTransient<IExecutorMethodPreparer, ExecutorMethodPreparer>();
             services.AddTransient<IUserStates, UserStates>();
-            services.AddTransient<IParseErrorHandler, ParseErrorHandler>();
             services.AddSingleton(typeof(IUserStateSaver), executorOptions.UserState.SaverType);
-            services.AddTransient(typeof(IParametersParser), executorOptions.ParametersParser.ParserType);
             services.AddSingleton(typeof(INameTransformer), executorOptions.MethodNameTransformer.NameTransformerType);
 
+            services.AddParameterParsing(executorOptions.ParametersParser);
+            
             foreach (var executor in executorsTypes.Select(wrapper => wrapper.Type))
             {
                 services.AddTransient(executor);

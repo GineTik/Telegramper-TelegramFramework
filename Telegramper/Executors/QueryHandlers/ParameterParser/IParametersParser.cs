@@ -1,10 +1,11 @@
 ﻿using System.Reflection;
-using Telegramper.Executors.QueryHandlers.ParametersParser.Results;
+using Telegramper.Executors.Common.Models;
+using Telegramper.Executors.QueryHandlers.ParameterParser.Models;
 
-namespace Telegramper.Executors.QueryHandlers.ParametersParser
+namespace Telegramper.Executors.QueryHandlers.ParameterParser
 {
     public interface IParametersParser
     {
-        public ParametersParseResult Parse(string args, ICollection<ParameterInfo> parametersInfos, string argsSeparator);
+        public ParametersParseResult TryParse(ExecutorMethod method);
     }
 }

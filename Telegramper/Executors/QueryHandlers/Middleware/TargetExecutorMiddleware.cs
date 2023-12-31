@@ -30,8 +30,8 @@ namespace Telegramper.Executors.QueryHandlers.Middleware
 
         public async Task InvokeAsync(UpdateContext updateContext, NextDelegate next)
         {
-            var suitableMethods = await _suitableMethodFinder.FindForCurrentUpdateAsync();
-            var invokableMethods = _executorMethodPreparer.PrepareMethodsForExecution(suitableMethods, out var errors);
+            var suitableRouteMethods = await _suitableMethodFinder.FindForCurrentUpdateAsync();
+            var invokableMethods = _executorMethodPreparer.PrepareMethodsForExecution(suitableRouteMethods, out var errors);
 
             foreach (var error in errors)
             {

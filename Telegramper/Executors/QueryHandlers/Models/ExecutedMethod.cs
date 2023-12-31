@@ -1,6 +1,6 @@
 ﻿using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
-using Telegramper.Executors.QueryHandlers.ParametersParser.Results;
+using Telegramper.Executors.QueryHandlers.ParameterParser.Models;
 
 namespace Telegramper.Executors.QueryHandlers.Models
 {
