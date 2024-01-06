@@ -1,12 +1,10 @@
 ﻿using Telegramper.Executors.Common.Models;
-using Telegramper.Executors.Initialization.Models;
-using Telegramper.Executors.Initialization.StorageInitializers;
 
 namespace Telegramper.Executors.QueryHandlers.RouteDictionaries
 {
     public class MethodsByUserStateDictionary : Dictionary<string, MethodsByUserState>
     {
-        public void AddOrSet(string userStateKey, TemporaryMethodDataForInitialization temporaryMethodData)
+        public void AddOrSet(string userStateKey, Route temporaryMethodData)
         {
             if (TryGetValue(userStateKey, out var foundMethodsByUserState))
             {

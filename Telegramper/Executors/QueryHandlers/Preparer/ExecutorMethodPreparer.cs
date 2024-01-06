@@ -19,21 +19,21 @@ namespace Telegramper.Executors.QueryHandlers.Preparer
         }
 
         public IEnumerable<InvokableExecutorMethod> PrepareMethodsForExecution(
-            IEnumerable<ExecutorMethod> methods, 
+            IEnumerable<Route> routes, 
             out IEnumerable<PrepareError> prepareErrors)
         {
             var prepareErrorsAsList = new List<PrepareError>();
             var invokableMethods = new List<InvokableExecutorMethod>();
 
-            foreach (var method in methods)
+            foreach (var route in routes)
             {
-                var parseResult = _parametersParser.TryParse(method);
+                var parseResult = _parametersParser.TryParseFor(route);
 
                 if (parseResult.Successfully == false) 
                 {
                     prepareErrorsAsList.Add(new PrepareError
                     {
-                        Method = method,
+                        Method = route.Method,
                         Message = parseResult.ErrorMessage!
                     });
                     continue;
@@ -41,7 +41,7 @@ namespace Telegramper.Executors.QueryHandlers.Preparer
 
                 invokableMethods.Add(new InvokableExecutorMethod
                 {
-                    Method = method,
+                    Method = route.Method,
                     Parameters = parseResult.ConvertedParameters
                 });
             }

@@ -1,37 +1,19 @@
-using Telegramper.Executors.Initialization.Models;
-using Telegramper.Executors.Initialization.StorageInitializers;
-
 namespace Telegramper.Executors.Common.Models;
 
 public class MethodsByUserState
 {
-    private readonly List<RouteMethod> _methodsInHandlerQueue = new();
-    private readonly List<RouteMethod> _methodsWithIgnoreHandlerAttribute = new();
+    private readonly List<Route> _routesInHandlerQueue = new();
+    private readonly List<Route> _routesWithIgnoreHandlerAttribute = new();
 
-    public IEnumerable<RouteMethod> MethodsInHandlerQueue => _methodsInHandlerQueue;
-    public IEnumerable<RouteMethod> MethodsWithIgnoreHandlerAttribute => _methodsWithIgnoreHandlerAttribute;
+    public IEnumerable<Route> RoutesInHandlerQueue => _routesInHandlerQueue;
+    public IEnumerable<Route> RoutesWithIgnoreHandlerAttribute => _routesWithIgnoreHandlerAttribute;
 
-    public void Add(TemporaryMethodDataForInitialization temporaryMethodData)
+    public void Add(Route route)
     {
-        var correctCollection = temporaryMethodData.Method.IsIgnoresLimitOfHandlers
-            ? _methodsWithIgnoreHandlerAttribute
-            : _methodsInHandlerQueue;
-        
-        var routeMethod =
-            correctCollection.FirstOrDefault(routeMethod =>
-                routeMethod.Method.MethodInfo == temporaryMethodData.Method.MethodInfo);
-            
-        if (routeMethod != null)
-        {
-            routeMethod.TargetAttributes.Add(temporaryMethodData.TargetAttribute);      
-        }
-        else
-        {
-            correctCollection.Add(new RouteMethod
-            {
-                TargetAttributes = new[] { temporaryMethodData.TargetAttribute },
-                Method = temporaryMethodData.Method
-            });
-        }
+        var correctCollection = route.Method.IsIgnoresLimitOfHandlers
+            ? _routesWithIgnoreHandlerAttribute
+            : _routesInHandlerQueue;
+     
+        correctCollection.Add(route);
     }
 }

@@ -12,21 +12,13 @@ public class SingleFinderStrategy : ISuitableMethodFinderStrategy
         _updateContext = updateContextAccessor.UpdateContext;
     }
 
-    public IEnumerable<ExecutorMethod> Find(IEnumerable<RouteMethod> methodsInHandlerQueue, IEnumerable<RouteMethod> methodsWithIgnoreQueueAttribute)
+    public IEnumerable<Route> Find(IEnumerable<Route> routesInHandlerQueue, IEnumerable<Route> routesWithIgnoreQueueAttribute)
     {
-        var suitableMethodInQueue = methodsInHandlerQueue.FirstOrDefault(m => m
-            .TargetAttributes
-            .Any(attr => attr.IsTarget(_updateContext.Update))
-        );
-        
-        var suitableMethodsWithIgnoreAttribute = methodsWithIgnoreQueueAttribute.Where(method => method
-            .TargetAttributes
-            .Any(attr => attr.IsTarget(_updateContext.Update))
-        );
+        var suitableRouteInQueue = routesInHandlerQueue.FirstOrDefault(route => route.TargetAttribute.IsTarget(_updateContext.Update));
+        var suitableRoutesWithIgnoreAttribute = routesWithIgnoreQueueAttribute.Where(route => route.TargetAttribute.IsTarget(_updateContext.Update));
 
-        return (suitableMethodInQueue == null
-            ? suitableMethodsWithIgnoreAttribute
-            : new[] { suitableMethodInQueue }.Concat(suitableMethodsWithIgnoreAttribute)
-        ).Select(m => m.Method);
+        return suitableRouteInQueue == null
+            ? suitableRoutesWithIgnoreAttribute
+            : new[] { suitableRouteInQueue }.Concat(suitableRoutesWithIgnoreAttribute);
     }
 }

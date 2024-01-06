@@ -36,7 +36,7 @@ namespace Telegramper.Executors.QueryHandlers.SuitableMethodFinder
             };
         }
 
-        public async Task<IEnumerable<ExecutorMethod>> FindForCurrentUpdateAsync()
+        public async Task<IEnumerable<Route>> FindForCurrentUpdateAsync()
         {
             var userStates = await _userStates.GetAsync(_updateContext.TelegramUserId);
 
@@ -46,8 +46,8 @@ namespace Telegramper.Executors.QueryHandlers.SuitableMethodFinder
             ).ToList();
 
             return _finderStrategy.Find(
-                methods.SelectMany(m => m.MethodsInHandlerQueue),
-                methods.SelectMany(m => m.MethodsWithIgnoreHandlerAttribute));
+                methods.SelectMany(m => m.RoutesInHandlerQueue),
+                methods.SelectMany(m => m.RoutesWithIgnoreHandlerAttribute));
         }
     }
 }

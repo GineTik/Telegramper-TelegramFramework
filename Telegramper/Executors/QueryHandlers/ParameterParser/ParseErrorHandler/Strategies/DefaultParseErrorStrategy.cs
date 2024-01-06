@@ -4,7 +4,7 @@ namespace Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler.
 
 public class DefaultParseErrorStrategy : IParseErrorStrategy
 {
-    public string Handle(string errorMessage, IEnumerable<object?> convertedArgs, ExecutorMethod method)
+    public string Handle(string errorMessage, IEnumerable<object?> convertedArgs, Route route)
     {
         return errorMessage;
     }

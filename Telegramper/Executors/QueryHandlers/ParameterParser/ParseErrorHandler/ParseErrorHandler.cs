@@ -19,12 +19,12 @@ public class ParseErrorHandler : IParseErrorHandler
         _parametersParserOptions = parametersParserOptions.Value;
     }
 
-    public string Handle(ParseStatus status, IEnumerable<object?> convertedArgs, ExecutorMethod method)
+    public string Handle(ParseStatus status, IEnumerable<object?> convertedArgs, Route route)
     {
-        var errorMessage = method.GetCustomAttribute<ParseErrorMessagesAttribute>()?.GetActualErrorMessage(status)
+        var errorMessage = route.Method.GetCustomAttribute<ParseErrorMessagesAttribute>()?.GetActualErrorMessage(status)
             ?? _parametersParserOptions.ErrorMessages.GetActualErrorMessage(status)
             ?? status.ToString();
         
-        return _parseErrorStrategy.Handle(errorMessage, convertedArgs, method);
+        return _parseErrorStrategy.Handle(errorMessage, convertedArgs, route);
     }
 }

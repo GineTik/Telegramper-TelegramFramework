@@ -4,6 +4,7 @@ using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.Common.Options;
 using Telegramper.Executors.QueryHandlers.Attributes.ParametersParse.Separator;
 using Telegramper.Executors.QueryHandlers.ParameterParser.Enums;
+using Telegramper.Executors.QueryHandlers.ParameterParser.Extensions;
 using Telegramper.Executors.QueryHandlers.ParameterParser.Models;
 using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler;
 using Telegramper.Executors.QueryHandlers.ParameterParser.Strategies;
@@ -25,11 +26,11 @@ namespace Telegramper.Executors.QueryHandlers.ParameterParser
             _parametersParserOptions = parametersParserOptions.Value;
         }
 
-        public ParametersParseResult TryParse(ExecutorMethod method)
+        public ParametersParseResult TryParseFor(Route route)
         {
-            var parametersInfos = method.MethodInfo.GetParameters();
+            var parametersInfos = route.Method.MethodInfo.GetParameters();
             var argsAsString = getArgs();
-            var defaultSeparator = getDefaultSeparator(method);
+            var defaultSeparator = getDefaultSeparator(route.Method);
 
             if (parametersInfos.Length == 0)
             {
@@ -38,7 +39,7 @@ namespace Telegramper.Executors.QueryHandlers.ParameterParser
 
             if (argsAsString.Length == 0)
             {
-                return error(ParseStatus.ArgsLengthIsLess, method, Array.Empty<object?>());
+                return error(ParseStatus.ArgsLengthIsLess, route, Array.Empty<object?>());
             }
 
             var argsAsArray = argsAsString.Split(defaultSeparator);
@@ -46,7 +47,7 @@ namespace Telegramper.Executors.QueryHandlers.ParameterParser
 
             return status == ParseStatus.Success
                 ? success(convertedArgs)
-                : error(status, method, convertedArgs);
+                : error(status, route, convertedArgs);
         }
 
         private ParametersParseResult success(object?[] convertedArgs)
@@ -58,18 +59,18 @@ namespace Telegramper.Executors.QueryHandlers.ParameterParser
             };
         }
         
-        private ParametersParseResult error(ParseStatus status, ExecutorMethod method, object?[] convertedArgs)
+        private ParametersParseResult error(ParseStatus status, Route route, object?[] convertedArgs)
         {
             return new ParametersParseResult
             {
                 ConvertedParameters = convertedArgs,
-                ErrorMessage = _parseErrorHandler.Handle(status, convertedArgs, method)
+                ErrorMessage = _parseErrorHandler.Handle(status, convertedArgs, route)
             };
         }
 
         private string getArgs()
         {
-            return _updateContext.Message?.Text
+            return _updateContext.Message?.Text?.RemoveCommand()
                    ?? _updateContext.Update.CallbackQuery?.Data
                    ?? "";
         }

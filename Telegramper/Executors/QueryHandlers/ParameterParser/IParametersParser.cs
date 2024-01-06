@@ -6,6 +6,6 @@ namespace Telegramper.Executors.QueryHandlers.ParameterParser
 {
     public interface IParametersParser
     {
-        public ParametersParseResult TryParse(ExecutorMethod method);
+        public ParametersParseResult TryParseFor(Route route);
     }
 }

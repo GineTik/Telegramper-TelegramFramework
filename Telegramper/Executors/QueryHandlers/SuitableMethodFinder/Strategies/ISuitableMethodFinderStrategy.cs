@@ -4,6 +4,6 @@ namespace Telegramper.Executors.QueryHandlers.SuitableMethodFinder.Strategies;
 
 public interface ISuitableMethodFinderStrategy
 {
-    IEnumerable<ExecutorMethod> Find(IEnumerable<RouteMethod> methodsInHandlerQueue,
-        IEnumerable<RouteMethod> methodsWithIgnoreQueueAttribute);
+    IEnumerable<Route> Find(IEnumerable<Route> routesInHandlerQueue,
+        IEnumerable<Route> routesWithIgnoreQueueAttribute);
 }

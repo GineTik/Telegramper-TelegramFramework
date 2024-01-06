@@ -16,28 +16,26 @@ public class LimitedFinderStrategy : ISuitableMethodFinderStrategy
         _handlerQueueOptions = handlerQueueOptions.Value;
     }
 
-    public IEnumerable<ExecutorMethod> Find(IEnumerable<RouteMethod> methodsInHandlerQueue, IEnumerable<RouteMethod> methodsWithIgnoreQueueAttribute)
+    public IEnumerable<Route> Find(IEnumerable<Route> routesInHandlerQueue, IEnumerable<Route> routesWithIgnoreQueueAttribute)
     {
-        var i = 0;
-        var suitableMethodsInQueue = new List<ExecutorMethod>();
-        
-        foreach (var method in methodsInHandlerQueue)
+        var suitableRoutesInQueue = findSuitableRoutes(routesInHandlerQueue);
+        var suitableMethodsWithIgnoreAttribute = routesWithIgnoreQueueAttribute.Where(route => route.TargetAttribute.IsTarget(_updateContext.Update));
+
+        return suitableRoutesInQueue.Concat(suitableMethodsWithIgnoreAttribute);
+    }
+
+    private IEnumerable<Route> findSuitableRoutes(IEnumerable<Route> routesInHandlerQueue)
+    {
+        var routesFound = 0;
+        foreach (var route in routesInHandlerQueue)
         {
-            var targetAttributes = method.TargetAttributes;
-            if (!targetAttributes.Any(attr => attr.IsTarget(_updateContext.Update))) continue;
+            if (!route.TargetAttribute.IsTarget(_updateContext.Update)) continue;
 
-            suitableMethodsInQueue.Add(method.Method);
-            i++;
+            routesFound++;
+            yield return route;
 
-            if (i == _handlerQueueOptions.LimitOfHandlersPerRequest)
+            if (routesFound == _handlerQueueOptions.LimitOfHandlersPerRequest)
                 break;
         }
-
-        var suitableMethodsWithIgnoreAttribute = methodsWithIgnoreQueueAttribute.Where(method => method
-            .TargetAttributes
-            .Any(attr => attr.IsTarget(_updateContext.Update))
-        ).Select(m => m.Method);
-
-        return suitableMethodsInQueue.Concat(suitableMethodsWithIgnoreAttribute);
     }
 }

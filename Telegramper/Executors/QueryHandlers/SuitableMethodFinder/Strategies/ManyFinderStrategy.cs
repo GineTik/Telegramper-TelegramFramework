@@ -12,13 +12,9 @@ public class ManyFinderStrategy : ISuitableMethodFinderStrategy
         _updateContext = updateContextAccessor.UpdateContext;
     }
 
-    public IEnumerable<ExecutorMethod> Find(IEnumerable<RouteMethod> methodsInHandlerQueue, IEnumerable<RouteMethod> methodsWithIgnoreQueueAttribute)
+    public IEnumerable<Route> Find(IEnumerable<Route> routesInHandlerQueue, IEnumerable<Route> routesWithIgnoreQueueAttribute)
     {
-        var methods = methodsInHandlerQueue.Concat(methodsWithIgnoreQueueAttribute);
-        
-        return methods.Where(method => method
-            .TargetAttributes
-            .Any(attr => attr.IsTarget(_updateContext.Update))
-        ).Select(m => m.Method);
+        var routes = routesInHandlerQueue.Concat(routesWithIgnoreQueueAttribute);
+        return routes.Where(route => route.TargetAttribute.IsTarget(_updateContext.Update));
     }
 }

@@ -6,6 +6,6 @@ namespace Telegramper.Executors.QueryHandlers.Preparer
 {
     public interface IExecutorMethodPreparer
     {
-        IEnumerable<InvokableExecutorMethod> PrepareMethodsForExecution(IEnumerable<ExecutorMethod> methods, out IEnumerable<PrepareError> prepareErrors);
+        IEnumerable<InvokableExecutorMethod> PrepareMethodsForExecution(IEnumerable<Route> routes, out IEnumerable<PrepareError> prepareErrors);
     }
 }
