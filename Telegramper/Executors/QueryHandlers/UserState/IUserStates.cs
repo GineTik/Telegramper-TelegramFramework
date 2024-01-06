@@ -7,5 +7,6 @@
         Task SetRangeAsync(IEnumerable<string> states, long? telegramUserId = null, bool withDefaultState = false);
         Task AddAsync(string state, long? telegramUserId = null);
         Task RemoveAsync(long? telegramUserId = null);
+        Task<bool> Contains(string state, long? telegramUserId = null);
     }
 }

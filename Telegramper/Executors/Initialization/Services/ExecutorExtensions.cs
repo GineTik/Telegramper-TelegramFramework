@@ -14,7 +14,7 @@ using Telegramper.Executors.QueryHandlers.RouteDictionaries;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder.Strategies;
 using Telegramper.Executors.QueryHandlers.UserState;
-using Telegramper.Executors.QueryHandlers.UserState.Saver;
+using Telegramper.Executors.QueryHandlers.UserState.Strategy;
 using Telegramper.Storage.Services;
 
 namespace Telegramper.Executors.Initialization.Services
@@ -75,7 +75,7 @@ namespace Telegramper.Executors.Initialization.Services
             services.AddTransient<LimitedFinderStrategy>();
             services.AddTransient<IExecutorMethodPreparer, ExecutorMethodPreparer>();
             services.AddTransient<IUserStates, UserStates>();
-            services.AddSingleton(typeof(IUserStateSaver), executorOptions.UserState.SaverType);
+            services.AddSingleton(typeof(IUserStateSaveStrategy), executorOptions.UserState.SaverType);
             services.AddSingleton(typeof(INameTransformer), executorOptions.MethodNameTransformer.NameTransformerType);
 
             services.AddParameterParsing(executorOptions.ParametersParser);

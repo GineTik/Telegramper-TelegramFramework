@@ -5,7 +5,7 @@ using Telegramper.Executors.QueryHandlers.Attributes.ParametersParse;
 using Telegramper.Executors.QueryHandlers.ParameterParser;
 using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler.Strategies;
 using Telegramper.Executors.QueryHandlers.ParameterParser.Strategies;
-using Telegramper.Executors.QueryHandlers.UserState.Saver.Implementations;
+using Telegramper.Executors.QueryHandlers.UserState.Strategy;
 
 namespace Telegramper.Executors.Common.Options
 {
@@ -37,7 +37,7 @@ namespace Telegramper.Executors.Common.Options
         public UserStateOptions UserState { get; set; } = new()
         {
             DefaultUserState = "",
-            SaverType = typeof(MemoryUserStateSaver)
+            SaverType = typeof(MemoryUserStateSaveStrategy)
         };
 
         public HandlerQueueOptions HandlerQueue { get; set; } = new()
