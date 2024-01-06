@@ -49,7 +49,7 @@ namespace Telegramper.Core
         private void addCurrentBotInformationToServices(string apiKey)
         {
             var botClient = new TelegramBotClient(apiKey);
-            Services.AddSingleton(new CurrentBot { Data = botClient.GetMeAsync().Result });
+            Services.AddSingleton(new BotAccessor { Bot = botClient.GetMeAsync().Result });
         }
 
         private void setDefaultsServicesAndLogging()

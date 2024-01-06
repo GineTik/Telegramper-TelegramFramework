@@ -40,9 +40,9 @@ public class InvokeMethodTests
         updateContextAccessor.UpdateContext = buildFakeUpdateContext(text);
         var suitableMethodFinder = _serviceProvider.GetRequiredService<ISuitableMethodFinder>();
         
-        var suitableMethods = await suitableMethodFinder.FindForCurrentUpdateAsync();
+        var suitableRoutes = await suitableMethodFinder.FindForCurrentUpdateAsync();
 
-        Assert.Contains(suitableMethods, suitableMethod => suitableMethod.MethodInfo.Name == expectedMethodName);
+        Assert.Contains(suitableRoutes, suitableRoute => suitableRoute.Method.MethodInfo.Name == expectedMethodName);
     }
     
     private static UpdateContext buildFakeUpdateContext(string text)

@@ -6,13 +6,15 @@ using Telegramper.Executors.Initialization.StorageInitializers;
 using Telegramper.Executors.QueryHandlers.Attributes.Targets;
 using Telegramper.Executors.QueryHandlers.Factory;
 using Telegramper.Executors.QueryHandlers.MethodInvoker;
-using Telegramper.Executors.QueryHandlers.ParametersParser;
+using Telegramper.Executors.QueryHandlers.ParameterParser;
+using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler;
+using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler.Strategies;
 using Telegramper.Executors.QueryHandlers.Preparer;
-using Telegramper.Executors.QueryHandlers.Preparer.ErrorHandler;
 using Telegramper.Executors.QueryHandlers.RouteDictionaries;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
+using Telegramper.Executors.QueryHandlers.SuitableMethodFinder.Strategies;
 using Telegramper.Executors.QueryHandlers.UserState;
-using Telegramper.Executors.QueryHandlers.UserState.Saver;
+using Telegramper.Executors.QueryHandlers.UserState.Strategy;
 using Telegramper.Storage.Services;
 
 namespace Telegramper.Executors.Initialization.Services
@@ -59,7 +61,7 @@ namespace Telegramper.Executors.Initialization.Services
             this IServiceCollection services,
             ExecutorOptions executorOptions)
         {
-            var executorsTypes = StaticExecutorFinder.FindExecutorTypes(executorOptions.Assemblies);
+            var executorsTypes = new ExecutorTypeStorageInitializer(executorOptions.Assemblies).Initialization();
             services.AddListStorage<ExecutorType>(_ => executorsTypes);
             services.AddListStorage<ExecutorMethod, ExecutorMethodStorageInitializer>();
             services.AddListStorage<TargetCommandAttribute, CommandStorageInitializer>();
@@ -68,13 +70,16 @@ namespace Telegramper.Executors.Initialization.Services
             services.AddTransient<IExecutorMethodInvoker, ExecutorMethodInvoker>();
             services.AddTransient<IExecutorFactory, ExecutorFactory>();
             services.AddTransient<ISuitableMethodFinder, SuitableMethodFinder>();
+            services.AddTransient<ManyFinderStrategy>();
+            services.AddTransient<SingleFinderStrategy>();
+            services.AddTransient<LimitedFinderStrategy>();
             services.AddTransient<IExecutorMethodPreparer, ExecutorMethodPreparer>();
             services.AddTransient<IUserStates, UserStates>();
-            services.AddTransient<IParseErrorHandler, ParseErrorHandler>();
-            services.AddSingleton(typeof(IUserStateSaver), executorOptions.UserState.SaverType);
-            services.AddTransient(typeof(IParametersParser), executorOptions.ParametersParser.ParserType);
+            services.AddSingleton(typeof(IUserStateSaveStrategy), executorOptions.UserState.SaverType);
             services.AddSingleton(typeof(INameTransformer), executorOptions.MethodNameTransformer.NameTransformerType);
 
+            services.AddParameterParsing(executorOptions.ParametersParser);
+            
             foreach (var executor in executorsTypes.Select(wrapper => wrapper.Type))
             {
                 services.AddTransient(executor);

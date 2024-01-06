@@ -1,22 +1,22 @@
 ﻿using Telegramper.Core.Context;
 using Microsoft.Extensions.Options;
-using Telegramper.Executors.QueryHandlers.UserState.Saver;
 using Telegramper.Executors.Common.Options;
+using Telegramper.Executors.QueryHandlers.UserState.Strategy;
 
 namespace Telegramper.Executors.QueryHandlers.UserState
 {
     public class UserStates : IUserStates
     {
-        private readonly IUserStateSaver _saver; 
+        private readonly IUserStateSaveStrategy _saveStrategy; 
         private readonly UpdateContext _updateContext;
         private readonly UserStateOptions _options;
 
         public UserStates(
-            IUserStateSaver saver,
+            IUserStateSaveStrategy saveStrategy,
             UpdateContextAccessor accessor,
             IOptions<UserStateOptions> options)
         {
-            _saver = saver;
+            _saveStrategy = saveStrategy;
             _updateContext = accessor.UpdateContext;
             _options = options.Value;
         }
@@ -36,7 +36,7 @@ namespace Telegramper.Executors.QueryHandlers.UserState
             telegramUserId ??= _updateContext.TelegramUserId;
             ArgumentNullException.ThrowIfNull(telegramUserId);
 
-            var userStates = await _saver.GetAsync(telegramUserId.Value);
+            var userStates = await _saveStrategy.GetAsync(telegramUserId.Value);
             return userStates ?? new[] { _options.DefaultUserState };
         }
 
@@ -45,7 +45,12 @@ namespace Telegramper.Executors.QueryHandlers.UserState
             telegramUserId ??= _updateContext.TelegramUserId;
             ArgumentNullException.ThrowIfNull(telegramUserId);
 
-            await _saver.RemoveAsync(telegramUserId.Value);
+            await _saveStrategy.RemoveAsync(telegramUserId.Value);
+        }
+
+        public async Task<bool> Contains(string state, long? telegramUserId = null)
+        {
+            return (await GetAsync(telegramUserId)).Contains(state);
         }
 
         public async Task SetAsync(string state, long? telegramUserId = null, bool withDefaultState = false)
@@ -58,12 +63,12 @@ namespace Telegramper.Executors.QueryHandlers.UserState
             telegramUserId ??= _updateContext.TelegramUserId;
             ArgumentNullException.ThrowIfNull(telegramUserId);
 
-            if (withDefaultState == true)
+            if (withDefaultState)
             {
-                states = states.Concat(new List<string> { _options.DefaultUserState });
+                states = states.Append(_options.DefaultUserState);
             }
 
-            await _saver.AddAsync(telegramUserId.Value, states);
+            await _saveStrategy.AddOrUpdateAsync(telegramUserId.Value, states);
         }
     }
 }

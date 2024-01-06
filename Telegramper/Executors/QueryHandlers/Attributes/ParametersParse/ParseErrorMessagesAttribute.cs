@@ -1,4 +1,5 @@
-﻿using Telegramper.Executors.QueryHandlers.ParametersParser.Results;
+﻿using Telegramper.Executors.QueryHandlers.ParameterParser.Enums;
+using Telegramper.Executors.QueryHandlers.ParameterParser.Models;
 
 namespace Telegramper.Executors.QueryHandlers.Attributes.ParametersParse
 {

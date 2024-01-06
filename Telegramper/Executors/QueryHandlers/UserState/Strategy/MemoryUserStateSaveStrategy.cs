@@ -1,14 +1,9 @@
-﻿namespace Telegramper.Executors.QueryHandlers.UserState.Saver.Implementations
+﻿namespace Telegramper.Executors.QueryHandlers.UserState.Strategy
 {
-    public class MemoryUserStateSaver : IUserStateSaver
+    public class MemoryUserStateSaveStrategy : IUserStateSaveStrategy
     {
-        private readonly Dictionary<long, IEnumerable<string>> _usersStates;
-        private readonly object _locker = new object();
-
-        public MemoryUserStateSaver()
-        {
-            _usersStates = new();
-        }
+        private readonly Dictionary<long, IEnumerable<string>> _usersStates = new();
+        private readonly object _locker = new();
 
         public async Task<IEnumerable<string>?> GetAsync(long userId)
         {
@@ -16,10 +11,8 @@
             {
                 lock (_locker)
                 {
-                    if (_usersStates.ContainsKey(userId) == false)
-                        return null;
-
-                    return _usersStates[userId];
+                    _usersStates.TryGetValue(userId, out var userState);
+                    return userState;
                 }
             });
         }
@@ -35,7 +28,7 @@
             });
         }
 
-        public async Task AddAsync(long userId, IEnumerable<string> state)
+        public async Task AddOrUpdateAsync(long userId, IEnumerable<string> state)
         {
             await Task.Run(() =>
             {
@@ -43,11 +36,11 @@
                 {
                     if (_usersStates.ContainsKey(userId) == true)
                     {
-                        _usersStates[userId] = state!;
+                        _usersStates[userId] = state;
                     }
                     else
                     {
-                        _usersStates.Add(userId, state!);
+                        _usersStates.Add(userId, state);
                     }
                 }
             });

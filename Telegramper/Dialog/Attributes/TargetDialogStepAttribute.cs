@@ -19,8 +19,6 @@ namespace Telegramper.Dialog.Attributes
         public string Question { get; }
         public ParseMode? ParseMode { get; set; }
 
-        public override string? UserStates => StaticDialogUserStateFactory.CreateByIndex(DialogName, Index);
-
         public TargetDialogStepAttribute(string question)
         {
             Question = question;
@@ -43,6 +41,8 @@ namespace Telegramper.Dialog.Attributes
                 .OrderByDescending(method => method.GetCustomAttribute<TargetDialogStepAttribute>()!.Priority)
                 .ToList()
                 .IndexOf(method.MethodInfo);
+
+            UserStates = new[] { StaticDialogUserStateFactory.CreateByIndex(DialogName, Index) };
         }
     }
 }

@@ -13,13 +13,13 @@ namespace Telegramper.Executors.QueryHandlers.RouteDictionaries
             }
         }
         
-        public IEnumerable<MethodsByUserState> GetTargetMethodInfos(UpdateType updateType, IEnumerable<string> states)
+        public IEnumerable<MethodsByUserState> GetSuitableMethodsBy(UpdateType updateType, IEnumerable<string> states)
         {
-            var methods = this[updateType].GetTargetMethodInfos(states);
+            var methods = this[updateType].GetSuitableMethodsBy(states);
         
             return updateType == UpdateType.Unknown 
                 ? methods 
-                : methods.Concat(this[UpdateType.Unknown].GetTargetMethodInfos(states));
+                : methods.Concat(this[UpdateType.Unknown].GetSuitableMethodsBy(states));
         }
     }
 }

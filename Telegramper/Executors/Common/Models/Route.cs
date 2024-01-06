@@ -2,9 +2,9 @@
 
 namespace Telegramper.Executors.Common.Models
 {
-    public class RouteMethod
+    public class Route
     {
         public required ExecutorMethod Method { get; set; }
-        public required ICollection<TargetAttribute> TargetAttributes { get; set; }
+        public required TargetAttribute TargetAttribute { get; set; }
     }
 }

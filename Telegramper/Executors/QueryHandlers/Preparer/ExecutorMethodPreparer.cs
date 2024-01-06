@@ -1,74 +1,52 @@
-﻿using Telegramper.Executors.QueryHandlers.Models;
-using Telegramper.Executors.QueryHandlers.ParametersParser;
-using Telegramper.Executors.QueryHandlers.ParametersParser.Results;
-using Telegramper.Executors.QueryHandlers.Preparer.PrepareErrors;
+﻿using Microsoft.Extensions.Options;
 using Telegramper.Core.Context;
-using Telegramper.Executors.QueryHandlers.ParametersParser.Extensions;
-using Microsoft.Extensions.Options;
-using Telegramper.Executors.Common.Options;
 using Telegramper.Executors.Common.Models;
-using Telegramper.Executors.QueryHandlers.Preparer.ErrorHandler;
+using Telegramper.Executors.Common.Options;
+using Telegramper.Executors.QueryHandlers.Models;
+using Telegramper.Executors.QueryHandlers.ParameterParser;
+using Telegramper.Executors.QueryHandlers.Preparer.Models;
 
 namespace Telegramper.Executors.QueryHandlers.Preparer
 {
     public class ExecutorMethodPreparer : IExecutorMethodPreparer
     {
         private readonly IParametersParser _parametersParser;
-        private readonly UpdateContext _updateContext;
-        private readonly ParametersParserOptions _parametersParserOptions;
-        private readonly IParseErrorHandler _parseErrorHandler;
 
         public ExecutorMethodPreparer(
-            IParametersParser parametersParser,
-            UpdateContextAccessor updateContextAccessor,
-            IOptions<ParametersParserOptions> parameterParserOptions,
-            IParseErrorHandler parseErrorHandler)
+            IParametersParser parametersParser)
         {
             _parametersParser = parametersParser;
-            _updateContext = updateContextAccessor.UpdateContext;
-            _parametersParserOptions = parameterParserOptions.Value;
-            _parseErrorHandler = parseErrorHandler;
         }
 
         public IEnumerable<InvokableExecutorMethod> PrepareMethodsForExecution(
-            IEnumerable<ExecutorMethod> methods, 
+            IEnumerable<Route> routes, 
             out IEnumerable<PrepareError> prepareErrors)
         {
-            var prepareErrorsList = new List<PrepareError>();
+            var prepareErrorsAsList = new List<PrepareError>();
             var invokableMethods = new List<InvokableExecutorMethod>();
 
-            foreach (var method in methods)
+            foreach (var route in routes)
             {
-                var parseResult = _parametersParser.Parse(
-                    _updateContext,
-                    method.MethodInfo,
-                    _parametersParserOptions.DefaultSeparator
-                );
+                var parseResult = _parametersParser.TryParseFor(route);
 
-                if (parseResult == null)
+                if (parseResult.Successfully == false) 
                 {
-                    continue;
-                }
-
-                if (parseResult.Status != ParseStatus.Success)
-                {
-                    var errorMessage = _parseErrorHandler.GetErrorMessage(parseResult.Status, method);
-                    prepareErrorsList.Add(new PrepareError
+                    prepareErrorsAsList.Add(new PrepareError
                     {
-                        Method = method,
-                        Message = errorMessage
+                        Method = route.Method,
+                        Message = parseResult.ErrorMessage!
                     });
                     continue;
                 }
 
                 invokableMethods.Add(new InvokableExecutorMethod
                 {
-                    Method = method,
+                    Method = route.Method,
                     Parameters = parseResult.ConvertedParameters
                 });
             }
 
-            prepareErrors = prepareErrorsList;
+            prepareErrors = prepareErrorsAsList;
             return invokableMethods;
         }
     }
