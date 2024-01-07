@@ -87,17 +87,18 @@ If UpdateType is equal to Message, then the Text property must be filled in the 
 If UpdateType is equal to CallbackQuery, then the Data property must be filled in the request. In the data property, the first word is required for routing, the rest will be split into parameters
 
 #### Attributes for parameters
-- ```ParametersSeparatorAttribute(separator)```, the default is space(" ")
+- ```ParametersSeparatorAttribute(separator)```,
 - ```EmptyParametersSeparatorAttribute```, set the separator to "", which means that can be only one parameters, for example, a user send /command param1 param2 param3, then param1 param2 param3 set into one parameter
-  ```cs
-  [TargetCommands("echo")]
-  [EmptyParameterSeparator] // remove separator
-  public async Task Echo(string phrase)
+- ```ParseErrorMessages```, set error messages that are sent to the user in response
+
+ ```cs
+  [TargetCommand]
+  [ParseErrorMessages(your error messages after unsuccessful parameter parsing)]
+  public async Task Echo(string phrase) // default missing separator
   {
       await Client.SendTextMessageAsync(phrase);
   }
   ```
-- ```ParseErrorMessages```, set error messages that are sent to the user in response
 
 #### Example:
 Let's look at a few cases:
@@ -112,8 +113,9 @@ Code:
 public class ExampleExecutor : Executor
 {
     [TargetCommands("example")]
+    [ParametersSeparatorAttribute(" ")]
     [ParseErrorMessages(ArgsLengthIsLess = "ArgsLengthIsLess", TypeParseError = "TypeParseError")] // change the default error messages that are sent to the user in response
-    public async Task Example(string? param1, int param2, int? param3)
+    public async Task Method(string? param1, int param2, int? param3)
     {
         await Client.SendTextMessageAsync($"all good, param1 is {param1 ?? "null"}, param2 is {param2}, param3 is {param3?.ToString() ?? "null"}");
     }
