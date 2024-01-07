@@ -139,47 +139,21 @@ There are target attributes for routing. You can attach one or more target attri
 If at least one target attribute in the handler method matches, the method is executed.
 
 ### Available attributes for routing
-- TargetCommands
-  ```cs
-  [TargetCommands("command1, commmand2, command3", Description = "Commands")]
-  public async Task Handle() { }
-  ```
-- TargetCallbackData
-  ```cs
-  [TargetCallbacksDatas("data1, data2, data3")]
-  public async Task Handle() { }
-  ```
-- TargetUpdateType
-  ```cs
-  [TargetUpdateType(UpdateType.Message)]
-  public async Task Handle() { }
-  ```
-- TargetUserStateContains
-  ```cs
-  [TargetUserStateContains("userState1, userState2, userState3")]
-  public async Task Handle() { }
-  ```
-- TargetText
-  ```cs
-  [TargetText("target text")]
-  public async Task Handle() { }
-  ```
-- TargetContainsText
-  ```cs
-  [TargetContainsText("target contains text")]
-  public async Task Handle() { }
-  ```
+- ```TargetCommand(command without a slash)```
+- ```TargetCallbackData(callback data)```
+- ```TargetUpdateType(UpdateType)```
+- ```TargetTextAttribute(text, TextMatchingMode)```
 
-This attributes checks the input data and acept to execute the method if validation result is successfully. There can be one or more ValidationAttribute for handle method.
+For ```TargetCommand``` and ```TargetCallbackData``` attributes, you can not specify parameters, then the name of the method will be substituted in the parameters and will be changed using the INameTransformer implementation, by default it is SnakeCaseNameTransformer (you can change implementation of INameTransformer in options, read about it above)
+
+This attributes checks the input data and accept to execute the method if validation result is successfully.
 
 ### Available attributes for input data validation
-- RequiredData
-```cs
-[TargetAttribute...]
-[RequiredData(UpdateProperty.Example, ErrorMessage="error message")]
-public async Task Handle() { }
+- ```RequiredData(UpdateProperty, error message)```
 
-// Available values
+<details><summary>Available values of UpdateProperty</summary>
+
+```cs
 public enum UpdateProperty
 {
     User,
@@ -189,7 +163,9 @@ public enum UpdateProperty
 }
 ```
 
-Validation attributes don't executing Executor method if input data not correct. If validation is failed, runing next middleware. One handler can have more than one ValidationAttributes.
+</details>
+
+Validation attributes don't allow to executing method if input data not correct. If validation is failed, runing next middleware. One handler can have more than one ValidationAttributes.
 
 ### Write your own attribute
 Inherit the TargetAttribute or ValidateInputD ataAttribute attribute and implement the method.
