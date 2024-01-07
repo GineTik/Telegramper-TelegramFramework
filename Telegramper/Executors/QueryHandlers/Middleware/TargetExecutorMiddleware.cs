@@ -43,12 +43,12 @@ namespace Telegramper.Executors.QueryHandlers.Middleware
 
             if (invokableMethods.Any() == false)
             {
-                _logger.LogDebug("No one handled the route");
+                _logger.LogDebug("No one handled the request");
                 await next();
                 return;
             }
 
-            _logger.LogDebug($"The following methods will handle the route: {string.Join(", ", invokableMethods.Select(v => v.Method.MethodInfo.Name))}");
+            _logger.LogDebug($"The following methods will handle the request: {string.Join(", ", invokableMethods.Select(v => v.Method.MethodInfo.Name))}");
             await _executorMethodInvoker.InvokeAsync(invokableMethods);
         }
     }
