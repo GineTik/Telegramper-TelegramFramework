@@ -6,49 +6,80 @@ For using executors, you should add ```builder.Services.AddExecutors()``` and ``
 
 Configure executors in services
 ```cs
+builder.Services.AddExecutors();
+```
+or
+```cs
 builder.Services.AddExecutors(options =>
 {
-    // default values
-
-    options.MethodNameTransformer.Type = typeof(SnakeCaseNameTransformer); // the class that transform the method name for use [TargetCommands] and [TargetCallbackData] without parameters
-
     options.ParameterParser.DefaultSeparator = " ";
     options.ParameterParser.ErrorMessages.TypeParseError = "Parse type error";
     options.ParameterParser.ErrorMessages.ArgsLengthIsLess = "Args length is less";
-    options.ParameterParser.ParserType = typeof(ParametersParser);
 
     options.UserState.DefaultUserState = "";
-    options.UserState.SaverType = typeof(MemoryUserStateSaver);
 });
 ```
-and you can configure assemblies where the executors located
+
+Default values of executor options:
 ```cs
-builder.Services.AddExecutors(new[] { Assembly.GetEntryAssembly()! }); // in the second parameter to set the default values as above
+public class ExecutorOptions
+{
+    public IEnumerable<SmartAssembly> Assemblies { get; set; } = new[]
+    {
+        new SmartAssembly(Assembly.GetEntryAssembly()!)
+    };
+    
+    public CommandExecutorOptions MethodNameTransformer { get; set; } = new()
+    {
+        NameTransformerType = typeof(SnakeCaseNameTransformer) // implementation INameTransformer
+    };
+
+    public ParametersParserOptions ParametersParser { get; set; } = new()
+    {
+        ParserType = typeof(ParametersParser), // implementation IParametersParser
+        ErrorHandlerStrategyType = typeof(DefaultParseErrorStrategy), // implementation IParseErrorStrategy
+        DefaultSeparator = ParametersParserOptions.NoneSeparator,
+        ErrorMessages = new ParseErrorMessagesAttribute
+        {
+            TypeParseError = "Type parse error",
+            ArgsLengthIsLess = "Args length is less"
+        },
+        ParameterParseStrategyType = typeof(DefaultParseStrategy) // implementation IParametersParseStrategy
+    };
+        
+    public UserStateOptions UserState { get; set; } = new()
+    {
+        DefaultUserState = "",
+        SaverType = typeof(MemoryUserStateSaveStrategy) // implementation IUserStateSaveStrategy
+    };
+
+    public HandlerQueueOptions HandlerQueue { get; set; } = new()
+    {
+        LimitOfHandlersPerRequest = 1
+    };
+}
 ```
 
 ## Executors
-Executor is basic abstract class who provide properties and methods. Executor has UpdateContext (identical to the HttpContext), Client (for send responce to a user), ExecuteAsync method (for execute other methods of executors).
+Executor is basic abstract class who provide properties and methods. 
+Executor contains:
+- UpdateContext ([about this](https://github.com/GineTik/Telegramper-TelegramFramework/blob/master/Documentation/Core/UpdateContext.md))
+- Client (taked from UpdateContext)
+- ServiceProvider (for take a dependencies)
+- ExecuteAsync (method for invoke other methods other executors)
 
 ### Executor structur
 ```cs
 public class ExecutorName : Executor // the name does not affect anything
 {
-    [TargetAttribute...(...)]
-    [ValidationAttribute]
-    public async Task Start(string? param1, int param2) // the name of methods does not affect anything too, but the return type should be Task
+    [Attributes] // TargetAttributes, ValidationAttributes, FilterAttributes (read more below)
+    public async Task Method(parameters) //  the method should be async and the returned value should be Task type
     {
-        // ... do anything
+        // do anything
         await Client.SendTextMessageAsync($"Response"); // send a response
     }
 }
 ```
-
-### Executor infrastructure 
-Executor contains:
-- UpdateContext, [about this](https://github.com/GineTik/TelegramFramework/tree/master/Telegramper/TelegramBotApplication/Context)
-- ExecuteAsync method for invoke other methods other executors.
-
-You can take dependencies from the constructor. 
 
 ### Executor parameters
 You can take a parameters (with basic type and basic nullable type) from Message and CallbackQuery UpdateTypes. Nullable type is not required parameter (example below).
