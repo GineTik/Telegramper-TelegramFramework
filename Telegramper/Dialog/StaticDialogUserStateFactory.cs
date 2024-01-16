@@ -4,17 +4,17 @@
     {
         public static string Create(string dialogName)
         {
-            return $"{DialogConstants.Modificator}{dialogName}";
+            return $"{SequenceConstants.ModificatorForName}{SequenceConstants.Separator}{dialogName}";
         }
 
-        public static string CreateByIndex(string dialogName, int index)
+        public static string CreateByIndex(int index)
         {
-            return $"{DialogConstants.Modificator}{dialogName}:{index}";
+            return $"{SequenceConstants.ModificatorForStepIndex}{SequenceConstants.Separator}{index}";
         }
 
-        public static string CreateByName(string dialogName, string name)
+        public static string CreateByName(string name)
         {
-            return $"{DialogConstants.Modificator}{dialogName}:{name}";
+            return $"{SequenceConstants.ModificatorForStepName}{SequenceConstants.Separator}{name}";
         }
     }
 }
