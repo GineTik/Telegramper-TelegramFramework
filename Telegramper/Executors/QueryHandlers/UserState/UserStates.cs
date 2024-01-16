@@ -40,8 +40,9 @@ namespace Telegramper.Executors.QueryHandlers.UserState
             telegramUserId ??= _updateContext.TelegramUserId;
             ArgumentNullException.ThrowIfNull(telegramUserId);
 
-            var userStates = await _saveStrategy.GetAsync(telegramUserId.Value);
-            return userStates ?? new[] { _options.DefaultUserState };
+            var defaultState = new[] { _options.DefaultUserState };
+            var userStates = (await _saveStrategy.GetAsync(telegramUserId.Value) ?? defaultState).ToArray();
+            return userStates.Length == 0 ? defaultState : userStates;
         }
 
         public async Task RemoveAsync(long? telegramUserId = null)
