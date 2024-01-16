@@ -24,11 +24,7 @@ namespace Telegramper.Executors.QueryHandlers.UserState
         public async Task AddAsync(string state, long? telegramUserId = null)
         {
             telegramUserId ??= _updateContext.TelegramUserId;
-
-            var userStates = await GetAsync(telegramUserId);
-            userStates = userStates.Concat(new[] { state });
-
-            await SetRangeAsync(userStates, telegramUserId);
+            await _saveStrategy.AddAsync(telegramUserId!.Value, new[] { state });
         }
 
         public async Task<IEnumerable<string>> GetAsync(long? telegramUserId = null)
@@ -45,7 +41,15 @@ namespace Telegramper.Executors.QueryHandlers.UserState
             telegramUserId ??= _updateContext.TelegramUserId;
             ArgumentNullException.ThrowIfNull(telegramUserId);
 
-            await _saveStrategy.RemoveAsync(telegramUserId.Value);
+            await _saveStrategy.RemoveAllAsync(telegramUserId.Value);
+        }
+
+        public async Task RemoveAsync(string state, long? telegramUserId = null)
+        {
+            telegramUserId ??= _updateContext.TelegramUserId;
+            ArgumentNullException.ThrowIfNull(telegramUserId);
+
+            await _saveStrategy.RemoveAsync(telegramUserId.Value, state);
         }
 
         public async Task<bool> Contains(string state, long? telegramUserId = null)
@@ -68,7 +72,7 @@ namespace Telegramper.Executors.QueryHandlers.UserState
                 states = states.Append(_options.DefaultUserState);
             }
 
-            await _saveStrategy.AddOrUpdateAsync(telegramUserId.Value, states);
+            await _saveStrategy.SetRangeAsync(telegramUserId.Value, states);
         }
     }
 }
