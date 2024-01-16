@@ -12,7 +12,7 @@ namespace Telegramper.Dialog.Attributes
     {
         public string DialogName { get; private set; } = default!;
         
-        public string? Key { get; set; }
+        public string? Name { get; set; }
         public int Priority { get; set; }
         public int Index { get; private set; }
 
@@ -42,7 +42,12 @@ namespace Telegramper.Dialog.Attributes
                 .ToList()
                 .IndexOf(method.MethodInfo);
 
-            UserStates = new[] { StaticDialogUserStateFactory.CreateByIndex(DialogName, Index) };
+            UserStates = new[]
+            {
+                StaticDialogUserStateFactory.Create(DialogName),
+                StaticDialogUserStateFactory.CreateByIndex(DialogName, Index),
+                StaticDialogUserStateFactory.CreateByName(DialogName, Name ?? MethodName),
+            };
         }
     }
 }

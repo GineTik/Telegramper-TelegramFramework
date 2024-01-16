@@ -87,21 +87,7 @@ namespace Telegramper.Dialog.Service
         private async Task runStepAsync(DialogStep step)
         {
             var stepAttribute = step.StepAttribute;
-
-            await _userStates.SetRangeAsync(
-                stepAttribute.UserStates
-                .Append(StaticDialogUserStateFactory.Create(stepAttribute.DialogName))
-            );
-
-            if (stepAttribute.Key != null)
-            {
-                await _userStates.AddAsync(
-                    StaticDialogUserStateFactory.CreateByName(
-                        stepAttribute.DialogName,
-                        stepAttribute.Key
-                    )
-                );
-            }
+            await _userStates.SetRangeAsync(stepAttribute.UserStates);
 
             if (stepAttribute.Question != null)
             {
