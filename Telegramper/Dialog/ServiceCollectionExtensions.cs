@@ -8,10 +8,10 @@ namespace Telegramper.Dialog
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddDialogsByAttributes(this IServiceCollection services)
+        public static IServiceCollection AddSequence(this IServiceCollection services)
         {
-            services.AddTransient<IDialogService, DialogService>();
-            services.AddDictionaryStorage<DialogStepsDictionary, DialogStepsStorageInitializer>();
+            services.AddTransient<ISequenceService, SequenceService>();
+            services.AddDictionaryStorage<SequenceDictionary, SequenceStorageInitializer>();
             return services;
         }
     }

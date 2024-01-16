@@ -2,11 +2,11 @@
 
 namespace Telegramper.Dialog.Service
 {
-    public interface IDialogService
+    public interface ISequenceService
     {
         Task StartAsync(string dialogName);
         Task StartAsync<T>() where T : Executor;
-        Task StartAsync(Type dialogType);
+        Task StartAsync(Type sequenceType);
         Task NextAsync();
         Task EndAsync();
         Task<bool> IsLaunchedAsync();
