@@ -2,7 +2,7 @@
 {
     public class MemoryUserStateSaveStrategy : IUserStateSaveStrategy
     {
-        private readonly Dictionary<long, ICollection<string>> _usersStates = new();
+        private readonly Dictionary<long, HashSet<string>> _usersStates = new();
         private readonly object _locker = new();
 
         public async Task SetRangeAsync(long userId, IEnumerable<string> states)
@@ -11,7 +11,7 @@
             {
                 lock (_locker)
                 {
-                    _usersStates[userId] = new List<string>(states);
+                    _usersStates[userId] = new HashSet<string>(states);
                 }
             });
         }
@@ -58,7 +58,7 @@
                 lock (_locker)
                 {
                     _usersStates.TryGetValue(userId, out var userState);
-                    _usersStates[userId] = new List<string>(userState == null
+                    _usersStates[userId] = new HashSet<string>(userState == null
                         ? state
                         : state.Concat(userState));
                 }
