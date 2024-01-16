@@ -1,6 +1,6 @@
 ﻿namespace Telegramper.Executors.QueryHandlers.Attributes.ParametersParse.Separator
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
     public class ParametersSeparatorAttribute : Attribute
     {
         public string Separator { get; }

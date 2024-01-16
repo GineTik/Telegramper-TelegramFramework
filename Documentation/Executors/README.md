@@ -6,49 +6,80 @@ For using executors, you should add ```builder.Services.AddExecutors()``` and ``
 
 Configure executors in services
 ```cs
+builder.Services.AddExecutors();
+```
+or
+```cs
 builder.Services.AddExecutors(options =>
 {
-    // default values
-
-    options.MethodNameTransformer.Type = typeof(SnakeCaseNameTransformer); // the class that transform the method name for use [TargetCommands] and [TargetCallbackData] without parameters
-
     options.ParameterParser.DefaultSeparator = " ";
     options.ParameterParser.ErrorMessages.TypeParseError = "Parse type error";
     options.ParameterParser.ErrorMessages.ArgsLengthIsLess = "Args length is less";
-    options.ParameterParser.ParserType = typeof(ParametersParser);
 
     options.UserState.DefaultUserState = "";
-    options.UserState.SaverType = typeof(MemoryUserStateSaver);
 });
 ```
-and you can configure assemblies where the executors located
+
+Default values of executor options:
 ```cs
-builder.Services.AddExecutors(new[] { Assembly.GetEntryAssembly()! }); // in the second parameter to set the default values as above
+public class ExecutorOptions
+{
+    public IEnumerable<SmartAssembly> Assemblies { get; set; } = new[]
+    {
+        new SmartAssembly(Assembly.GetEntryAssembly()!)
+    };
+    
+    public CommandExecutorOptions MethodNameTransformer { get; set; } = new()
+    {
+        NameTransformerType = typeof(SnakeCaseNameTransformer) // implementation INameTransformer
+    };
+
+    public ParametersParserOptions ParametersParser { get; set; } = new()
+    {
+        ParserType = typeof(ParametersParser), // implementation IParametersParser
+        ErrorHandlerStrategyType = typeof(DefaultParseErrorStrategy), // implementation IParseErrorStrategy
+        DefaultSeparator = ParametersParserOptions.NoneSeparator,
+        ErrorMessages = new ParseErrorMessagesAttribute
+        {
+            TypeParseError = "Type parse error",
+            ArgsLengthIsLess = "Args length is less"
+        },
+        ParameterParseStrategyType = typeof(DefaultParseStrategy) // implementation IParametersParseStrategy
+    };
+        
+    public UserStateOptions UserState { get; set; } = new()
+    {
+        DefaultUserState = "",
+        SaverType = typeof(MemoryUserStateSaveStrategy) // implementation IUserStateSaveStrategy
+    };
+
+    public HandlerQueueOptions HandlerQueue { get; set; } = new()
+    {
+        LimitOfHandlersPerRequest = 1
+    };
+}
 ```
 
 ## Executors
-Executor is basic abstract class who provide properties and methods. Executor has UpdateContext (identical to the HttpContext), Client (for send responce to a user), ExecuteAsync method (for execute other methods of executors).
+Executor is basic abstract class who provide properties and methods. 
+Executor contains:
+- UpdateContext ([about this](https://github.com/GineTik/Telegramper-TelegramFramework/blob/master/Documentation/Core/UpdateContext.md))
+- Client (taked from UpdateContext)
+- ServiceProvider (for take a dependencies)
+- ExecuteAsync (method for invoke other methods other executors)
 
 ### Executor structur
 ```cs
 public class ExecutorName : Executor // the name does not affect anything
 {
-    [TargetAttribute...(...)]
-    [ValidationAttribute]
-    public async Task Start(string? param1, int param2) // the name of methods does not affect anything too, but the return type should be Task
+    [Attributes] // TargetAttributes, ValidationAttributes, FilterAttributes (read more below)
+    public async Task Method(parameters) //  the method should be async and the returned value should be Task type
     {
-        // ... do anything
+        // do anything
         await Client.SendTextMessageAsync($"Response"); // send a response
     }
 }
 ```
-
-### Executor infrastructure 
-Executor contains:
-- UpdateContext, [about this](https://github.com/GineTik/TelegramFramework/tree/master/Telegramper/TelegramBotApplication/Context)
-- ExecuteAsync method for invoke other methods other executors.
-
-You can take dependencies from the constructor. 
 
 ### Executor parameters
 You can take a parameters (with basic type and basic nullable type) from Message and CallbackQuery UpdateTypes. Nullable type is not required parameter (example below).
@@ -56,17 +87,18 @@ If UpdateType is equal to Message, then the Text property must be filled in the 
 If UpdateType is equal to CallbackQuery, then the Data property must be filled in the request. In the data property, the first word is required for routing, the rest will be split into parameters
 
 #### Attributes for parameters
-- ```ParametersSeparatorAttribute(separator)```, the default is space(" ")
+- ```ParametersSeparatorAttribute(separator)```,
 - ```EmptyParametersSeparatorAttribute```, set the separator to "", which means that can be only one parameters, for example, a user send /command param1 param2 param3, then param1 param2 param3 set into one parameter
-  ```cs
-  [TargetCommands("echo")]
-  [EmptyParameterSeparator] // remove separator
-  public async Task Echo(string phrase)
+- ```ParseErrorMessages```, set error messages that are sent to the user in response
+
+ ```cs
+  [TargetCommand]
+  [ParseErrorMessages(your error messages after unsuccessful parameter parsing)]
+  public async Task Echo(string phrase) // default missing separator
   {
       await Client.SendTextMessageAsync(phrase);
   }
   ```
-- ```ParseErrorMessages```, set error messages that are sent to the user in response
 
 #### Example:
 Let's look at a few cases:
@@ -81,8 +113,9 @@ Code:
 public class ExampleExecutor : Executor
 {
     [TargetCommands("example")]
+    [ParametersSeparatorAttribute(" ")]
     [ParseErrorMessages(ArgsLengthIsLess = "ArgsLengthIsLess", TypeParseError = "TypeParseError")] // change the default error messages that are sent to the user in response
-    public async Task Example(string? param1, int param2, int? param3)
+    public async Task Method(string? param1, int param2, int? param3)
     {
         await Client.SendTextMessageAsync($"all good, param1 is {param1 ?? "null"}, param2 is {param2}, param3 is {param3?.ToString() ?? "null"}");
     }
@@ -108,52 +141,33 @@ There are target attributes for routing. You can attach one or more target attri
 If at least one target attribute in the handler method matches, the method is executed.
 
 ### Available attributes for routing
-- TargetCommands
-  ```cs
-  [TargetCommands("command1, commmand2, command3", Description = "Commands")]
-  public async Task Handle() { }
-  ```
-- TargetCallbackData
-  ```cs
-  [TargetCallbacksDatas("data1, data2, data3")]
-  public async Task Handle() { }
-  ```
-- TargetUpdateType
-  ```cs
-  [TargetUpdateType(UpdateType.Message)]
-  public async Task Handle() { }
-  ```
-- TargetUserStateContains
-  ```cs
-  [TargetUserStateContains("userState1, userState2, userState3")]
-  public async Task Handle() { }
-  ```
-- TargetText
-  ```cs
-  [TargetText("target text")]
-  public async Task Handle() { }
-  ```
-- TargetContainsText
-  ```cs
-  [TargetContainsText("target contains text")]
-  public async Task Handle() { }
-  ```
+- ```TargetCommand(command without a slash)```
+- ```TargetCallbackData(callback data)```
+- ```TargetUpdateType(UpdateType)```
+- ```TargetTextAttribute(text, TextMatchingMode)```
 
-This attributes checks the input data on similarity and attempts to execute the method if it is simiral. There can be more than one TargetAttributes per handler.
+For ```TargetCommand``` and ```TargetCallbackData``` attributes, you can not specify parameters, then the name of the method will be substituted in the parameters and will be changed using the INameTransformer implementation, by default it is SnakeCaseNameTransformer (you can change implementation of INameTransformer in options, read about it above)
+
+This attributes checks the input data and accept to execute the method if validation result is successfully.
 
 ### Available attributes for input data validation
-- RequireUser
-- RequireChat
-- RequireMessageText
-- RequireMessagePhoto
+- ```RequiredData(UpdateProperty, error message)```
+
+<details><summary>Available values of UpdateProperty</summary>
 
 ```cs
-[TargetAttribute...]
-[RequireAttribute...(ErrorMessage="error message")]
-public async Task Handle() { }
+public enum UpdateProperty
+{
+    User,
+    Chat,
+    MessageText,
+    MessagePhoto,
+}
 ```
 
-Validation attributes don't executing Executor method if input data not correct. If validation is failed, runing next middleware. One handler can have more than one ValidationAttributes.
+</details>
+
+Validation attributes don't allow to executing method if input data not correct. If validation is failed, runing next middleware. One handler can have more than one ValidationAttributes.
 
 ### Write your own attribute
 Inherit the TargetAttribute or ValidateInputD ataAttribute attribute and implement the method.

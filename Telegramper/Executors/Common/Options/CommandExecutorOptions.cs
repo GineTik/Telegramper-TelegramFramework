@@ -5,17 +5,16 @@ namespace Telegramper.Executors.Common.Options
 {
     public class CommandExecutorOptions
     {
-        private Type _nameTransformerType = typeof(SnakeCaseNameTransformer);
-        public Type Type
+        /// default values see in <see cref="ExecutorOptions"/>
+        
+        private Type _nameTransformerNameTransformerType = null!;
+        public Type NameTransformerType
         {
-            get
-            {
-                return _nameTransformerType;
-            }
+            get => _nameTransformerNameTransformerType;
             set
             {
                 InvalidTypeException.ThrowIfNotImplementation<INameTransformer>(value);
-                _nameTransformerType = value;
+                _nameTransformerNameTransformerType = value;
             }
         }
     }

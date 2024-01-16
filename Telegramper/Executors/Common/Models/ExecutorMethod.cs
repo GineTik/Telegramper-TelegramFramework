@@ -1,49 +1,62 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
-using Telegramper.Executors.Initialization.NameTransformer;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Telegramper.Executors.Common.Options;
 using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
+using Telegramper.Executors.QueryHandlers.Attributes.Supports;
 
 namespace Telegramper.Executors.Common.Models
 {
     public class ExecutorMethod
     {
-        private readonly MethodInfo _methodInfo;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IEnumerable<Attribute> _assemblyAttributes;
 
-        public ExecutorMethod(MethodInfo methodInfo, IServiceProvider serviceProvider)
+        public MethodInfo MethodInfo { get; }
+        public Type ExecutorType =>
+                    MethodInfo.DeclaringType ??
+                    MethodInfo.ReflectedType ??
+                    throw new InvalidOperationException($"Method {MethodInfo.Name} don't have DeclaringType and ReflectedType");
+        public IEnumerable<TargetAttribute> TargetAttributes { get; }
+        public IEnumerable<FilterAttribute> FilterAttributes { get; }
+
+        public bool IsIgnoresLimitOfHandlers { get; }
+
+        public ExecutorMethod(MethodInfo methodInfo, IServiceProvider serviceProvider, IEnumerable<Attribute> assemblyAttributes)
         {
-            _methodInfo = methodInfo;
+            MethodInfo = methodInfo;
             _serviceProvider = serviceProvider;
+            _assemblyAttributes = assemblyAttributes;
+
+            TargetAttributes = GetCustomAttributes<TargetAttribute>();
+            FilterAttributes = GetCustomAttributes<FilterAttribute>();
+            initializationTargetAttributes(TargetAttributes);
+
+            IsIgnoresLimitOfHandlers = MethodInfo.GetCustomAttribute<IgnoreLimitOfHandlers>() != null;
         }
 
-        public MethodInfo MethodInfo => _methodInfo;
-
-        public Type ExecutorType =>
-                    _methodInfo.DeclaringType ??
-                    _methodInfo.ReflectedType ??
-                    throw new InvalidOperationException($"Method {_methodInfo.Name} don't have DeclaringType and ReflectedType");
-
-        private IEnumerable<TargetAttribute> _targetAttributes = default!;
-        public IEnumerable<TargetAttribute> TargetAttributes
+        public IEnumerable<TAttribute> GetCustomAttributes<TAttribute>()
+            where TAttribute : Attribute
         {
-            get
+            return MethodInfo.GetCustomAttributes<TAttribute>()
+                .Concat(ExecutorType.GetCustomAttributes<TAttribute>())
+                .Concat(_assemblyAttributes.Where(a => a is TAttribute).Cast<TAttribute>());
+        }
+        
+        public TAttribute? GetCustomAttribute<TAttribute>()
+            where TAttribute : Attribute
+        {
+            return MethodInfo.GetCustomAttribute<TAttribute>()
+                   ?? ExecutorType.GetCustomAttribute<TAttribute>()
+                   ?? _assemblyAttributes.FirstOrDefault(a => a is TAttribute) as TAttribute;
+        }
+
+        private void initializationTargetAttributes(IEnumerable<TargetAttribute> targetAttributes)
+        {
+            foreach (var targetAttribute in targetAttributes)
             {
-                if (_targetAttributes == null)
-                {
-                    _targetAttributes = _methodInfo.GetCustomAttributes<TargetAttribute>();
-
-                    foreach (var targetAttribute in _targetAttributes)
-                    {
-                        targetAttribute.Initialization(this, _serviceProvider);
-                    }
-                }
-
-                return _targetAttributes;
+                targetAttribute.Initialization(this, _serviceProvider);
             }
         }
-
-        private IEnumerable<FilterAttribute> _filterAttributes = default!;
-        public IEnumerable<FilterAttribute> FilterAttributes =>
-            _filterAttributes ??= _methodInfo.GetCustomAttributes<FilterAttribute>();
     }
 }

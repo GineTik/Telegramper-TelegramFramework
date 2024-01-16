@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegramper.Core.Configuration.Services;
 using Telegramper.Core.Helpers.Factories.Configuration;
@@ -36,11 +37,20 @@ namespace Telegramper.Core
 
         public IBotApplication Build()
         {
-            // if ApiKey is null, will be throw exception in the BotApplication constructor
+            if (ApiKey == null)
+                throw new NullReferenceException("Api key is null, please fill the api key");
+
+            addCurrentBotInformationToServices(ApiKey);
             return new BotApplication(ApiKey!, Services, ReceiverOptions);
         }
 
-        public static BotApplicationBuilder CreateBuilder() => new BotApplicationBuilder();
+        public static BotApplicationBuilder CreateBuilder() => new();
+
+        private void addCurrentBotInformationToServices(string apiKey)
+        {
+            var botClient = new TelegramBotClient(apiKey);
+            Services.AddSingleton(new BotAccessor { Bot = botClient.GetMeAsync().Result });
+        }
 
         private void setDefaultsServicesAndLogging()
         {
@@ -51,6 +61,5 @@ namespace Telegramper.Core
             Logging.ClearProviders();
             Logging.AddConsole();
         }
-
     }
 }

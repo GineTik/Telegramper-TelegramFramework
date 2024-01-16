@@ -22,7 +22,7 @@ namespace Telegramper.Executors.QueryHandlers.MethodInvoker
 
         public async Task InvokeAsync(IEnumerable<InvokableExecutorMethod> invokableMethods)
         {
-            var verifiedInvokableMethods = await beforeExecutionAsync(invokableMethods);
+            var verifiedInvokableMethods = (await beforeExecutionAsync(invokableMethods)).ToList();
 
             foreach (var invokableMethod in verifiedInvokableMethods)
             {

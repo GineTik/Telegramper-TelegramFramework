@@ -1,28 +1,42 @@
-﻿using Microsoft.Extensions.Options;
-using Telegramper.Executors.Common.Models;
-using Telegramper.Executors.Common.Options;
+﻿using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.QueryHandlers.RouteDictionaries;
 using Telegramper.Storage.Initializers;
 using Telegramper.Storage.List;
 
 namespace Telegramper.Executors.Initialization.StorageInitializers
 {
-    public class RouteStorageInitializer : IDictionaryStorageInitializer<RouteTree>
+    public class RouteStorageInitializer : IDictionaryStorageInitializer<RoutesDictionary>
     {
-        private readonly UserStateOptions _userStateOptions;
         private readonly IEnumerable<ExecutorMethod> _methods;
 
         public RouteStorageInitializer(
-            IOptions<UserStateOptions> userStateOptions,
             IListStorage<ExecutorMethod> executorMethodStorage)
         {
-            _userStateOptions = userStateOptions.Value;
             _methods = executorMethodStorage.Items;
         }
 
-        public RouteTree Initialization()
+        public RoutesDictionary Initialization()
         {
-            return new RouteTree(_userStateOptions.DefaultUserState, _methods);
+            var routes = new RoutesDictionary();
+            var allRoutes = _methods.SelectMany(method => method.TargetAttributes.Select(targetAttribute => 
+                new Route
+                {
+                    TargetAttribute = targetAttribute,
+                    Method = method,
+                }));
+            
+            foreach (var route in allRoutes)
+            {
+                foreach (var updateType in route.TargetAttribute.UpdateTypes)
+                {
+                    foreach (var userState in route.TargetAttribute.UserStates)
+                    {
+                        routes[updateType].AddOrSet(userState, route);
+                    }
+                }
+            }
+            
+            return routes;
         }
     }
 }

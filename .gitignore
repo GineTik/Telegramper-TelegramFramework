@@ -3,6 +3,14 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+appsettings.json
+
+# Rider
+.idea/
+
+# Test project
+Examples/
+
 # NuGet packege files
 *.nupkg
 *.nuspec

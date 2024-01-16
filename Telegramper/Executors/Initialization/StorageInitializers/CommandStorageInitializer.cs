@@ -16,6 +16,7 @@ namespace Telegramper.Executors.Initialization.StorageInitializers
 
         public IEnumerable<TargetCommandAttribute> Initialization()
         {
+            // TODO: rewrite searching TargetCommandAttributes
             return _executorsMethods
                 .SelectMany(method => method
                     .TargetAttributes

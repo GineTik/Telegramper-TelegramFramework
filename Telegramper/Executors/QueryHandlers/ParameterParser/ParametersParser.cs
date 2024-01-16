@@ -1,132 +1,84 @@
-﻿using System.Reflection;
-using Telegramper.Executors.QueryHandlers.Extensions;
-using Telegramper.Executors.QueryHandlers.ParameterParser.ParameterTypeConvertors;
-using Telegramper.Executors.QueryHandlers.ParametersParser.Results;
+﻿using Microsoft.Extensions.Options;
+using Telegramper.Core.Context;
+using Telegramper.Executors.Common.Models;
+using Telegramper.Executors.Common.Options;
+using Telegramper.Executors.QueryHandlers.Attributes.ParametersParse.Separator;
+using Telegramper.Executors.QueryHandlers.ParameterParser.Enums;
+using Telegramper.Executors.QueryHandlers.ParameterParser.Extensions;
+using Telegramper.Executors.QueryHandlers.ParameterParser.Models;
+using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler;
+using Telegramper.Executors.QueryHandlers.ParameterParser.Strategies;
 
-namespace Telegramper.Executors.QueryHandlers.ParametersParser
+namespace Telegramper.Executors.QueryHandlers.ParameterParser
 {
     public class ParametersParser : IParametersParser
     {
-        public ParametersParseResult Parse(string args, ICollection<ParameterInfo> parametersInfos, string argsSeparator)
+        private readonly IParametersParseStrategy _strategy;
+        private readonly ParametersParserOptions _parametersParserOptions;
+        private readonly IParseErrorHandler _parseErrorHandler;
+        private readonly UpdateContext _updateContext;
+
+        public ParametersParser(IParametersParseStrategy strategy, IOptions<ParametersParserOptions> parametersParserOptions, IParseErrorHandler parseErrorHandler, UpdateContextAccessor updateContextAccessor)
         {
-            if (args == "")
-            {
-                if (parametersInfos.Count == 0)
-                {
-                    return ParametersParseResult.Success(new string[0]);
-                }
-                else
-                {
-                    return ParametersParseResult.ArgsLengthIsLess;
-                }
-            }
-
-            var argsAsQueue = new Queue<string>(args.Split(argsSeparator));
-
-            int numberOfMandatoryParameters = parametersInfos.Count - parametersInfos.NullableCount();
-            bool isCorrectArgsCount = argsAsQueue.Count >= numberOfMandatoryParameters;
-
-            if (isCorrectArgsCount == false)
-            {
-                return ParametersParseResult.ArgsLengthIsLess;
-            }
-
-            var unmandatoryParametersThatCanBeFilledIn = argsAsQueue.Count - numberOfMandatoryParameters;
-            var convertedArgs = new List<object?>();
-
-            foreach (var parameterInfo in parametersInfos)
-            {
-                var isNullable = parameterInfo.IsNullable();
-
-                if (isNullable == true)
-                {
-                    if (unmandatoryParametersThatCanBeFilledIn == 0)
-                    {
-                        convertedArgs.Add(null);
-                        continue;
-                    }
-
-                    unmandatoryParametersThatCanBeFilledIn--;
-                }
-
-                try
-                {
-                    var typeConvertor = new BasicTypeConvertor();
-                    var convertedArg = typeConvertor.ConvertTo(
-                        parameterInfo.ParameterType, 
-                        argsAsQueue.Dequeue(), 
-                        isNullable
-                    );
-                    convertedArgs.Add(convertedArg);
-                }
-                catch
-                {
-                    return ParametersParseResult.ParseError;
-                }
-            }
-
-            return ParametersParseResult.Success(convertedArgs.ToArray());
-
-            //var args = getArgsAsStack(text, argsSeparator);
-            //var parametersStack = new Stack<ParameterInfo>(args);
-
-            //if (isCorrectArgsCount(args, parametersStack))
-            //{ 
-            //    return ParametersParseResult.ArgsLengthIsLess;
-            //}
-
-            //_missingArgs = parametersStack.Count - args.Count;
-            //var convertedArgs = new Stack<object?>();
-
-            //try
-            //{
-            //    while (parametersStack.Count != 0)
-            //    {
-            //        var value = convertArgsToMethodParameter(args, parametersStack);
-            //        convertedArgs.Push(value);
-            //    }
-            //}
-            //catch
-            //{
-            //    return ParametersParseResult.ParseError;
-            //}
-
-            //return ParametersParseResult.Success(convertedArgs.ToArray());
+            _strategy = strategy;
+            _parseErrorHandler = parseErrorHandler;
+            _updateContext = updateContextAccessor.UpdateContext;
+            _parametersParserOptions = parametersParserOptions.Value;
         }
 
-        //private static Stack<string> getArgsAsStack(string text, string parameterSeparator)
-        //{
-        //    text = Regex.Replace(text ?? "", "^/*\\w+\\s*", ""); // remove command
-        //    return string.IsNullOrEmpty(text) ?
-        //        new Stack<string>() :
-        //        new Stack<string>(text.Split(parameterSeparator));
-        //}
+        public ParametersParseResult TryParseFor(Route route)
+        {
+            var parametersInfos = route.Method.MethodInfo.GetParameters();
+            var argsAsString = getArgs();
+            var defaultSeparator = getDefaultSeparator(route.Method);
 
-        //private bool isCorrectArgsCount(ICollection<string> args, ICollection<ParameterInfo> parameterTypes)
-        //{
-        //    var numberOfMandatoryParameters = parameterTypes.Count - parameterTypes.NullableCount();
-        //    return numberOfMandatoryParameters > args.Count;
-        //}
+            if (parametersInfos.Length == 0)
+            {
+                return success(Array.Empty<object?>());
+            }
 
-        //private object? convertArgsToMethodParameter(Stack<string> args, Stack<ParameterInfo> parameters)
-        //{
-        //    var parameter = parameters.Pop();
-        //    var targetType = parameter.ParameterType;
+            if (argsAsString.Length == 0)
+            {
+                return error(ParseStatus.ArgsLengthIsLess, route, Array.Empty<object?>());
+            }
 
-        //    if (parameter.IsNullable() == true && _missingArgs != 0)
-        //    {
-        //        _missingArgs--;
-        //        return null;
-        //    }
+            var argsAsArray = argsAsString.Split(defaultSeparator);
+            var status = _strategy.TryParse(argsAsArray, parametersInfos, out var convertedArgs);
 
-        //    if (targetType.IsGenericType && targetType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-        //    {
-        //        targetType = Nullable.GetUnderlyingType(targetType)!;
-        //    }
+            return status == ParseStatus.Success
+                ? success(convertedArgs)
+                : error(status, route, convertedArgs);
+        }
 
-        //    var stringValue = args.Pop();
+        private ParametersParseResult success(object?[] convertedArgs)
+        {
+            return new ParametersParseResult
+            {
+                ConvertedParameters = convertedArgs,
+                ErrorMessage = null
+            };
+        }
+        
+        private ParametersParseResult error(ParseStatus status, Route route, object?[] convertedArgs)
+        {
+            return new ParametersParseResult
+            {
+                ConvertedParameters = convertedArgs,
+                ErrorMessage = _parseErrorHandler.Handle(status, convertedArgs, route)
+            };
+        }
 
-        //    return Convert.ChangeType(stringValue, targetType);
-        //}
+        private string getArgs()
+        {
+            return _updateContext.Message?.Text?.RemoveCommand()
+                   ?? _updateContext.Update.CallbackQuery?.Data
+                   ?? "";
+        }
+
+        private string getDefaultSeparator(ExecutorMethod method)
+        {
+            return method.GetCustomAttribute<ParametersSeparatorAttribute>()?.Separator ??
+                   _parametersParserOptions.DefaultSeparator;
+        }
     }
 }

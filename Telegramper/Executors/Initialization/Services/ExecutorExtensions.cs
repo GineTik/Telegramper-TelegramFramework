@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.Common.Options;
 using Telegramper.Executors.Initialization.NameTransformer;
@@ -7,48 +6,41 @@ using Telegramper.Executors.Initialization.StorageInitializers;
 using Telegramper.Executors.QueryHandlers.Attributes.Targets;
 using Telegramper.Executors.QueryHandlers.Factory;
 using Telegramper.Executors.QueryHandlers.MethodInvoker;
-using Telegramper.Executors.QueryHandlers.ParametersParser;
+using Telegramper.Executors.QueryHandlers.ParameterParser;
+using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler;
+using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler.Strategies;
 using Telegramper.Executors.QueryHandlers.Preparer;
-using Telegramper.Executors.QueryHandlers.Preparer.ErrorHandler;
 using Telegramper.Executors.QueryHandlers.RouteDictionaries;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
+using Telegramper.Executors.QueryHandlers.SuitableMethodFinder.Strategies;
 using Telegramper.Executors.QueryHandlers.UserState;
-using Telegramper.Executors.QueryHandlers.UserState.Saver;
+using Telegramper.Executors.QueryHandlers.UserState.Strategy;
 using Telegramper.Storage.Services;
 
 namespace Telegramper.Executors.Initialization.Services
 {
     public static class ExecutorExtensions
     {
-        public static IServiceCollection AddExecutors(this IServiceCollection services,
-            Action<ExecutorOptions>? configure = null)
+        public static IServiceCollection AddExecutors(this IServiceCollection services, Action<ExecutorOptions>? configureAction = null)
         {
-            return services.AddExecutors(null, configure);
-        }
-
-        public static IServiceCollection AddExecutors(this IServiceCollection services,
-            IEnumerable<Assembly>? assemblies, Action<ExecutorOptions>? configureAction = null)
-        {
-            assemblies ??= new[] { Assembly.GetExecutingAssembly(), Assembly.GetEntryAssembly()! }.Where(a => a != null);
-
-            var executorOptions = services.configureOptions(configureAction);
-            services.addExecutorServices(executorOptions, assemblies);
+            var executorOptions = configureOptions(services, configureAction);
+            services.addExecutorServices(executorOptions);
 
             return services;
         }
 
         private static ExecutorOptions configureOptions(
-            this IServiceCollection services,
+            IServiceCollection services,
             Action<ExecutorOptions>? configure)
         {
             var executorOptions = new ExecutorOptions();
             configure?.Invoke(executorOptions);
 
-            services.Configure<ParameterParserOptions>(options =>
+            services.Configure<ParametersParserOptions>(options =>
             {
-                options.DefaultSeparator = executorOptions.ParameterParser.DefaultSeparator;
-                options.ParserType = executorOptions.ParameterParser.ParserType;
-                options.ErrorMessages = executorOptions.ParameterParser.ErrorMessages;
+                options.DefaultSeparator = executorOptions.ParametersParser.DefaultSeparator;
+                options.ParserType = executorOptions.ParametersParser.ParserType;
+                options.ErrorMessages = executorOptions.ParametersParser.ErrorMessages;
             });
 
             services.Configure<UserStateOptions>(options =>
@@ -56,36 +48,42 @@ namespace Telegramper.Executors.Initialization.Services
                 options.DefaultUserState = executorOptions.UserState.DefaultUserState;
                 options.SaverType = executorOptions.UserState.SaverType;
             });
+            
+            services.Configure<HandlerQueueOptions>(options =>
+            {
+                options.LimitOfHandlersPerRequest = executorOptions.HandlerQueue.LimitOfHandlersPerRequest;
+            });
 
             return executorOptions;
         }
 
         private static void addExecutorServices(
             this IServiceCollection services,
-            ExecutorOptions executorOptions,
-            IEnumerable<Assembly> assemblies)
+            ExecutorOptions executorOptions)
         {
-            var executorsTypes = StaticExecutorFinder.FindExecutorTypes(assemblies);
-            services.AddListStorage<ExecutorTypeWrapper>(_ => executorsTypes.Select(type => new ExecutorTypeWrapper
-            {
-                Type = type
-            }));
+            var executorsTypes = new ExecutorTypeStorageInitializer(executorOptions.Assemblies).Initialization();
+            services.AddListStorage<ExecutorType>(_ => executorsTypes);
             services.AddListStorage<ExecutorMethod, ExecutorMethodStorageInitializer>();
             services.AddListStorage<TargetCommandAttribute, CommandStorageInitializer>();
-            services.AddDictionaryStorage<RouteTree, RouteStorageInitializer>();
+            services.AddDictionaryStorage<RoutesDictionary, RouteStorageInitializer>();
 
             services.AddTransient<IExecutorMethodInvoker, ExecutorMethodInvoker>();
             services.AddTransient<IExecutorFactory, ExecutorFactory>();
             services.AddTransient<ISuitableMethodFinder, SuitableMethodFinder>();
+            services.AddTransient<ManyFinderStrategy>();
+            services.AddTransient<SingleFinderStrategy>();
+            services.AddTransient<LimitedFinderStrategy>();
             services.AddTransient<IExecutorMethodPreparer, ExecutorMethodPreparer>();
             services.AddTransient<IUserStates, UserStates>();
-            services.AddTransient<IParseErrorHandler, ParseErrorHandler>();
-            services.AddSingleton(typeof(IUserStateSaver), executorOptions.UserState.SaverType);
-            services.AddTransient(typeof(IParametersParser), executorOptions.ParameterParser.ParserType);
-            services.AddSingleton(typeof(INameTransformer), executorOptions.MethodNameTransformer.Type);
+            services.AddSingleton(typeof(IUserStateSaveStrategy), executorOptions.UserState.SaverType);
+            services.AddSingleton(typeof(INameTransformer), executorOptions.MethodNameTransformer.NameTransformerType);
 
-            foreach (var executor in executorsTypes)
+            services.AddParameterParsing(executorOptions.ParametersParser);
+            
+            foreach (var executor in executorsTypes.Select(wrapper => wrapper.Type))
+            {
                 services.AddTransient(executor);
+            }
         }
     }
 }

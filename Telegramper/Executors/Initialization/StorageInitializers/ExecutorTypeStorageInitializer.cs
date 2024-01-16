@@ -3,11 +3,23 @@ using Telegramper.Storage.Initializers;
 
 namespace Telegramper.Executors.Initialization.StorageInitializers
 {
-    public class ExecutorTypeStorageInitializer : IListStorageInitializer<ExecutorTypeWrapper>
+    public class ExecutorTypeStorageInitializer : IListStorageInitializer<ExecutorType>
     {
-        public IEnumerable<ExecutorTypeWrapper> Initialization()
+        private readonly IEnumerable<SmartAssembly> _assemblies;
+
+        public ExecutorTypeStorageInitializer(IEnumerable<SmartAssembly> assemblies)
         {
-            throw new NotImplementedException();
+            _assemblies = assemblies;
+        }
+
+        public IEnumerable<ExecutorType> Initialization()
+        {
+            return _assemblies.SelectMany(smartAssembly => smartAssembly
+                .Assembly
+                .GetTypes()
+                .Where(executorType => executorType != typeof(Executor)
+                       && typeof(Executor).IsAssignableFrom(executorType))
+                .Select(type => new ExecutorType(type, smartAssembly.AssemblyAttributes)));
         }
     }
 }
