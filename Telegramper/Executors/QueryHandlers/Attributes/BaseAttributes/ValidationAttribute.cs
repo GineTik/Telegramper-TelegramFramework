@@ -16,7 +16,7 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes
         {
             var result = await ValidateAsync(updateContext, serviceProvider);
 
-            if (result == false)
+            if (result == false && string.IsNullOrEmpty(ErrorMessage) == false)
             {
                 await updateContext.Client.SendTextMessageAsync(ErrorMessage, parseMode: ParseMode);
             }

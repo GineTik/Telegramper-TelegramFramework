@@ -70,8 +70,8 @@ namespace Telegramper.Executors.QueryHandlers.ParameterParser
 
         private string getArgs()
         {
-            return _updateContext.Message?.Text?.RemoveCommand()
-                   ?? _updateContext.Update.CallbackQuery?.Data
+            return _updateContext.Update.CallbackQuery?.Data
+                   ?? _updateContext.Message?.Text?.RemoveCommand()
                    ?? "";
         }
 

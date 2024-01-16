@@ -9,6 +9,7 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.Validations
         Chat,
         MessageText,
         MessagePhoto,
+        CallbackData
     }
     
     public class RequiredDataAttribute : ValidationAttribute
@@ -23,6 +24,7 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.Validations
                 UpdateProperty.Chat => (updateContext) => updateContext.Chat,
                 UpdateProperty.MessageText => (updateContext) => updateContext.Message?.Text,
                 UpdateProperty.MessagePhoto => (updateContext) => updateContext.Message?.Photo,
+                UpdateProperty.CallbackData => (updateContext) => updateContext.Update.CallbackQuery?.Data,
                 _ => throw new NotSupportedException()
             };
         }
