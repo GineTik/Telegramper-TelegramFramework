@@ -51,7 +51,7 @@
             });
         }
 
-        public async Task AddAsync(long userId, IEnumerable<string> state)
+        public async Task AddRangeAsync(long userId, IEnumerable<string> state)
         {
             await Task.Run(() =>
             {

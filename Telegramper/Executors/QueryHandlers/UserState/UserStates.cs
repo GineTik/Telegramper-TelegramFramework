@@ -24,7 +24,15 @@ namespace Telegramper.Executors.QueryHandlers.UserState
         public async Task AddAsync(string state, long? telegramUserId = null)
         {
             telegramUserId ??= _updateContext.TelegramUserId;
-            await _saveStrategy.AddAsync(telegramUserId!.Value, new[] { state });
+            ArgumentNullException.ThrowIfNull(telegramUserId);
+            await _saveStrategy.AddRangeAsync(telegramUserId.Value, new[] { state });
+        }
+
+        public async Task AddRangeAsync(IEnumerable<string> states, long? telegramUserId = null)
+        {
+            telegramUserId ??= _updateContext.TelegramUserId;
+            ArgumentNullException.ThrowIfNull(telegramUserId);
+            await _saveStrategy.AddRangeAsync(telegramUserId.Value, states);
         }
 
         public async Task<IEnumerable<string>> GetAsync(long? telegramUserId = null)
