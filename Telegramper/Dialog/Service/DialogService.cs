@@ -76,18 +76,20 @@ namespace Telegramper.Dialog.Service
 
         public async Task EndAsync()
         {
-            await _userStates.RemoveAsync();
+            foreach (var state in await _userStates.GetAsync())
+                if (state.StartsWith(DialogConstants.Modificator))
+                    await _userStates.RemoveAsync(state);
         }
 
         public async Task<bool> IsLaunchedAsync()
         {
-            return await _userStates.Contains(DialogConstants.Modificator);
+            return (await _userStates.GetAsync()).Any(s => s.StartsWith(DialogConstants.Modificator));
         }
 
         private async Task runStepAsync(DialogStep step)
         {
             var stepAttribute = step.StepAttribute;
-            await _userStates.SetRangeAsync(stepAttribute.UserStates);
+            await _userStates.AddRangeAsync(stepAttribute.UserStates);
 
             if (stepAttribute.Question != null)
             {
