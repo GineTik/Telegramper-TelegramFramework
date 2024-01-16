@@ -2,7 +2,7 @@
 {
     public interface IUserStateSaveStrategy
     {
-        Task AddAsync(long userId, IEnumerable<string> states);
+        Task AddRangeAsync(long userId, IEnumerable<string> states);
         Task SetRangeAsync(long userId, IEnumerable<string> states);
         Task<IEnumerable<string>?> GetAsync(long userId);
         Task RemoveAllAsync(long userId);
