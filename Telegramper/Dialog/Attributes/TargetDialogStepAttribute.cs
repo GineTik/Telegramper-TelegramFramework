@@ -19,7 +19,7 @@ namespace Telegramper.Dialog.Attributes
         public string? Question { get; }
         public ParseMode? ParseMode { get; set; }
 
-        public TargetDialogStepAttribute(string? question)
+        public TargetDialogStepAttribute(string? question = null)
         {
             Question = question;
         }
@@ -44,8 +44,10 @@ namespace Telegramper.Dialog.Attributes
 
             UserStates = new[]
             {
-                StaticDialogUserStateFactory.Create(DialogName),
+                // this state should be the first
                 StaticDialogUserStateFactory.CreateByIndex(DialogName, Index),
+                // helping states
+                StaticDialogUserStateFactory.Create(DialogName),
                 StaticDialogUserStateFactory.CreateByName(DialogName, Name ?? MethodName),
             };
         }
