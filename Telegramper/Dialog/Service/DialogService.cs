@@ -38,7 +38,12 @@ namespace Telegramper.Dialog.Service
 
         public async Task StartAsync<T>() where T : Executor
         {
-            await StartAsync(typeof(T).Name);
+            await StartAsync(typeof(T));
+        }
+
+        public async Task StartAsync(Type dialogType)
+        {
+            await StartAsync(dialogType.Name);
         }
 
         public async Task NextAsync()
@@ -49,7 +54,7 @@ namespace Telegramper.Dialog.Service
             }
 
             var states = await _userStates.GetAsync();
-            var dialogParams = states.First(state => state.StartsWith(DialogConstants.Modificator)).Split(":");
+            var dialogParams = states.First(state => state.StartsWith(DialogConstants.Modificator)).Split(DialogConstants.Separator);
             var dialogName = dialogParams[1];
             var currentStepIndex = int.Parse(dialogParams[2]);
             var nextStepIndex = ++currentStepIndex;
@@ -76,33 +81,21 @@ namespace Telegramper.Dialog.Service
 
         public async Task<bool> IsLaunchedAsync()
         {
-            var states = await _userStates.GetAsync();
-            return states.Any(state => state.StartsWith(DialogConstants.Modificator));
+            return await _userStates.Contains(DialogConstants.Modificator);
         }
 
         private async Task runStepAsync(DialogStep step)
         {
             var stepAttribute = step.StepAttribute;
+            await _userStates.SetRangeAsync(stepAttribute.UserStates);
 
-            await _userStates.SetRangeAsync(
-                stepAttribute.UserStates
-                .Append(StaticDialogUserStateFactory.Create(stepAttribute.DialogName))
-            );
-
-            if (stepAttribute.Key != null)
+            if (stepAttribute.Question != null)
             {
-                await _userStates.AddAsync(
-                    StaticDialogUserStateFactory.CreateByKey(
-                        stepAttribute.DialogName,
-                        stepAttribute.Key
-                    )
+                await _updateContext.Client.SendTextMessageAsync(
+                    stepAttribute.Question,
+                    parseMode: stepAttribute.ParseMode
                 );
             }
-
-            await _updateContext.Client.SendTextMessageAsync(
-                stepAttribute.Question,
-                parseMode: stepAttribute.ParseMode
-            );
         }
     } 
 }

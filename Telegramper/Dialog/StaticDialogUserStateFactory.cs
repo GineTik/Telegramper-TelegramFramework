@@ -12,9 +12,9 @@
             return $"{DialogConstants.Modificator}{dialogName}:{index}";
         }
 
-        public static string CreateByKey(string dialogName, string key)
+        public static string CreateByName(string dialogName, string name)
         {
-            return $"{DialogConstants.Modificator}{dialogName}:{key}";
+            return $"{DialogConstants.Modificator}{dialogName}:{name}";
         }
     }
 }

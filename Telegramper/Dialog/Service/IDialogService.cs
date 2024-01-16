@@ -6,6 +6,7 @@ namespace Telegramper.Dialog.Service
     {
         Task StartAsync(string dialogName);
         Task StartAsync<T>() where T : Executor;
+        Task StartAsync(Type dialogType);
         Task NextAsync();
         Task EndAsync();
         Task<bool> IsLaunchedAsync();

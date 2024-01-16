@@ -12,14 +12,14 @@ namespace Telegramper.Dialog.Attributes
     {
         public string DialogName { get; private set; } = default!;
         
-        public string? Key { get; set; }
+        public string? Name { get; set; }
         public int Priority { get; set; }
         public int Index { get; private set; }
 
-        public string Question { get; }
+        public string? Question { get; }
         public ParseMode? ParseMode { get; set; }
 
-        public TargetDialogStepAttribute(string question)
+        public TargetDialogStepAttribute(string? question)
         {
             Question = question;
         }
@@ -37,12 +37,17 @@ namespace Telegramper.Dialog.Attributes
 
             Index = method.ExecutorType
                 .GetMethods()
-                .Where(method => method.GetCustomAttribute<TargetDialogStepAttribute>() != null)
-                .OrderByDescending(method => method.GetCustomAttribute<TargetDialogStepAttribute>()!.Priority)
+                .Where(methodInfo => methodInfo.GetCustomAttribute<TargetDialogStepAttribute>() != null)
+                .OrderByDescending(methodInfo => methodInfo.GetCustomAttribute<TargetDialogStepAttribute>()!.Priority)
                 .ToList()
                 .IndexOf(method.MethodInfo);
 
-            UserStates = new[] { StaticDialogUserStateFactory.CreateByIndex(DialogName, Index) };
+            UserStates = new[]
+            {
+                StaticDialogUserStateFactory.Create(DialogName),
+                StaticDialogUserStateFactory.CreateByIndex(DialogName, Index),
+                StaticDialogUserStateFactory.CreateByName(DialogName, Name ?? MethodName),
+            };
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes
 {
     public abstract class ValidationAttribute : FilterAttribute
     {
-        public string ErrorMessage { get; set; } = default!;
+        public string? ErrorMessage { get; set; } = default!;
         public ParseMode ParseMode { get; set; } = ParseMode.MarkdownV2;
 
         public abstract Task<bool> ValidateAsync(UpdateContext updateContext, IServiceProvider provider);
