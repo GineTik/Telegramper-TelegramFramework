@@ -70,15 +70,14 @@ namespace Telegramper.Dialog.Service
                 return;
             }
 
+            await cleanDialogStates();
             var nextStep = steps.ElementAt(nextStepIndex);
             await runStepAsync(nextStep);
         }
 
         public async Task EndAsync()
         {
-            foreach (var state in await _userStates.GetAsync())
-                if (state.StartsWith(DialogConstants.Modificator))
-                    await _userStates.RemoveAsync(state);
+            await cleanDialogStates();
         }
 
         public async Task<bool> IsLaunchedAsync()
@@ -89,7 +88,7 @@ namespace Telegramper.Dialog.Service
         private async Task runStepAsync(DialogStep step)
         {
             var stepAttribute = step.StepAttribute;
-            await _userStates.AddRangeAsync(stepAttribute.UserStates);
+            await _userStates.AddRangeAsync(step.StepAttribute.UserStates);
 
             if (stepAttribute.Question != null)
             {
@@ -98,6 +97,13 @@ namespace Telegramper.Dialog.Service
                     parseMode: stepAttribute.ParseMode
                 );
             }
+        }
+        
+        private async Task cleanDialogStates()
+        {
+            foreach (var state in await _userStates.GetAsync())
+                if (state.StartsWith(DialogConstants.Modificator))
+                    await _userStates.RemoveAsync(state);
         }
     } 
 }
