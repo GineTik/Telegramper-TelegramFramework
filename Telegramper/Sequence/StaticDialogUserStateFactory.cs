@@ -1,4 +1,4 @@
-﻿namespace Telegramper.Dialog
+﻿namespace Telegramper.Sequence
 {
     public static class StaticDialogUserStateFactory
     {

@@ -1,12 +1,12 @@
 ﻿using Telegramper.Core.Context;
-using Telegramper.Dialog.Models;
 using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.QueryHandlers.Extensions;
 using Telegramper.Executors.QueryHandlers.Factory;
 using Telegramper.Executors.QueryHandlers.UserState;
+using Telegramper.Sequence.Models;
 using Telegramper.Storage.Dictionary;
 
-namespace Telegramper.Dialog.Service
+namespace Telegramper.Sequence.Service
 {
     public class SequenceService : ISequenceService
     {
@@ -96,7 +96,7 @@ namespace Telegramper.Dialog.Service
             return (await _userStates.GetAsync()).Any(s => s.StartsWith(SequenceConstants.ModificatorForName));
         }
         
-        private async Task endAsync(Sequence sequence)
+        private async Task endAsync(Models.Sequence sequence)
         {
             if (sequence.EndOfSequence != null)
             {

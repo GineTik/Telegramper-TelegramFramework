@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
-using Telegramper.Dialog.Attributes;
-using Telegramper.Dialog.Models;
 using Telegramper.Executors.Common.Models;
+using Telegramper.Sequence.Attributes;
+using Telegramper.Sequence.Models;
 using Telegramper.Storage.Initializers;
 using Telegramper.Storage.List;
 
-namespace Telegramper.Dialog.StorageInitializers
+namespace Telegramper.Sequence.StorageInitializers
 {
     public class SequenceStorageInitializer : IDictionaryStorageInitializer<SequenceDictionary>
     {
@@ -85,10 +85,10 @@ namespace Telegramper.Dialog.StorageInitializers
             }
         }
 
-        private static Sequence getSequence(string sequenceName, SequenceDictionary sequenceDictionary)
+        private static Models.Sequence getSequence(string sequenceName, SequenceDictionary sequenceDictionary)
         {
             sequenceDictionary.TryGetValue(sequenceName, out var sequence);
-            return sequence ?? new Sequence
+            return sequence ?? new Models.Sequence
             {
                 Name = sequenceName
             };

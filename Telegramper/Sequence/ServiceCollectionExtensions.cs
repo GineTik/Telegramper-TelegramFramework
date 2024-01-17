@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Telegramper.Dialog.Service;
-using Telegramper.Dialog.Models;
-using Telegramper.Dialog.StorageInitializers;
+using Telegramper.Sequence.Models;
+using Telegramper.Sequence.Service;
+using Telegramper.Sequence.StorageInitializers;
 using Telegramper.Storage.Services;
 
-namespace Telegramper.Dialog
+namespace Telegramper.Sequence
 {
     public static class ServiceCollectionExtensions
     {

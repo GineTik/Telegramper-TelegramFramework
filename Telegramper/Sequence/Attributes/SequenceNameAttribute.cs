@@ -1,4 +1,4 @@
-﻿namespace Telegramper.Dialog.Attributes
+﻿namespace Telegramper.Sequence.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SequenceNameAttribute : Attribute
