@@ -38,7 +38,10 @@ namespace Telegramper.Executors.QueryHandlers.Middleware
 
             foreach (var error in errors)
             {
-                await _updateContext.Client.SendTextMessageAsync(error.Message, parseMode: ParseMode.MarkdownV2);
+                if (error.Message != null)
+                {
+                    await _updateContext.Client.SendTextMessageAsync(error.Message, parseMode: ParseMode.MarkdownV2);
+                }
             }
 
             if (invokableMethods.Any() == false)
