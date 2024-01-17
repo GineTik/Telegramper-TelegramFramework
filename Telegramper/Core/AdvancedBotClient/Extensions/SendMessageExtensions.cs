@@ -12,7 +12,7 @@ namespace Telegramper.Core.AdvancedBotClient.Extensions
     {
         public static async Task<Message> SendTextMessageAsync(
             this IAdvancedTelegramBotClient client,
-            string? text,
+            string text,
             int? messageThreadId = default,
             ParseMode? parseMode = default,
             IEnumerable<MessageEntity>? entities = default,
