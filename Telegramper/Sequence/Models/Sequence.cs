@@ -1,7 +1,7 @@
 using System.Reflection;
 using Telegramper.Executors.Common.Models;
 
-namespace Telegramper.Dialog.Models;
+namespace Telegramper.Sequence.Models;
 
 public class Sequence
 {

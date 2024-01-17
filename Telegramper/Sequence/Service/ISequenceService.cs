@@ -1,6 +1,6 @@
 ﻿using Telegramper.Executors.Common.Models;
 
-namespace Telegramper.Dialog.Service
+namespace Telegramper.Sequence.Service
 {
     public interface ISequenceService
     {

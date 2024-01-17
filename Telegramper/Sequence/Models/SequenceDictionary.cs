@@ -1,4 +1,4 @@
-﻿namespace Telegramper.Dialog.Models
+﻿namespace Telegramper.Sequence.Models
 {
     public class SequenceDictionary : Dictionary<string, Sequence>
     {

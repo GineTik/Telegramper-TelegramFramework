@@ -5,7 +5,7 @@ using Telegramper.Executors.Common.Models;
 using Telegramper.Executors.QueryHandlers.Attributes.BaseAttributes;
 using Telegramper.Executors.QueryHandlers.Attributes.Targets;
 
-namespace Telegramper.Dialog.Attributes
+namespace Telegramper.Sequence.Attributes
 {
     [TargetUpdateType(UpdateType.Unknown)]
     public class TargetSequenceStepAttribute : TargetAttribute

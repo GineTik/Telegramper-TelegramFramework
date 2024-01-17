@@ -1,7 +1,7 @@
-﻿using Telegramper.Dialog.Attributes;
-using Telegramper.Executors.Common.Models;
+﻿using Telegramper.Executors.Common.Models;
+using Telegramper.Sequence.Attributes;
 
-namespace Telegramper.Dialog.Models
+namespace Telegramper.Sequence.Models
 {
     public sealed class SequenceStep
     {
