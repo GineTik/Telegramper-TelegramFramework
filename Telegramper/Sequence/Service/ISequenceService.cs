@@ -8,7 +8,9 @@ namespace Telegramper.Sequence.Service
         Task StartAsync<T>() where T : Executor;
         Task StartAsync(Type sequenceType);
         Task NextAsync();
-        Task EndAsync();
+
+
+        Task EndAsync(bool executeEndCallback = true);
         Task<bool> IsLaunchedAsync();
     }
 }

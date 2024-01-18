@@ -72,7 +72,7 @@ namespace Telegramper.Sequence.Service
 
             if (sequence.Steps.Count <= nextStepIndex)
             {
-                await endAsync(sequence);
+                await endAsync(sequence, true);
                 return;
             }
 
@@ -81,13 +81,14 @@ namespace Telegramper.Sequence.Service
             await setUserStateForStepAsync(nextStep);
         }
 
-        public async Task EndAsync()
+        public async Task EndAsync(bool executeEndCallback = true)
         {
             var states = await _userStates.GetAsync();
             var sequenceName = getSequenceNameFromUserStates(states);
+            
             if (_sequences.TryGetValue(sequenceName, out var sequence))
             {  
-                await endAsync(sequence);
+                await endAsync(sequence, executeEndCallback);
             }
         }
 
@@ -96,9 +97,9 @@ namespace Telegramper.Sequence.Service
             return (await _userStates.GetAsync()).Any(s => s.StartsWith(SequenceConstants.ModificatorForName));
         }
         
-        private async Task endAsync(Models.Sequence sequence)
+        private async Task endAsync(Models.Sequence sequence, bool executeEndCallback)
         {
-            if (sequence.EndOfSequence != null)
+            if (executeEndCallback && sequence.EndOfSequence != null)
             {
                 await sequence.EndOfSequence?.InvokeMethodAsync(_executorFactory, Array.Empty<object>())!;
             }
