@@ -52,8 +52,28 @@ namespace Telegramper.Sequence.Service
         {
             await StartAsync(sequenceType.Name);
         }
+        
+        public async Task NextAsync(int steps = 1)
+        {
+            if (steps < 1)
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(steps)}({steps}) cant be less then 1");
+            }
+            
+            await ShiftAsync(steps);
+        }
+        
+        public async Task BackAsync(int steps = 1)
+        {
+            if (steps < 1)
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(steps)}({steps}) cant be less then 1");
+            }
+            
+            await ShiftAsync(-steps);
+        }
 
-        public async Task NextAsync()
+        public async Task ShiftAsync(int offset = 1)
         {
             if (await IsLaunchedAsync() == false)
             {
@@ -63,14 +83,14 @@ namespace Telegramper.Sequence.Service
             var states = (await _userStates.GetAsync()).ToList();
             var sequenceName = getSequenceNameFromUserStates(states);
             var currentStepIndex = int.Parse(getStepIndexFromUserState(states));
-            var nextStepIndex = ++currentStepIndex;
+            var nextStepIndex = currentStepIndex + offset;
 
             if (_sequences.TryGetValue(sequenceName, out var sequence) == false)
             {
                 throw new ArgumentException($"The dialog with current name({sequenceName}) not exists");
             }
 
-            if (sequence.Steps.Count <= nextStepIndex)
+            if (nextStepIndex < 0 || nextStepIndex >= sequence.Steps.Count)
             {
                 await endAsync(sequence, true);
                 return;
