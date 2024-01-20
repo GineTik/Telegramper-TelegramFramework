@@ -26,11 +26,11 @@ namespace Telegramper.Sequence.Service
             _updateContext = updateContextAccessor.UpdateContext;
         }
 
-        public async Task StartAsync(string dialogName)
+        public async Task StartAsync(string sequenceName)
         {
-            if (_sequences.TryGetValue(dialogName, out var sequence) == false)
+            if (_sequences.TryGetValue(sequenceName, out var sequence) == false)
             {
-                throw new ArgumentException("The dialog with current name not exists");
+                throw new ArgumentException($"The sequence with current name ({sequenceName}) not exists");
             }
 
             if (sequence.StartOfSequence != null)
@@ -38,39 +38,11 @@ namespace Telegramper.Sequence.Service
                 await sequence.StartOfSequence!.InvokeMethodAsync(_executorFactory, Array.Empty<object>());
             }
             
-            // The steps will definitely be one or more
-            var firstStep = sequence.Steps.First();
-            await setUserStateForStepAsync(firstStep);
-        }
-
-        public async Task StartAsync<T>() where T : Executor
-        {
-            await StartAsync(typeof(T));
-        }
-
-        public async Task StartAsync(Type sequenceType)
-        {
-            await StartAsync(sequenceType.Name);
-        }
-        
-        public async Task NextAsync(int steps = 1)
-        {
-            if (steps < 1)
+            await _userStates.SetRangeAsync(new[]
             {
-                throw new ArgumentOutOfRangeException($"{nameof(steps)}({steps}) cant be less then 1");
-            }
-            
-            await ShiftAsync(steps);
-        }
-        
-        public async Task BackAsync(int steps = 1)
-        {
-            if (steps < 1)
-            {
-                throw new ArgumentOutOfRangeException($"{nameof(steps)}({steps}) cant be less then 1");
-            }
-            
-            await ShiftAsync(-steps);
+                StaticSequenceUserStateFactory.Create(sequence.Name),
+                StaticSequenceUserStateFactory.CreateByIndex(sequence.Name, 0)
+            });
         }
 
         public async Task ShiftAsync(int offset = 1)
@@ -87,28 +59,28 @@ namespace Telegramper.Sequence.Service
 
             if (_sequences.TryGetValue(sequenceName, out var sequence) == false)
             {
-                throw new ArgumentException($"The dialog with current name({sequenceName}) not exists");
+                throw new ArgumentException($"The sequence with current name({sequenceName}) not exists");
             }
-
+            
             if (nextStepIndex < 0 || nextStepIndex >= sequence.Steps.Count)
             {
-                await endAsync(sequence, true);
+                await endAsync(sequence, executeEndCallback: true, currentStepIndex);
                 return;
             }
-
-            await cleanDialogStates();
-            var nextStep = sequence.Steps.ElementAt(nextStepIndex);
-            await setUserStateForStepAsync(nextStep);
+            
+            await _userStates.RemoveAsync(StaticSequenceUserStateFactory.CreateByIndex(sequenceName, currentStepIndex));
+            await _userStates.AddAsync(StaticSequenceUserStateFactory.CreateByIndex(sequenceName, nextStepIndex));
         }
 
         public async Task EndAsync(bool executeEndCallback = true)
         {
-            var states = await _userStates.GetAsync();
+            var states = (await _userStates.GetAsync()).ToList();
             var sequenceName = getSequenceNameFromUserStates(states);
+            var currentStepIndex = int.Parse(getStepIndexFromUserState(states));
             
             if (_sequences.TryGetValue(sequenceName, out var sequence))
             {  
-                await endAsync(sequence, executeEndCallback);
+                await endAsync(sequence, executeEndCallback, currentStepIndex);
             }
         }
 
@@ -117,26 +89,15 @@ namespace Telegramper.Sequence.Service
             return (await _userStates.GetAsync()).Any(s => s.StartsWith(SequenceConstants.ModificatorForName));
         }
         
-        private async Task endAsync(Models.Sequence sequence, bool executeEndCallback)
+        private async Task endAsync(Models.Sequence sequence, bool executeEndCallback, int currentStepIndex)
         {
             if (executeEndCallback && sequence.EndOfSequence != null)
             {
                 await sequence.EndOfSequence?.InvokeMethodAsync(_executorFactory, Array.Empty<object>())!;
             }
-            
-            await cleanDialogStates();
-        }
 
-        private async Task setUserStateForStepAsync(SequenceStep step)
-        {
-            await _userStates.AddRangeAsync(step.StepAttribute.UserStates);
-        }
-        
-        private async Task cleanDialogStates()
-        {
-            foreach (var state in await _userStates.GetAsync())
-                if (state.StartsWith(SequenceConstants.ModificatorForName))
-                    await _userStates.RemoveAsync(state);
+            await _userStates.RemoveAsync(StaticSequenceUserStateFactory.CreateByIndex(sequence.Name, currentStepIndex));
+            await _userStates.RemoveAsync(StaticSequenceUserStateFactory.Create(sequence.Name));
         }
         
         private static string getSequenceNameFromUserStates(IEnumerable<string> states)

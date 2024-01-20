@@ -53,35 +53,32 @@ namespace Telegramper.Sequence.StorageInitializers
 
         private void addStartOfSequences(SequenceDictionary sequenceDictionary)
         {
-            var startOfSequenceMethods = _executorTypes
-                .SelectMany(t => t.Type.GetMethods())
-                .Where(m => m.GetCustomAttribute<StartOfSequenceAttribute>() != null);
-
-            foreach (var method in startOfSequenceMethods)
-            {
-                var executorType = method.DeclaringType ??
-                                   method.ReflectedType ?? throw new InvalidOperationException("The method haven't class type");
-                var sequence =
-                    getSequence(method.GetCustomAttribute<StartOfSequenceAttribute>()!.SequenceName ?? executorType.Name,
-                        sequenceDictionary);
-                sequence.StartOfSequence = method;
-            }
+            addStartOrEndOfSequence<StartOfSequenceAttribute>(
+                sequenceDictionary, 
+                (sequence, method) => sequence.StartOfSequence = method);
         }
 
         private void addEndOfSequences(SequenceDictionary sequenceDictionary)
         {
+            addStartOrEndOfSequence<EndOfSequenceAttribute>(
+                sequenceDictionary, 
+                (sequence, method) => sequence.EndOfSequence = method);
+        }
+
+        private void addStartOrEndOfSequence<TAttribute>(SequenceDictionary sequenceDictionary, Action<Models.Sequence, MethodInfo> setProperty)
+            where TAttribute : Attribute 
+        {
             var endOfSequenceMethods = _executorTypes
                 .SelectMany(t => t.Type.GetMethods())
-                .Where(m => m.GetCustomAttribute<EndOfSequenceAttribute>() != null);
+                .Where(m => m.GetCustomAttribute<TAttribute>() != null);
 
             foreach (var method in endOfSequenceMethods)
             {
                 var executorType = method.DeclaringType ??
-                                   method.ReflectedType ?? throw new InvalidOperationException("The method haven't class type");
-                var sequence =
-                    getSequence(method.GetCustomAttribute<EndOfSequenceAttribute>()!.SequenceName ?? executorType.Name,
-                        sequenceDictionary);
-                sequence.EndOfSequence = method;
+                                   method.ReflectedType ?? 
+                                   throw new InvalidOperationException("The method haven't class type");
+                var sequence = getSequence(executorType.FullName!, sequenceDictionary);
+                setProperty(sequence, method);
             }
         }
 

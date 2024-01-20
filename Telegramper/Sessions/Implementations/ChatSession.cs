@@ -6,7 +6,7 @@ namespace Telegramper.Sessions.Implementations
 {
     public class ChatSession : Session, IChatSession
     {
-        public ChatSession(ISessionDataSaver saver, UpdateContextAccessor updateContextAccessor) : base(saver, updateContextAccessor)
+        public ChatSession(ISessionSaveStrategy saver, UpdateContextAccessor updateContextAccessor) : base(saver, updateContextAccessor)
         {
         }
 
