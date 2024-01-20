@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegramper.Core.Configuration.Services;
+using Telegramper.Core.Helpers.Builders;
 using Telegramper.Core.Helpers.Factories.Configuration;
 
 namespace Telegramper.Core
@@ -55,6 +56,7 @@ namespace Telegramper.Core
         private void setDefaultsServicesAndLogging()
         {
             Services.AddSingleton(Configuration);
+            Services.AddSingleton<InlineKeyboardBuilder>();
             Services.AddUpdateContextAccessor();
             Services.AddLogging(builder => { Logging = builder; });
 

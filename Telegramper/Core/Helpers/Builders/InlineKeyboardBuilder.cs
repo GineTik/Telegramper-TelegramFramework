@@ -1,27 +1,28 @@
 ﻿using Telegramper.Executors;
 using System.Linq.Expressions;
 using Telegram.Bot.Types.ReplyMarkups;
+using Telegramper.Executors.Common.Options;
 
 namespace Telegramper.Core.Helpers.Builders
 {
     public class InlineKeyboardBuilder
     {
-        private readonly List<List<InlineKeyboardButton>> _buttons;
-        private List<InlineKeyboardButton> _currentRow;
-
-        public InlineKeyboardBuilder()
+        private readonly List<List<InlineKeyboardButton>> _buttons = new();
+        private List<InlineKeyboardButton> _currentRow = new();
+        private readonly ParametersParserOptions _parametersParserOptions;
+        
+        public InlineKeyboardBuilder(ParametersParserOptions parametersParserOptions)
         {
-            _buttons = new List<List<InlineKeyboardButton>>();
-            _currentRow = new List<InlineKeyboardButton>();
+            _parametersParserOptions = parametersParserOptions;
         }
-
+        
         public InlineKeyboardBuilder ButtonList(IEnumerable<InlineKeyboardButton> buttons, int rowCount = 1)
         {
             var queue = new Queue<InlineKeyboardButton>(buttons);
 
             while (queue.Count > 0)
             {
-                for (int i = 0; i < rowCount && queue.Count > 0; i++)
+                for (var i = 0; i < rowCount && queue.Count > 0; i++)
                 {
                     Button(queue.Dequeue());
                 }
@@ -31,11 +32,11 @@ namespace Telegramper.Core.Helpers.Builders
             return this;
         }
 
-        public InlineKeyboardBuilder CallbackButtonList<T>(IEnumerable<T> list, Func<T, int, string> textConfigure,
+        public InlineKeyboardBuilder ButtonRange<T>(IEnumerable<T> list, Func<T, int, string> textConfigure,
             Func<T, int, string> callbackDataConfigure, int rowCount = 1)
         {
             var buttons = new List<InlineKeyboardButton>();
-            int i = 0;
+            var i = 0;
             foreach (var item in list)
             {
                 buttons.Add(InlineKeyboardButton.WithCallbackData(
@@ -48,28 +49,36 @@ namespace Telegramper.Core.Helpers.Builders
             return ButtonList(buttons, rowCount);
         }
 
-        public InlineKeyboardBuilder CallbackButton(string text, string callback)
+        public InlineKeyboardBuilder Button(string text, string callback)
         {
             _currentRow.Add(InlineKeyboardButton.WithCallbackData(text, callback));
             return this;
         }
-
-        //public InlineKeyboardBuilder ExecutorButton(string text, Expression<Action<TExecutor>> method, string args)
-        //{
-        //    if (method.Body.NodeType != ExpressionType.Call)
-        //        throw new ArgumentNullException("method.Body.NodeType != ExpressionType.Call");
-
-        //    var info = (MethodCallExpression)method.Body;
-        //    var methodName = info.Method.Name;
-        //    CallbackButton(text, $"{methodName} {args}");
-
-        //    return this;
-        //}
+        
+        public InlineKeyboardBuilder ButtonUrl(string text, string url)
+        {
+            _currentRow.Add(InlineKeyboardButton.WithUrl(text, url));
+            return this;
+        }
+        
+        public InlineKeyboardBuilder Button(string textAndCallback)
+        {
+            _currentRow.Add(InlineKeyboardButton.WithCallbackData(textAndCallback));
+            return this;
+        }
 
         public InlineKeyboardBuilder Button(InlineKeyboardButton button)
         {
             _currentRow.Add(button);
             return this;
+        }
+
+        public InlineKeyboardBuilder Button(string text, string callbackHandler, object[] parameters)
+        {
+            return Button(text, 
+                callbackHandler + 
+                _parametersParserOptions.DefaultSeparator + 
+                string.Join(_parametersParserOptions.DefaultSeparator, parameters));
         }
 
         public InlineKeyboardBuilder EndRow()
