@@ -6,6 +6,8 @@ using Telegramper.Executors.QueryHandlers.ParameterParser;
 using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler.Strategies;
 using Telegramper.Executors.QueryHandlers.ParameterParser.Strategies;
 using Telegramper.Executors.QueryHandlers.UserState.Strategy;
+using Telegramper.Sessions.Options;
+using Telegramper.Sessions.Saver.Implementations;
 
 namespace Telegramper.Executors.Common.Options
 {
@@ -43,6 +45,11 @@ namespace Telegramper.Executors.Common.Options
         public HandlerQueueOptions HandlerQueue { get; set; } = new()
         {
             LimitOfHandlersPerRequest = 1
+        };
+
+        public SessionOptions Session { get; set; } = new()
+        {
+            SaveStrategyType = typeof(MemorySessionSaveStrategy)
         };
     }
 }

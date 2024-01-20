@@ -5,14 +5,14 @@ namespace Telegramper.Sessions
 {
     public abstract class Session : ISession
     {
-        private readonly ISessionDataSaver _sessionDataSaver;
+        private readonly ISessionSaveStrategy _sessionSaveStrategy;
         private readonly UpdateContext _updateContext;
 
         public Session(
-            ISessionDataSaver saver,
+            ISessionSaveStrategy saver,
             UpdateContextAccessor updateContextAccessor)
         {
-            _sessionDataSaver = saver;
+            _sessionSaveStrategy = saver;
             _updateContext = updateContextAccessor.UpdateContext;
         }
 
@@ -31,7 +31,7 @@ namespace Telegramper.Sessions
             entityId ??= GetCurrentEntityId(_updateContext);
             key ??= BuildKey<T>();
 
-            return await _sessionDataSaver.GetAsync<T>(entityId!.Value, key!);
+            return await _sessionSaveStrategy.GetAsync<T>(entityId!.Value, key!);
         }
 
         public async Task<T> GetAsync<T>(T defaultValue, long? entityId = null, string? key = null)
@@ -53,7 +53,7 @@ namespace Telegramper.Sessions
             entityId ??= GetCurrentEntityId(_updateContext);
             key ??= BuildKey<T>();
 
-            await _sessionDataSaver.SetAsync(entityId!.Value, key!, value);
+            await _sessionSaveStrategy.SetAsync(entityId!.Value, key!, value);
         }
 
         public async Task SetAsync<T>(Action<T> changeValues, long? entityId = null, string? key = null)
@@ -86,7 +86,7 @@ namespace Telegramper.Sessions
             entityId ??= GetCurrentEntityId(_updateContext);
             key ??= BuildKey<T>();
 
-            await _sessionDataSaver.RemoveAsync(entityId!.Value, key!);
+            await _sessionSaveStrategy.RemoveAsync(entityId!.Value, key!);
         }
         #endregion
 

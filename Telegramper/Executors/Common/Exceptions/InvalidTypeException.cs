@@ -10,13 +10,23 @@
         {
         }
 
-        public static void ThrowIfNotImplementation<TSaver>(Type type)
+        public static void ThrowIfNotImplementation<T>(Type type)
         {
             if (type.IsInterface == true ||
                 type.IsAbstract == true ||
-                typeof(TSaver).IsAssignableFrom(type) == false)
+                typeof(T).IsAssignableFrom(type) == false)
             {
-                throw new InvalidTypeException($"Type {type.Name} is interface or abstract or not inherit {typeof(TSaver).Name}");
+                throw new InvalidTypeException($"Type {type.Name} is interface or abstract or not inherit {typeof(T).Name}");
+            }
+        }
+        
+        public static void ThrowIfNotInherit<T>(Type type)
+        {
+            if (type.IsInterface == true ||
+                type.IsAbstract == true ||
+                typeof(T).IsAssignableFrom(type) == false)
+            {
+                throw new InvalidTypeException($"Type {type.Name} is interface or abstract or not inherit {typeof(T).Name}");
             }
         }
     }

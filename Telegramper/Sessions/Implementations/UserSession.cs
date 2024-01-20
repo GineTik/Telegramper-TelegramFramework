@@ -6,7 +6,7 @@ namespace Telegramper.Sessions.Implementations
 {
     public class UserSession : Session, IUserSession
     {
-        public UserSession(ISessionDataSaver saver, UpdateContextAccessor updateContextAccessor) : base(saver, updateContextAccessor)
+        public UserSession(ISessionSaveStrategy saver, UpdateContextAccessor updateContextAccessor) : base(saver, updateContextAccessor)
         {
         }
 

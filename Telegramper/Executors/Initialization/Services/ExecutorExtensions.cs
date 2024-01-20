@@ -6,15 +6,14 @@ using Telegramper.Executors.Initialization.StorageInitializers;
 using Telegramper.Executors.QueryHandlers.Attributes.Targets;
 using Telegramper.Executors.QueryHandlers.Factory;
 using Telegramper.Executors.QueryHandlers.MethodInvoker;
-using Telegramper.Executors.QueryHandlers.ParameterParser;
-using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler;
-using Telegramper.Executors.QueryHandlers.ParameterParser.ParseErrorHandler.Strategies;
 using Telegramper.Executors.QueryHandlers.Preparer;
 using Telegramper.Executors.QueryHandlers.RouteDictionaries;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder;
 using Telegramper.Executors.QueryHandlers.SuitableMethodFinder.Strategies;
 using Telegramper.Executors.QueryHandlers.UserState;
 using Telegramper.Executors.QueryHandlers.UserState.Strategy;
+using Telegramper.Sequence;
+using Telegramper.Sessions.Services;
 using Telegramper.Storage.Services;
 
 namespace Telegramper.Executors.Initialization.Services
@@ -79,6 +78,8 @@ namespace Telegramper.Executors.Initialization.Services
             services.AddSingleton(typeof(INameTransformer), executorOptions.MethodNameTransformer.NameTransformerType);
 
             services.AddParameterParsing(executorOptions.ParametersParser);
+            services.AddSessions(executorOptions.Session);
+            services.AddSequence();
             
             foreach (var executor in executorsTypes.Select(wrapper => wrapper.Type))
             {

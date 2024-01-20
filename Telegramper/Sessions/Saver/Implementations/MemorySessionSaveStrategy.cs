@@ -1,11 +1,11 @@
 ﻿namespace Telegramper.Sessions.Saver.Implementations
 {
-    public class MemorySessionDataSaver : ISessionDataSaver
+    public class MemorySessionSaveStrategy : ISessionSaveStrategy
     {
         private readonly Dictionary<string, object> _sessions;
         private readonly object _locker;
 
-        public MemorySessionDataSaver()
+        public MemorySessionSaveStrategy()
         {
             _sessions = new();
             _locker = new object();

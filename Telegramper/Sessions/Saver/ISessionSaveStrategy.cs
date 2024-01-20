@@ -1,6 +1,6 @@
 ﻿namespace Telegramper.Sessions.Saver
 {
-    public interface ISessionDataSaver
+    public interface ISessionSaveStrategy
     {
         // entityId is UserId or ChatId
         Task SetAsync<T>(long entityId, string key, T data) where T : class;
